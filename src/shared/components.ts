@@ -15,3 +15,8 @@ export interface IIdentity {
 export interface IInventory {
   wood: number;
 }
+
+export interface IMovementIntent {
+  targetQ: number;
+  targetR: number;
+}

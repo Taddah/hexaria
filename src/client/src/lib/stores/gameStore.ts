@@ -19,4 +19,4 @@ export interface EntityDTO {
 export const mapStore = writable<TileData[]>([]);
 export const entitiesStore = writable<EntityDTO[]>([]);
 export const hexSizeStore = writable<number>(75);
-export const selectedHexStore = writable<{q: number, r: number} | null>(null);
+export const selectedHexStore = writable<{ q: number; r: number } | null>(null);

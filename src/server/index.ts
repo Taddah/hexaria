@@ -3,6 +3,7 @@ import { MapGenerator } from './core/MapGenerator';
 import { IPosition, IAge, IIdentity, IInventory } from '$shared/components';
 import { runAgingSystem } from './systems/AgingSystem';
 import { NetworkSystem } from './systems/NetworkSystem';
+import { runMovementSystem, MOVEMENT_TICK_MS } from './systems/MovementSystem';
 
 function bootstrap() {
   const world = new World();
@@ -16,15 +17,20 @@ function bootstrap() {
   const player = world.createEntity();
   world.addComponent<IPosition>(player, 'Position', { q: 25, r: 25 });
   world.addComponent<IAge>(player, 'Age', { current: 18, max: 25 });
-  world.addComponent<IIdentity>(player, 'Identity', { name: "Héros Test" });
+  world.addComponent<IIdentity>(player, 'Identity', { name: 'Héros Test' });
   world.addComponent<IInventory>(player, 'Inventory', { wood: 50 });
 
   console.log(`[INIT] Joueur créé avec l'ID: ${player}`);
 
   setInterval(() => {
+    runMovementSystem(world, map);
+    network.broadcastWorldState();
+  }, MOVEMENT_TICK_MS);
+
+  setInterval(() => {
     runAgingSystem(world);
     network.broadcastWorldState();
-  }, 100000);
+  }, 10000);
 }
 
 bootstrap();

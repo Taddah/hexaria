@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import * as PIXI from 'pixi.js';
-	import { mapStore, entitiesStore, hexSizeStore, selectedHexStore } from '../stores/gameStore';
+	import { mapStore, entitiesStore, hexSizeStore, selectedHexStore } from '$lib/stores/gameStore';
+	import { pixelToHex, drawHexagonPoly, hexDistance } from '$lib/utils/hexUtils';
+	import { exploredTiles, expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar';
 
 	let canvasContainer: HTMLDivElement;
 	let app: PIXI.Application;
@@ -10,24 +12,15 @@
 	let highlightContainer: PIXI.Container;
 	let entitiesContainer: PIXI.Container;
 
-	const entityGraphicsMap = new Map<number, PIXI.Graphics>();
 	let highlightGraphic: PIXI.Graphics;
+	const entityGraphicsMap = new Map<number, PIXI.Graphics>();
 
-	const VISION_RADIUS = 3;
-	const exploredTiles = new Set<string>();
 	let playerPos: { q: number; r: number } | null = null;
-
 	let unsubs: Array<() => void> = [];
 
 	onMount(async () => {
 		app = new PIXI.Application();
-
-		await app.init({
-			resizeTo: canvasContainer,
-			backgroundColor: 0x1e1e2f,
-			antialias: true
-		});
-
+		await app.init({ resizeTo: canvasContainer, backgroundColor: 0x1e1e2f, antialias: true });
 		canvasContainer.appendChild(app.canvas);
 
 		mapContainer = new PIXI.Container();
@@ -48,39 +41,25 @@
 		app.stage.on('pointerdown', (e) => {
 			const localPos = mapContainer.toLocal(e.global);
 			const coords = pixelToHex(localPos.x, localPos.y, $hexSizeStore);
-
-			console.log('Hexagone cliqué :', coords);
-
 			const tile = $mapStore.find((t) => t.q === coords.q && t.r === coords.r);
-			if (tile) {
-				console.log('Infos de la tuile (Store) :', tile);
-				selectedHexStore.set({ q: coords.q, r: coords.r });
-			} else {
-				console.log('Aucune tuile existante à cet emplacement.');
-				selectedHexStore.set(null);
-			}
+			selectedHexStore.set(tile ? { q: coords.q, r: coords.r } : null);
 		});
 
 		unsubs.push(
 			mapStore.subscribe((mapData) => {
-				if (mapData.length > 0) {
-					drawMap(mapData, $hexSizeStore);
-				}
+				if (mapData.length > 0) drawMap(mapData, $hexSizeStore);
 			})
 		);
 
 		unsubs.push(
 			hexSizeStore.subscribe((size) => {
-				const mapData = $mapStore;
-				if (mapData && mapData.length > 0) {
-					drawMap(mapData, size);
-				}
+				if ($mapStore.length > 0) drawMap($mapStore, size);
 			})
 		);
 
 		unsubs.push(
-			selectedHexStore.subscribe((selectedHex) => {
-				if (highlightGraphic) updateHighlight(selectedHex, $hexSizeStore);
+			selectedHexStore.subscribe((sel) => {
+				if (highlightGraphic) updateHighlight(sel, $hexSizeStore);
 			})
 		);
 
@@ -92,29 +71,12 @@
 	});
 
 	onDestroy(() => {
-		unsubs.forEach((unsub) => unsub());
-		if (app) {
-			app.destroy(true, { children: true, texture: true });
-		}
+		unsubs.forEach((u) => u());
+		app?.destroy(true, { children: true, texture: true });
 	});
 
-	function drawHexagonPoly(size: number): number[] {
-		const points: number[] = [];
-		for (let i = 0; i < 6; i++) {
-			const angle_deg = 60 * i - 30;
-			const angle_rad = (Math.PI / 180) * angle_deg;
-			points.push(size * Math.cos(angle_rad), size * Math.sin(angle_rad));
-		}
-		return points;
-	}
-
-	function hexDistance(q1: number, r1: number, q2: number, r2: number): number {
-		return (Math.abs(q1 - q2) + Math.abs(q1 + r1 - q2 - r2) + Math.abs(r1 - r2)) / 2;
-	}
-
-	function drawMap(mapData: any[], size: number) {
+	function drawMap(mapData: typeof $mapStore, size: number) {
 		mapContainer.removeChildren();
-
 		const sqrt3 = Math.sqrt(3);
 
 		for (const tile of mapData) {
@@ -130,7 +92,6 @@
 			const y = size * ((3 / 2) * tile.r);
 
 			const hex = new PIXI.Graphics();
-
 			let color = 0x000000;
 			switch (tile.type) {
 				case 'WATER':
@@ -148,39 +109,31 @@
 			}
 
 			hex.poly(drawHexagonPoly(size));
-
 			if (isVisible) {
-				hex.fill({ color: color });
+				hex.fill({ color });
 				hex.stroke({ color: 0x000000, width: 1, alpha: 0.5 });
 			} else {
-				hex.fill({ color: color, alpha: 0.35 });
+				hex.fill({ color, alpha: 0.35 });
 				hex.stroke({ color: 0x000000, width: 1, alpha: 0.2 });
 			}
-
 			hex.x = x;
 			hex.y = y;
-
 			mapContainer.addChild(hex);
 		}
 	}
 
-	function updateHighlight(selectedHex: { q: number; r: number } | null, size: number) {
+	function updateHighlight(sel: { q: number; r: number } | null, size: number) {
 		highlightGraphic.clear();
-		if (!selectedHex) return;
-
+		if (!sel) return;
 		const sqrt3 = Math.sqrt(3);
-		const x = size * (sqrt3 * selectedHex.q + (sqrt3 / 2) * selectedHex.r);
-		const y = size * ((3 / 2) * selectedHex.r);
-
 		highlightGraphic.poly(drawHexagonPoly(size));
 		highlightGraphic.fill({ color: 0xffaa00, alpha: 0.3 });
 		highlightGraphic.stroke({ color: 0xffaa00, width: 4, alpha: 1 });
-
-		highlightGraphic.x = x;
-		highlightGraphic.y = y;
+		highlightGraphic.x = size * (sqrt3 * sel.q + (sqrt3 / 2) * sel.r);
+		highlightGraphic.y = size * ((3 / 2) * sel.r);
 	}
 
-	function updateEntities(entities: any[], size: number) {
+	function updateEntities(entities: typeof $entitiesStore, size: number) {
 		const currentIds = new Set<number>();
 		const sqrt3 = Math.sqrt(3);
 		let needsRedraw = false;
@@ -188,35 +141,27 @@
 		for (const entity of entities) {
 			currentIds.add(entity.id);
 			const { q, r } = entity.position;
-
 			const x = size * (sqrt3 * q + (sqrt3 / 2) * r);
 			const y = size * ((3 / 2) * r);
 
-			let graphic = entityGraphicsMap.get(entity.id);
-			if (!graphic) {
-				graphic = new PIXI.Graphics();
-				graphic.circle(0, 0, size * 0.6);
-				graphic.fill({ color: 0xff3344 });
-				graphic.stroke({ color: 0xffffff, width: 2 });
-
-				entitiesContainer.addChild(graphic);
-				entityGraphicsMap.set(entity.id, graphic);
+			let g = entityGraphicsMap.get(entity.id);
+			if (!g) {
+				g = new PIXI.Graphics();
+				g.circle(0, 0, size * 0.6);
+				g.fill({ color: 0xff3344 });
+				g.stroke({ color: 0xffffff, width: 2 });
+				entitiesContainer.addChild(g);
+				entityGraphicsMap.set(entity.id, g);
 			}
-
-			graphic.x = x;
-			graphic.y = y;
+			g.x = x;
+			g.y = y;
 
 			if (entity.identity?.name === 'Héros Test') {
 				app.stage.position.set(window.innerWidth / 2 - x, window.innerHeight / 2 - y);
 
 				if (!playerPos || playerPos.q !== q || playerPos.r !== r) {
 					playerPos = { q, r };
-					const mapData = $mapStore;
-					for (const tile of mapData) {
-						if (hexDistance(q, r, tile.q, tile.r) <= VISION_RADIUS) {
-							exploredTiles.add(`${tile.q},${tile.r}`);
-						}
-					}
+					expandFog(q, r, $mapStore);
 					needsRedraw = true;
 				}
 			}
@@ -224,38 +169,13 @@
 
 		if (needsRedraw) drawMap($mapStore, size);
 
-		for (const [id, graphic] of entityGraphicsMap.entries()) {
+		for (const [id, g] of entityGraphicsMap.entries()) {
 			if (!currentIds.has(id)) {
-				entitiesContainer.removeChild(graphic);
-				graphic.destroy();
+				entitiesContainer.removeChild(g);
+				g.destroy();
 				entityGraphicsMap.delete(id);
 			}
 		}
-	}
-
-	function pixelToHex(x: number, y: number, size: number) {
-		const q = ((Math.sqrt(3) / 3) * x - (1 / 3) * y) / size;
-		const r = ((2 / 3) * y) / size;
-		return hexRound(q, r);
-	}
-
-	function hexRound(q: number, r: number) {
-		let x = q,
-			z = r,
-			y = -x - z;
-		let rx = Math.round(x),
-			ry = Math.round(y),
-			rz = Math.round(z);
-
-		const x_diff = Math.abs(rx - x);
-		const y_diff = Math.abs(ry - y);
-		const z_diff = Math.abs(rz - z);
-
-		if (x_diff > y_diff && x_diff > z_diff) rx = -ry - rz;
-		else if (y_diff > z_diff) ry = -rx - rz;
-		else rz = -rx - ry;
-
-		return { q: rx, r: rz };
 	}
 </script>
 
