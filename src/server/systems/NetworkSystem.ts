@@ -22,6 +22,31 @@ export class NetworkSystem {
             socket.emit('map_init', this.map);
             socket.emit('world_update', this.getWorldState());
 
+            socket.on('request_move', (target: { q: number, r: number }) => {
+
+                const heroId = Array.from(this.world.query(['Position', 'Identity'])).find(
+                    id => this.world.getComponent<IIdentity>(id, 'Identity')?.name === 'Héros Test'
+                );
+
+                if (heroId === undefined) return;
+
+                const pos = this.world.getComponent<IPosition>(heroId, 'Position');
+                if (!pos) return;
+
+
+                const distance = (Math.abs(pos.q - target.q) + Math.abs(pos.r - target.r) + Math.abs(pos.q + pos.r - target.q - target.r)) / 2;
+                if (distance !== 1) return;
+
+
+                const tile = this.map.find(t => t.q === target.q && t.r === target.r);
+                if (!tile || tile.type === 'WATER') return;
+
+                pos.q = target.q;
+                pos.r = target.r;
+
+                this.broadcastWorldState();
+            });
+
             socket.on('disconnect', () => {
                 console.log(`[NETWORK] Client déconnecté: ${socket.id}`);
             });

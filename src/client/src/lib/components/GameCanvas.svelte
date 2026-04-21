@@ -1,15 +1,21 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import * as PIXI from 'pixi.js';
-	import { mapStore, entitiesStore, hexSizeStore } from '../stores/gameStore';
+	import { mapStore, entitiesStore, hexSizeStore, selectedHexStore } from '../stores/gameStore';
 
 	let canvasContainer: HTMLDivElement;
 	let app: PIXI.Application;
 
 	let mapContainer: PIXI.Container;
+	let highlightContainer: PIXI.Container;
 	let entitiesContainer: PIXI.Container;
 
 	const entityGraphicsMap = new Map<number, PIXI.Graphics>();
+	let highlightGraphic: PIXI.Graphics;
+
+	const VISION_RADIUS = 3;
+	const exploredTiles = new Set<string>();
+	let playerPos: { q: number; r: number } | null = null;
 
 	let unsubs: Array<() => void> = [];
 
@@ -25,18 +31,16 @@
 		canvasContainer.appendChild(app.canvas);
 
 		mapContainer = new PIXI.Container();
+		highlightContainer = new PIXI.Container();
 		entitiesContainer = new PIXI.Container();
 		app.stage.addChild(mapContainer);
+		app.stage.addChild(highlightContainer);
 		app.stage.addChild(entitiesContainer);
 
-		const sqrt3 = Math.sqrt(3);
-		const size = $hexSizeStore;
-		const mapCenterX = size * (sqrt3 * 25 + (sqrt3 / 2) * 25);
-		const mapCenterY = size * ((3 / 2) * 25);
+		highlightGraphic = new PIXI.Graphics();
+		highlightContainer.addChild(highlightGraphic);
 
-		const offsetX = window.innerWidth / 2 - mapCenterX;
-		const offsetY = window.innerHeight / 2 - mapCenterY;
-		app.stage.position.set(offsetX, offsetY);
+		app.stage.position.set(window.innerWidth / 2, window.innerHeight / 2);
 
 		app.stage.eventMode = 'static';
 		app.stage.hitArea = new PIXI.Rectangle(-100000, -100000, 200000, 200000);
@@ -50,8 +54,10 @@
 			const tile = $mapStore.find((t) => t.q === coords.q && t.r === coords.r);
 			if (tile) {
 				console.log('Infos de la tuile (Store) :', tile);
+				selectedHexStore.set({ q: coords.q, r: coords.r });
 			} else {
 				console.log('Aucune tuile existante à cet emplacement.');
+				selectedHexStore.set(null);
 			}
 		});
 
@@ -69,6 +75,12 @@
 				if (mapData && mapData.length > 0) {
 					drawMap(mapData, size);
 				}
+			})
+		);
+
+		unsubs.push(
+			selectedHexStore.subscribe((selectedHex) => {
+				if (highlightGraphic) updateHighlight(selectedHex, $hexSizeStore);
 			})
 		);
 
@@ -96,12 +108,24 @@
 		return points;
 	}
 
+	function hexDistance(q1: number, r1: number, q2: number, r2: number): number {
+		return (Math.abs(q1 - q2) + Math.abs(q1 + r1 - q2 - r2) + Math.abs(r1 - r2)) / 2;
+	}
+
 	function drawMap(mapData: any[], size: number) {
 		mapContainer.removeChildren();
 
 		const sqrt3 = Math.sqrt(3);
 
 		for (const tile of mapData) {
+			const key = `${tile.q},${tile.r}`;
+			const isExplored = exploredTiles.has(key);
+			const isVisible =
+				playerPos !== null &&
+				hexDistance(playerPos.q, playerPos.r, tile.q, tile.r) <= VISION_RADIUS;
+
+			if (!isExplored && !isVisible) continue;
+
 			const x = size * (sqrt3 * tile.q + (sqrt3 / 2) * tile.r);
 			const y = size * ((3 / 2) * tile.r);
 
@@ -124,8 +148,14 @@
 			}
 
 			hex.poly(drawHexagonPoly(size));
-			hex.fill({ color: color });
-			hex.stroke({ color: 0x000000, width: 1, alpha: 0.5 });
+
+			if (isVisible) {
+				hex.fill({ color: color });
+				hex.stroke({ color: 0x000000, width: 1, alpha: 0.5 });
+			} else {
+				hex.fill({ color: color, alpha: 0.35 });
+				hex.stroke({ color: 0x000000, width: 1, alpha: 0.2 });
+			}
 
 			hex.x = x;
 			hex.y = y;
@@ -134,9 +164,26 @@
 		}
 	}
 
+	function updateHighlight(selectedHex: { q: number; r: number } | null, size: number) {
+		highlightGraphic.clear();
+		if (!selectedHex) return;
+
+		const sqrt3 = Math.sqrt(3);
+		const x = size * (sqrt3 * selectedHex.q + (sqrt3 / 2) * selectedHex.r);
+		const y = size * ((3 / 2) * selectedHex.r);
+
+		highlightGraphic.poly(drawHexagonPoly(size));
+		highlightGraphic.fill({ color: 0xffaa00, alpha: 0.3 });
+		highlightGraphic.stroke({ color: 0xffaa00, width: 4, alpha: 1 });
+
+		highlightGraphic.x = x;
+		highlightGraphic.y = y;
+	}
+
 	function updateEntities(entities: any[], size: number) {
 		const currentIds = new Set<number>();
 		const sqrt3 = Math.sqrt(3);
+		let needsRedraw = false;
 
 		for (const entity of entities) {
 			currentIds.add(entity.id);
@@ -158,7 +205,25 @@
 
 			graphic.x = x;
 			graphic.y = y;
+
+			if (entity.identity?.name === 'Héros Test') {
+				app.stage.position.set(window.innerWidth / 2 - x, window.innerHeight / 2 - y);
+
+				if (!playerPos || playerPos.q !== q || playerPos.r !== r) {
+					playerPos = { q, r };
+					const mapData = $mapStore;
+					for (const tile of mapData) {
+						if (hexDistance(q, r, tile.q, tile.r) <= VISION_RADIUS) {
+							exploredTiles.add(`${tile.q},${tile.r}`);
+						}
+					}
+					needsRedraw = true;
+				}
+			}
 		}
+
+		if (needsRedraw) drawMap($mapStore, size);
+
 		for (const [id, graphic] of entityGraphicsMap.entries()) {
 			if (!currentIds.has(id)) {
 				entitiesContainer.removeChild(graphic);

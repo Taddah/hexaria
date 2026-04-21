@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import GameCanvas from '$lib/components/GameCanvas.svelte';
 	import { initializeSocket } from '$lib/services/socket';
-	import { entitiesStore } from '$lib/stores/gameStore';
+	import { entitiesStore, selectedHexStore, mapStore } from '$lib/stores/gameStore';
 
 	let socket: ReturnType<typeof initializeSocket>;
 
@@ -17,6 +17,30 @@
 	});
 
 	const localPlayer = $derived($entitiesStore.find((e) => e.identity?.name === 'Héros Test'));
+
+	const selectedTile = $derived(
+		$selectedHexStore
+			? $mapStore.find((t) => t.q === $selectedHexStore.q && t.r === $selectedHexStore.r)
+			: null
+	);
+
+	const isMoveValid = $derived.by(() => {
+		if (!localPlayer || !selectedTile) return false;
+		if (selectedTile.type === 'WATER') return false;
+
+		const p = localPlayer.position;
+		const h = selectedTile;
+		const distance =
+			(Math.abs(p.q - h.q) + Math.abs(p.r - h.r) + Math.abs(p.q + p.r - h.q - h.r)) / 2;
+
+		return distance === 1;
+	});
+
+	function requestMove() {
+		if (isMoveValid && $selectedHexStore) {
+			socket.emit('request_move', { q: $selectedHexStore.q, r: $selectedHexStore.r });
+		}
+	}
 </script>
 
 <svelte:head>
@@ -74,4 +98,18 @@
 			</div>
 		{/if}
 	</div>
+
+	{#if isMoveValid}
+		<div
+			class="animate-in fade-in slide-in-from-right-8 absolute top-1/2 right-12 flex -translate-y-1/2 flex-col gap-4 duration-300"
+		>
+			<button
+				onclick={requestMove}
+				class="flex items-center justify-center gap-2 rounded-xl border border-blue-400/30 bg-blue-600 px-8 py-4 font-bold text-white shadow-[0_0_15px_rgba(37,99,235,0.5)] transition-all hover:scale-105 hover:bg-blue-500 active:scale-95 active:bg-blue-700"
+			>
+				<span>Se déplacer</span>
+				<span>🏃</span>
+			</button>
+		</div>
+	{/if}
 </main>
