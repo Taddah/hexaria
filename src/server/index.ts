@@ -1,7 +1,8 @@
 import { World } from './core/World';
 import { MapGenerator } from './core/MapGenerator';
-import { IPosition, IAge, IIdentity, IInventory } from './shared/components';
+import { IPosition, IAge, IIdentity, IInventory } from '$shared/components';
 import { runAgingSystem } from './systems/AgingSystem';
+import { NetworkSystem } from './systems/NetworkSystem';
 
 function bootstrap() {
   const world = new World();
@@ -9,6 +10,8 @@ function bootstrap() {
 
   const map = mapGen.generateMap(50, 50);
   console.log(`[INIT] Carte générée avec ${map.length} tuiles.`);
+
+  const network = new NetworkSystem(3000, world, map);
 
   const player = world.createEntity();
   world.addComponent<IPosition>(player, 'Position', { q: 25, r: 25 });
@@ -20,7 +23,8 @@ function bootstrap() {
 
   setInterval(() => {
     runAgingSystem(world);
-  }, 1000);
+    network.broadcastWorldState();
+  }, 100000);
 }
 
 bootstrap();

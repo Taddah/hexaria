@@ -21,6 +21,12 @@
     "declaration": true,
     "declarationMap": true,
 
+    "baseUrl": ".",
+    "paths": {
+      "$shared/*": ["./src/shared/*"],
+      "$shared": ["./src/shared"]
+    },
+
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,

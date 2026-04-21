@@ -1,5 +1,5 @@
 import { World } from '../core/World';
-import { IAge, IIdentity } from '../shared/components';
+import { IAge, IIdentity } from '$shared/components';
 
 export function runAgingSystem(world: World): void {
     const entities = world.query(['Age', 'Identity']);
