@@ -1,6 +1,6 @@
 import { World } from '../core/World';
 import { HexTile } from '../core/MapGenerator';
-import { IMovementIntent, IPosition } from '$shared/components';
+import { IMovementIntent, IPosition, IEnergy } from '$shared/components';
 
 const MOVEMENT_TICK_MS = 500;
 
@@ -10,6 +10,7 @@ export function runMovementSystem(world: World, map: HexTile[]): void {
     for (const entity of entities) {
         const pos = world.getComponent<IPosition>(entity, 'Position');
         const intent = world.getComponent<IMovementIntent>(entity, 'MovementIntent');
+        const energy = world.getComponent<IEnergy>(entity, 'Energy');
 
         if (!pos || !intent) continue;
 
@@ -31,6 +32,8 @@ export function runMovementSystem(world: World, map: HexTile[]): void {
 
         pos.q = intent.targetQ;
         pos.r = intent.targetR;
+
+        if (energy) energy.current = Math.max(0, energy.current - 1);
 
         world.removeComponent(entity, 'MovementIntent');
     }

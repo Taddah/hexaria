@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { mapStore, entitiesStore } from '../stores/gameStore';
+import { mapStore, entitiesStore, myEntityIdStore } from '../stores/gameStore';
 
 const SERVER_URL = 'http://localhost:3000';
 
@@ -11,8 +11,15 @@ export function initializeSocket() {
         console.log(`[CLIENT NETWORK] Connecté au serveur: ${socket.id}`);
     });
 
+    socket.on('player_init', (data: { entityId: number }) => {
+        myEntityIdStore.set(data.entityId);
+    });
+
     socket.on('map_init', (mapData) => {
-        console.log(`[CLIENT NETWORK] Réception de la map: ${mapData.length} tuiles`);
+        mapStore.set(mapData);
+    });
+
+    socket.on('map_update', (mapData) => {
         mapStore.set(mapData);
     });
 
@@ -22,6 +29,7 @@ export function initializeSocket() {
 
     socket.on('disconnect', () => {
         console.warn('[CLIENT NETWORK] Déconnecté du serveur');
+        myEntityIdStore.set(null);
     });
 
     return socket;

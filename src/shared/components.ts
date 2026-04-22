@@ -14,9 +14,24 @@ export interface IIdentity {
 
 export interface IInventory {
   wood: number;
+  iron: number;
 }
 
 export interface IMovementIntent {
   targetQ: number;
   targetR: number;
+}
+
+export interface IHarvestIntent {
+  tileQ: number;
+  tileR: number;
+}
+
+export interface IEnergy {
+  current: number;
+  max: number;
+}
+
+export interface IPlayer {
+  socketId: string;
 }

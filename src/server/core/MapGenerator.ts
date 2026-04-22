@@ -7,11 +7,19 @@ export enum TileType {
   MOUNTAIN = 'MOUNTAIN'
 }
 
+export type ResourceType = 'wood' | 'iron';
+
+export interface TileResource {
+  type: ResourceType;
+  amount: number;
+}
+
 export interface HexTile {
   q: number;
   r: number;
   type: TileType;
   elevation: number;
+  resource?: TileResource;
 }
 
 export class MapGenerator {
@@ -25,13 +33,12 @@ export class MapGenerator {
       for (let r = 0; r < height; r++) {
         const noiseValue = this.noise2D(q * scale, r * scale);
         const elevation = (noiseValue + 1) / 2;
+        const type = this.determineTileType(elevation);
 
-        tiles.push({
-          q,
-          r,
-          type: this.determineTileType(elevation),
-          elevation
-        });
+        const tile: HexTile = { q, r, type, elevation };
+        const resource = this.generateResource(type);
+        if (resource !== undefined) tile.resource = resource;
+        tiles.push(tile);
       }
     }
 
@@ -43,5 +50,15 @@ export class MapGenerator {
     if (elevation < 0.6) return TileType.PLAINS;
     if (elevation < 0.8) return TileType.FOREST;
     return TileType.MOUNTAIN;
+  }
+
+  private generateResource(type: TileType): TileResource | undefined {
+    if (type === TileType.FOREST && Math.random() < 0.4) {
+      return { type: 'wood', amount: Math.floor(Math.random() * 8) + 3 };
+    }
+    if (type === TileType.MOUNTAIN && Math.random() < 0.3) {
+      return { type: 'iron', amount: Math.floor(Math.random() * 6) + 2 };
+    }
+    return undefined;
   }
 }

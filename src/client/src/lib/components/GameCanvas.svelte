@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import * as PIXI from 'pixi.js';
-	import { mapStore, entitiesStore, hexSizeStore, selectedHexStore } from '$lib/stores/gameStore';
+	import { mapStore, entitiesStore, hexSizeStore, selectedHexStore, myEntityIdStore } from '$lib/stores/gameStore';
 	import { pixelToHex, drawHexagonPoly, hexDistance } from '$lib/utils/hexUtils';
 	import { exploredTiles, expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar';
 
@@ -139,6 +139,8 @@
 		let needsRedraw = false;
 
 		for (const entity of entities) {
+			if (entity.id !== $myEntityIdStore) continue;
+
 			currentIds.add(entity.id);
 			const { q, r } = entity.position;
 			const x = size * (sqrt3 * q + (sqrt3 / 2) * r);
@@ -156,7 +158,7 @@
 			g.x = x;
 			g.y = y;
 
-			if (entity.identity?.name === 'Héros Test') {
+			if (entity.id === $myEntityIdStore) {
 				app.stage.position.set(window.innerWidth / 2 - x, window.innerHeight / 2 - y);
 
 				if (!playerPos || playerPos.q !== q || playerPos.r !== r) {

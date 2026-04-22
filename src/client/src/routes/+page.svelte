@@ -2,7 +2,16 @@
 	import { onMount, onDestroy } from 'svelte';
 	import GameCanvas from '$lib/components/GameCanvas.svelte';
 	import { initializeSocket } from '$lib/services/socket';
-	import { entitiesStore, selectedHexStore, mapStore } from '$lib/stores/gameStore';
+	import { entitiesStore, selectedHexStore, mapStore, myEntityIdStore } from '$lib/stores/gameStore';
+
+	import Sidebar from '$lib/components/ui/Sidebar.svelte';
+	import PlayerInfo from '$lib/components/ui/PlayerInfo.svelte';
+	import TimeDisplay from '$lib/components/ui/TimeDisplay.svelte';
+	import ActionPanel from '$lib/components/ui/ActionPanel.svelte';
+	import InventoryPopup from '$lib/components/ui/InventoryPopup.svelte';
+	import HexInfoPanel from '$lib/components/ui/HexInfoPanel.svelte';
+	import EventLogPanel from '$lib/components/ui/EventLogPanel.svelte';
+	import { addGameEvent } from '$lib/services/eventService';
 
 	let socket: ReturnType<typeof initializeSocket>;
 
@@ -16,7 +25,9 @@
 		}
 	});
 
-	const localPlayer = $derived($entitiesStore.find((e) => e.identity?.name === 'Héros Test'));
+	let activePopup: string | null = $state(null);
+
+	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
 
 	const selectedTile = $derived(
 		$selectedHexStore
@@ -39,77 +50,76 @@
 	function requestMove() {
 		if (isMoveValid && $selectedHexStore) {
 			socket.emit('request_move', { q: $selectedHexStore.q, r: $selectedHexStore.r });
+			addGameEvent(`Vous vous déplacez vers l'hexagone [${$selectedHexStore.q}, ${$selectedHexStore.r}].`);
 		}
 	}
+
+	const playerTile = $derived(
+		localPlayer ? $mapStore.find((t) => t.q === localPlayer.position.q && t.r === localPlayer.position.r) : null
+	);
+
+	const canHarvest = $derived(!!playerTile?.resource && (playerTile.resource.amount ?? 0) > 0);
+
+	function requestHarvest() {
+		if (canHarvest) {
+			socket.emit('request_harvest');
+			const resType = playerTile?.resource?.type === 'iron' ? 'du fer' : 'du bois';
+			addGameEvent(`Vous récoltez ${resType}.`);
+		}
+	}
+
+	function handleMenuClick(menuId: string) {
+		if (menuId === 'inventaire') {
+			activePopup = 'inventaire';
+		}
+	}
+
+	const displayedHexData = $derived(selectedTile ? selectedTile : playerTile);
+
+	const playersOnHex = $derived(
+		displayedHexData
+			? $entitiesStore.filter(
+					(e) => e.position.q === displayedHexData.q && e.position.r === displayedHexData.r
+				)
+			: []
+	);
 </script>
 
 <svelte:head>
 	<title>Hexaria</title>
 </svelte:head>
 
-<main class="relative h-screen w-full overflow-hidden">
+<main class="relative h-screen w-full overflow-hidden bg-[#1e1e2f] select-none text-[#d5d0c5] font-serif">
 	<GameCanvas />
 
-	<div
-		class="absolute top-4 left-4 w-64 rounded-2xl border border-white/20 bg-white/10 p-6 text-white shadow-xl backdrop-blur-md"
-	>
-		<h1
-			class="mb-4 bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-2xl font-bold text-transparent"
-		>
-			Hexaria
-		</h1>
-
-		{#if localPlayer}
-			<div class="space-y-3">
-				<div class="flex items-center justify-between border-b border-white/10 pb-2">
-					<span class="font-medium text-white/60">Nom</span>
-					<span class="font-semibold">{localPlayer.identity.name}</span>
-				</div>
-
-				{#if localPlayer.age}
-					<div class="flex flex-col gap-1 border-b border-white/10 pb-2">
-						<div class="flex items-center justify-between">
-							<span class="font-medium text-white/60">Âge</span>
-							<span class="font-semibold text-amber-400"
-								>{localPlayer.age.current} / {localPlayer.age.max}</span
-							>
-						</div>
-						<div class="h-1.5 w-full overflow-hidden rounded-full bg-black/40">
-							<div
-								class="h-full bg-amber-400 transition-all duration-300"
-								style="width: {(localPlayer.age.current / localPlayer.age.max) * 100}%"
-							></div>
-						</div>
-					</div>
-				{/if}
-
-				{#if localPlayer.inventory}
-					<div class="flex items-center justify-between pb-2">
-						<span class="flex items-center gap-2 font-medium text-white/60">
-							<span class="text-orange-400">🪵</span> Bois
-						</span>
-						<span class="font-semibold">{localPlayer.inventory.wood}</span>
-					</div>
-				{/if}
-			</div>
-		{:else}
-			<div class="animate-pulse py-4 text-center text-white/50">
-				Connecté - En attente du héros...
-			</div>
+	<!-- HUD Wrapper -->
+	<div class="pointer-events-none absolute inset-0 z-10">
+		<Sidebar onMenuClick={handleMenuClick} />
+		<PlayerInfo player={localPlayer} />
+		<TimeDisplay year={214} />
+		{#if isMoveValid || canHarvest}
+			<ActionPanel 
+				selectedHex={$selectedHexStore} 
+				{isMoveValid} 
+				{canHarvest} 
+				{playerTile} 
+				onRequestMove={requestMove} 
+				onRequestHarvest={requestHarvest} 
+			/>
 		{/if}
+		<HexInfoPanel displayedHex={displayedHexData} {playersOnHex} />
+		<EventLogPanel />
 	</div>
 
-	{#if isMoveValid}
-		<div
-			class="animate-in fade-in slide-in-from-right-8 absolute top-1/2 right-12 flex -translate-y-1/2 flex-col gap-4 duration-300"
-		>
-			<button
-				onclick={requestMove}
-				class="flex items-center justify-center gap-2 rounded-xl border border-blue-400/30 bg-blue-600 px-8 py-4 font-bold text-white shadow-[0_0_15px_rgba(37,99,235,0.5)] transition-all hover:scale-105 hover:bg-blue-500 active:scale-95 active:bg-blue-700"
-			>
-				<span>Se déplacer</span>
-				<span>🏃</span>
-			</button>
-		</div>
+	{#if activePopup === 'inventaire'}
+		<InventoryPopup player={localPlayer} onClose={() => activePopup = null} />
 	{/if}
 </main>
+
+<style>
+	:global(body) {
+		margin: 0;
+		overflow: hidden;
+		background: #000;
+	}
+</style>

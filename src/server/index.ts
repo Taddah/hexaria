@@ -1,9 +1,9 @@
 import { World } from './core/World';
 import { MapGenerator } from './core/MapGenerator';
-import { IPosition, IAge, IIdentity, IInventory } from '$shared/components';
 import { runAgingSystem } from './systems/AgingSystem';
 import { NetworkSystem } from './systems/NetworkSystem';
 import { runMovementSystem, MOVEMENT_TICK_MS } from './systems/MovementSystem';
+import { runHarvestSystem } from './systems/HarvestSystem';
 
 function bootstrap() {
   const world = new World();
@@ -14,23 +14,25 @@ function bootstrap() {
 
   const network = new NetworkSystem(3000, world, map);
 
-  const player = world.createEntity();
-  world.addComponent<IPosition>(player, 'Position', { q: 25, r: 25 });
-  world.addComponent<IAge>(player, 'Age', { current: 18, max: 25 });
-  world.addComponent<IIdentity>(player, 'Identity', { name: 'Héros Test' });
-  world.addComponent<IInventory>(player, 'Inventory', { wood: 50 });
 
-  console.log(`[INIT] Joueur créé avec l'ID: ${player}`);
-
+  //Main heartbeat
+  let tickCount = 0;
   setInterval(() => {
+    tickCount++;
+    if (tickCount % 1000 === 0) {
+      runAgingSystem(world);
+    }
+
     runMovementSystem(world, map);
-    network.broadcastWorldState();
-  }, MOVEMENT_TICK_MS);
 
-  setInterval(() => {
-    runAgingSystem(world);
+    const harvestOccurred = runHarvestSystem(world, map);
+    if (harvestOccurred) network.broadcastMapUpdate();
+
+
     network.broadcastWorldState();
-  }, 10000);
+
+    if (tickCount >= 10000) tickCount = 0;
+  }, 100);
 }
 
 bootstrap();
