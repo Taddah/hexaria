@@ -27,7 +27,7 @@ export class MapGenerator {
 
   generateMap(width: number, height: number): HexTile[] {
     const tiles: HexTile[] = [];
-    const scale = 0.1;
+    const scale = 0.05;
 
     for (let q = 0; q < width; q++) {
       for (let r = 0; r < height; r++) {
