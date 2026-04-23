@@ -21,6 +21,7 @@
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tailwindcss/vite": "^4.2.2",
 		"@types/node": "^24",
+		"@types/three": "^0.184.0",
 		"eslint": "^10.2.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.0",
@@ -36,7 +37,10 @@
 		"vite": "^8.0.7"
 	},
 	"dependencies": {
+		"@threlte/core": "^8.5.9",
+		"@threlte/extras": "^9.14.8",
 		"pixi.js": "^8.18.1",
-		"socket.io-client": "^4.8.3"
+		"socket.io-client": "^4.8.3",
+		"three": "^0.184.0"
 	}
 }
