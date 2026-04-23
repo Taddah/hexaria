@@ -24,6 +24,7 @@
 		if (localPlayer && mapData.length > 0) {
 			expandFog(pQ, pR, mapData);
 			exploredSet = new Set(exploredTiles);
+			console.log(mapData);
 		}
 	});
 

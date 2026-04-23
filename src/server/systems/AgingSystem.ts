@@ -1,18 +1,17 @@
 import { World } from '../core/World';
-import { IAge, IIdentity } from '$shared/components';
+import { IIdentity } from '$shared';
 
 export function runAgingSystem(world: World): void {
-    const entities = world.query(['Age', 'Identity']);
+    const entities = world.query(['Identity']);
 
     for (const entity of entities) {
-        const age = world.getComponent<IAge>(entity, 'Age');
         const identity = world.getComponent<IIdentity>(entity, 'Identity');
 
-        if (age && identity) {
-            age.current += 1;
-            console.log(`L'entité ${identity.name} (ID: ${entity}) a vieilli : ${age.current}/${age.max}`);
+        if (identity) {
+            identity.currentAge += 1;
+            console.log(`L'entité ${identity.name} (ID: ${entity}) a vieilli : ${identity.currentAge}/${identity.ageMax}`);
 
-            if (age.current >= age.max) {
+            if (identity.currentAge >= identity.ageMax) {
                 handleDeath(world, identity, entity);
             }
         }

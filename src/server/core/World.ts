@@ -22,6 +22,7 @@ export class World {
     this.componentData.get(componentName)!.set(entity, data);
   }
 
+
   removeComponent(entity: Entity, componentName: string): void {
     this.componentSignatures.get(componentName)?.delete(entity);
     this.componentData.get(componentName)?.delete(entity);
@@ -30,6 +31,7 @@ export class World {
   getComponent<T>(entity: Entity, componentName: string): T | undefined {
     return this.componentData.get(componentName)?.get(entity) as T | undefined;
   }
+
 
   deleteEntity(entity: Entity): void {
     this.entities.delete(entity);

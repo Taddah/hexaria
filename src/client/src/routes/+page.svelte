@@ -2,7 +2,12 @@
 	import { onMount, onDestroy } from 'svelte';
 	import GameCanvas from '$lib/components/GameCanvas.svelte';
 	import { initializeSocket } from '$lib/services/socket';
-	import { entitiesStore, selectedHexStore, mapStore, myEntityIdStore } from '$lib/stores/gameStore';
+	import {
+		entitiesStore,
+		selectedHexStore,
+		mapStore,
+		myEntityIdStore
+	} from '$lib/stores/gameStore';
 
 	import Sidebar from '$lib/components/ui/Sidebar.svelte';
 	import PlayerInfo from '$lib/components/ui/PlayerInfo.svelte';
@@ -50,12 +55,16 @@
 	function requestMove() {
 		if (isMoveValid && $selectedHexStore) {
 			socket.emit('request_move', { q: $selectedHexStore.q, r: $selectedHexStore.r });
-			addGameEvent(`Vous vous déplacez vers l'hexagone [${$selectedHexStore.q}, ${$selectedHexStore.r}].`);
+			addGameEvent(
+				`Vous vous déplacez vers l'hexagone [${$selectedHexStore.q}, ${$selectedHexStore.r}].`
+			);
 		}
 	}
 
 	const playerTile = $derived(
-		localPlayer ? $mapStore.find((t) => t.q === localPlayer.position.q && t.r === localPlayer.position.r) : null
+		localPlayer
+			? $mapStore.find((t) => t.q === localPlayer.position.q && t.r === localPlayer.position.r)
+			: null
 	);
 
 	const canHarvest = $derived(!!playerTile?.resource && (playerTile.resource.amount ?? 0) > 0);
@@ -63,8 +72,6 @@
 	function requestHarvest() {
 		if (canHarvest) {
 			socket.emit('request_harvest');
-			const resType = playerTile?.resource?.type === 'iron' ? 'du fer' : 'du bois';
-			addGameEvent(`Vous récoltez ${resType}.`);
 		}
 	}
 
@@ -83,13 +90,27 @@
 				)
 			: []
 	);
+
+	$effect(() => {
+		const gameEvents = localPlayer?.gameEvents?.events ?? [];
+		const gameEventsUnseed = gameEvents.filter((event) => event.status === 'PENDING');
+
+		if (gameEventsUnseed.length > 0) {
+			gameEventsUnseed.forEach((gameEventUnseed) => {
+				addGameEvent(gameEventUnseed.event.description);
+				socket.emit('event_response', gameEventUnseed.uuid);
+			});
+		}
+	});
 </script>
 
 <svelte:head>
 	<title>Hexaria</title>
 </svelte:head>
 
-<main class="relative h-screen w-full overflow-hidden bg-[#1e1e2f] select-none text-[#d5d0c5] font-serif">
+<main
+	class="relative h-screen w-full overflow-hidden bg-[#1e1e2f] font-serif text-[#d5d0c5] select-none"
+>
 	<GameCanvas />
 
 	<!-- HUD Wrapper -->
@@ -98,13 +119,13 @@
 		<PlayerInfo player={localPlayer} />
 		<TimeDisplay year={214} />
 		{#if isMoveValid || canHarvest}
-			<ActionPanel 
-				selectedHex={$selectedHexStore} 
-				{isMoveValid} 
-				{canHarvest} 
-				{playerTile} 
-				onRequestMove={requestMove} 
-				onRequestHarvest={requestHarvest} 
+			<ActionPanel
+				selectedHex={$selectedHexStore}
+				{isMoveValid}
+				{canHarvest}
+				{playerTile}
+				onRequestMove={requestMove}
+				onRequestHarvest={requestHarvest}
 			/>
 		{/if}
 		<HexInfoPanel displayedHex={displayedHexData} {playersOnHex} />
@@ -112,7 +133,7 @@
 	</div>
 
 	{#if activePopup === 'inventaire'}
-		<InventoryPopup player={localPlayer} onClose={() => activePopup = null} />
+		<InventoryPopup player={localPlayer} onClose={() => (activePopup = null)} />
 	{/if}
 </main>
 

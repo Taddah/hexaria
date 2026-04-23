@@ -16,6 +16,7 @@ export function initializeSocket() {
     });
 
     socket.on('map_init', (mapData) => {
+        console.log("[MAP INIT]", mapData);
         mapStore.set(mapData);
     });
 

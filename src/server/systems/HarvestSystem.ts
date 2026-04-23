@@ -1,6 +1,6 @@
 import { World } from '../core/World';
 import { HexTile } from '../core/MapGenerator';
-import { IHarvestIntent, IInventory, IPosition, IEnergy } from '$shared/components';
+import { IHarvestIntent, IInventory, IPosition, IEnergy } from '$shared';
 
 export function runHarvestSystem(world: World, map: HexTile[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
@@ -32,8 +32,8 @@ export function runHarvestSystem(world: World, map: HexTile[]): boolean {
 
         if (energy) energy.current = Math.max(0, energy.current - 1);
 
-        console.log(`[HARVEST] Entité ${entity} a récolté ${amount} ${resource.type}.`);
         harvested = true;
+        world.addComponent(entity, 'ActionTag', { type: 'CHOP_WOOD', timestamp: Date.now() });
     }
 
     return harvested;

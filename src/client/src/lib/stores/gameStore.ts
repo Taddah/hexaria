@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { IPosition, IAge, IIdentity, IInventory, IEnergy } from '$shared/components';
+import type { IPosition, IIdentity, IInventory, IEnergy, GameEvent, EventComponent } from '$shared';
 
 export interface TileResource {
     type: 'wood' | 'iron';
@@ -18,9 +18,9 @@ export interface EntityDTO {
     id: number;
     position: IPosition;
     identity: IIdentity;
-    age?: IAge;
     inventory?: IInventory;
     energy?: IEnergy;
+    gameEvents?: EventComponent;
 }
 
 export const mapStore = writable<TileData[]>([]);

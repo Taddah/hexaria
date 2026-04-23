@@ -2,12 +2,16 @@ import { World } from './core/World';
 import { MapGenerator } from './core/MapGenerator';
 import { runAgingSystem } from './systems/AgingSystem';
 import { NetworkSystem } from './systems/NetworkSystem';
-import { runMovementSystem, MOVEMENT_TICK_MS } from './systems/MovementSystem';
+import { runMovementSystem } from './systems/MovementSystem';
 import { runHarvestSystem } from './systems/HarvestSystem';
+import { EventRegistry } from './core/EventRegistry';
+import { runEventSystem } from './systems/EventSystem';
 
 function bootstrap() {
   const world = new World();
   const mapGen = new MapGenerator();
+
+  EventRegistry.loadAll();
 
   const map = mapGen.generateMap(50, 50);
   console.log(`[INIT] Carte générée avec ${map.length} tuiles.`);
@@ -24,6 +28,7 @@ function bootstrap() {
     }
 
     runMovementSystem(world, map);
+    runEventSystem(world);
 
     const harvestOccurred = runHarvestSystem(world, map);
     if (harvestOccurred) network.broadcastMapUpdate();
