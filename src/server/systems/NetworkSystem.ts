@@ -14,6 +14,8 @@ export class NetworkSystem {
     private movementHandler: MovementHandler;
     private eventHandler: EventHandler;
 
+    private previousWorldState = {};
+
     constructor(port: number, private world: World, private map: HexTile[]) {
         this.io = new Server(port, {
             cors: { origin: '*', methods: ['GET', 'POST'] }
@@ -56,7 +58,14 @@ export class NetworkSystem {
 
 
     broadcastWorldState(): void {
-        this.io.emit('world_update', getWorldState(this.world));
+        const world = JSON.stringify(getWorldState(this.world));
+
+        if (world === this.previousWorldState) {
+            return;
+        }
+
+        this.io.emit('world_update', JSON.parse(world));
+        this.previousWorldState = world;
     }
 
     broadcastMapUpdate(): void {

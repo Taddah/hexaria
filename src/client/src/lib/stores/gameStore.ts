@@ -11,6 +11,7 @@ export interface TileData {
     r: number;
     type: string;
     elevation: number;
+    biome: string;
     resource?: TileResource;
 }
 

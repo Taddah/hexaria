@@ -19,13 +19,40 @@
 			camRef.updateProjectionMatrix();
 		}
 	});
+
+	let camOffset = $state({ x: 0, z: 0 });
+	const CAMERA_SPEED = 0.5;
+
+	function handleKeyDown(e: KeyboardEvent) {
+		switch (e.key) {
+			case 'ArrowUp':
+				camOffset.z -= CAMERA_SPEED;
+				break;
+			case 'ArrowDown':
+				camOffset.z += CAMERA_SPEED;
+				break;
+			case 'ArrowLeft':
+				camOffset.x -= CAMERA_SPEED;
+				break;
+			case 'ArrowRight':
+				camOffset.x += CAMERA_SPEED;
+				break;
+		}
+	}
 </script>
+
+<svelte:window onkeydown={handleKeyDown} />
 
 {#if browser}
 	<div class="absolute inset-0 h-full w-full overflow-hidden bg-[#1e1e2f]">
 		<Canvas toneMapping={0}>
 			<!-- Caméra isométrique -->
-			<T.OrthographicCamera makeDefault position={[20, 20, 20]} zoom={75} bind:ref={camRef} />
+			<T.OrthographicCamera
+				makeDefault
+				position={[20 + camOffset.x, 20, 20 + camOffset.z]}
+				zoom={75}
+				bind:ref={camRef}
+			/>
 
 			<T.AmbientLight intensity={0.5} color="#ffffff" />
 			<T.DirectionalLight position={[15, 30, 10]} intensity={2.0} color="#ffffff" castShadow />

@@ -21,12 +21,14 @@
   },
   "homepage": "https://github.com/Taddah/hexaria#readme",
   "devDependencies": {
+    "@types/seedrandom": "^3.0.8",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^6.0.3"
   },
   "dependencies": {
+    "seedrandom": "^3.0.5",
     "simplex-noise": "^4.0.3",
     "socket.io": "^4.8.3",
     "uuid": "^14.0.0"

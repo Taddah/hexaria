@@ -11,6 +11,7 @@
 	import { hexDistance } from '$lib/utils/hexUtils';
 	import { exploredTiles, expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar';
 	import HexTile from './HexTile.svelte';
+	import { resolveTile } from '$lib/utils/tiles/tileResolver';
 
 	const mapData = $derived($mapStore);
 	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
@@ -20,11 +21,15 @@
 
 	let exploredSet = $state(new Set(exploredTiles));
 
+	let lastQ = -1;
+	let lastR = -1;
+
 	$effect(() => {
-		if (localPlayer && mapData.length > 0) {
+		if (localPlayer && mapData.length > 0 && (pQ !== lastQ || pR !== lastR)) {
 			expandFog(pQ, pR, mapData);
 			exploredSet = new Set(exploredTiles);
-			console.log(mapData);
+			lastQ = pQ;
+			lastR = pR;
 		}
 	});
 
@@ -41,12 +46,6 @@
 			state.raycaster.setFromCamera(state.pointer.current, $camera);
 		}
 	});
-
-	const gltfWater = useGltf('/assets/3D_models/water.glb');
-	const gltfPlains = useGltf('/assets/3D_models/grass.glb');
-	const gltfForest = useGltf('/assets/3D_models/grass-forest.glb');
-	const gltfMountain = useGltf('/assets/3D_models/stone-mountain.glb');
-	const gltfDirt = useGltf('/assets/3D_models/dirt.glb');
 </script>
 
 {#each mapData as tile (`${tile.q},${tile.r}`)}
@@ -54,6 +53,7 @@
 	{@const isExplored = exploredSet.has(`${tile.q},${tile.r}`)}
 	{@const pos = hexToWorld(tile.q, tile.r)}
 	{@const isSelected = $selectedHexStore?.q === tile.q && $selectedHexStore?.r === tile.r}
+	{@const tileRenderData = resolveTile(tile)}
 
 	{#if isExplored || isVisible}
 		<T.Group position={pos}>
@@ -69,17 +69,7 @@
 				<T.MeshBasicMaterial transparent opacity={0} depthWrite={false} />
 			</T.Mesh>
 
-			{#if tile.type === 'WATER' && $gltfWater}
-				<HexTile gltf={$gltfWater} isVisible={isVisible ?? true} />
-			{:else if tile.type === 'PLAINS' && $gltfPlains}
-				<HexTile gltf={$gltfPlains} isVisible={isVisible ?? true} />
-			{:else if tile.type === 'FOREST' && $gltfForest}
-				<HexTile gltf={$gltfForest} isVisible={isVisible ?? true} />
-			{:else if tile.type === 'MOUNTAIN' && $gltfMountain}
-				<HexTile gltf={$gltfMountain} isVisible={isVisible ?? true} />
-			{:else if $gltfDirt}
-				<HexTile gltf={$gltfDirt} isVisible={isVisible ?? true} />
-			{/if}
+			<HexTile renderData={tileRenderData} {isVisible} />
 
 			{#if isSelected}
 				<T.Mesh position={[0, 0.6, 0]} rotation={[0, Math.PI / 3, 0]}>
