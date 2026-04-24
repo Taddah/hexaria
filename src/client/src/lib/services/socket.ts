@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 import { mapStore, entitiesStore, myEntityIdStore } from '../stores/gameStore';
+import type { TileData } from '$shared';
 
 const SERVER_URL = 'http://localhost:3000';
 
@@ -15,14 +16,32 @@ export function initializeSocket() {
         myEntityIdStore.set(data.entityId);
     });
 
-    socket.on('map_init', (mapData) => {
+    socket.on('map_init', (mapData: TileData[]) => {
         console.log("[MAP INIT]", mapData);
-        mapStore.set(mapData);
+        const record: Record<string, TileData> = {};
+        mapData.forEach(tile => { record[`${tile.q},${tile.r}`] = tile; });
+        mapStore.set(record);
     });
 
-    socket.on('map_update', (mapData) => {
-        mapStore.set(mapData);
+    socket.on('map_update', (mapData: TileData[]) => {
+        const record: Record<string, TileData> = {};
+        mapData.forEach(tile => { record[`${tile.q},${tile.r}`] = tile; });
+        mapStore.set(record);
     });
+
+    socket.on('tile_update', (updatedTiles: TileData[]) => {
+        mapStore.update(currentMap => {
+            const newMap = { ...currentMap };
+
+            updatedTiles.forEach(tile => {
+                const key = `${tile.q},${tile.r}`;
+                newMap[key] = { ...tile };
+            });
+
+            return newMap;
+        });
+    });
+
 
     socket.on('world_update', (entities) => {
         entitiesStore.set(entities);

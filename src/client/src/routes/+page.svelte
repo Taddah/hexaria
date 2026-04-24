@@ -35,9 +35,7 @@
 	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
 
 	const selectedTile = $derived(
-		$selectedHexStore
-			? $mapStore.find((t) => t.q === $selectedHexStore.q && t.r === $selectedHexStore.r)
-			: null
+		$selectedHexStore ? ($mapStore[`${$selectedHexStore.q},${$selectedHexStore.r}`] ?? null) : null
 	);
 
 	const isMoveValid = $derived.by(() => {
@@ -62,9 +60,7 @@
 	}
 
 	const playerTile = $derived(
-		localPlayer
-			? $mapStore.find((t) => t.q === localPlayer.position.q && t.r === localPlayer.position.r)
-			: null
+		localPlayer ? ($mapStore[`${localPlayer.position.q},${localPlayer.position.r}`] ?? null) : null
 	);
 
 	const canHarvest = $derived(!!playerTile?.resource && (playerTile.resource.amount ?? 0) > 0);

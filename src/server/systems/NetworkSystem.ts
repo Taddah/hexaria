@@ -1,11 +1,11 @@
 import { Server, Socket } from 'socket.io';
 import { World } from '../core/World';
-import { HexTile } from '../core/MapGenerator';
 import { findEntityBySocket, getWorldState } from '../handlers/utils';
 import { PlayerFactory } from '../factories/PlayerFactory';
 import { HarvestHandler } from '../handlers/harvestHandler';
 import { MovementHandler } from '../handlers/movementHandler';
 import { EventHandler } from '../handlers/eventHandler';
+import { TileData } from '$shared';
 
 export class NetworkSystem {
     private io: Server;
@@ -15,8 +15,9 @@ export class NetworkSystem {
     private eventHandler: EventHandler;
 
     private previousWorldState = {};
+    private previousMap: TileData[] = [];
 
-    constructor(port: number, private world: World, private map: HexTile[]) {
+    constructor(port: number, private world: World, private map: TileData[]) {
         this.io = new Server(port, {
             cors: { origin: '*', methods: ['GET', 'POST'] }
         });
@@ -68,7 +69,29 @@ export class NetworkSystem {
         this.previousWorldState = world;
     }
 
-    broadcastMapUpdate(): void {
-        this.io.emit('map_update', this.map);
+    broadcastMapUpdate() {
+        const diff = this.getMapDiff(this.map, this.previousMap);
+
+        if (diff.length > 0) {
+            this.io.emit('tile_update', diff);
+        }
+
+        this.previousMap = this.map.map(tile => ({
+            ...tile,
+            ...(tile.resource ? { resource: { ...tile.resource } } : {})
+        }));
+    }
+    private getMapDiff(currentMap: TileData[], previousMap: TileData[]): TileData[] {
+        const diff: TileData[] = [];
+
+        for (const currentTile of currentMap) {
+            const previousTile = previousMap.find(t => t.q === currentTile.q && t.r === currentTile.r);
+
+            if (!previousTile || JSON.stringify(previousTile) !== JSON.stringify(currentTile)) {
+                diff.push(currentTile);
+            }
+        }
+
+        return diff;
     }
 }

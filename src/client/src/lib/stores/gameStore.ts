@@ -24,7 +24,7 @@ export interface EntityDTO {
     gameEvents?: EventComponent;
 }
 
-export const mapStore = writable<TileData[]>([]);
+export const mapStore = writable<Record<string, TileData>>({});
 export const entitiesStore = writable<EntityDTO[]>([]);
 export const hexSizeStore = writable<number>(75);
 export const selectedHexStore = writable<{ q: number; r: number } | null>(null);

@@ -1,42 +1,16 @@
 import { createNoise2D } from 'simplex-noise';
 import seedrandom from 'seedrandom';
+import { TileData, TileType, Biome, TileResource } from '$shared/index';
 
 const SEED = "storyteller"
-export enum TileType {
-  WATER = 'WATER',
-  LAND = 'LAND',
-}
-
-export enum Biome {
-  WINTER = "WINTER",
-  SUMMER = "SUMMER",
-  FALL = "FALL",
-  SPRING = "SPRING",
-}
-
-export type ResourceType = 'wood' | 'iron';
-
-export interface TileResource {
-  type: ResourceType;
-  amount: number;
-}
-
-export interface HexTile {
-  q: number;
-  r: number;
-  type: TileType;
-  elevation: number;
-  biome: Biome;
-  resource?: TileResource;
-}
 
 export class MapGenerator {
   private noise2D = createNoise2D();
   private biomeNoise2D = createNoise2D();
   private rng = seedrandom(SEED);
 
-  generateMap(width: number, height: number): HexTile[] {
-    const tiles: HexTile[] = [];
+  generateMap(width: number, height: number): TileData[] {
+    const tiles: TileData[] = [];
 
     for (let q = 0; q < width; q++) {
       for (let r = 0; r < height; r++) {
@@ -44,7 +18,7 @@ export class MapGenerator {
         const biome = this.determineBiome(q, r, elevation);
         const type = this.determineTileType(elevation);
 
-        const tile: HexTile = { q, r, type, elevation, biome };
+        const tile: TileData = { q, r, type, elevation, biome };
         const resource = this.generateResource(type);
         if (resource !== undefined) tile.resource = resource;
         tiles.push(tile);

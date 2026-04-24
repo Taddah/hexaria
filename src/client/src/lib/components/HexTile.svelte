@@ -4,6 +4,7 @@
 	import { T } from '@threlte/core';
 	import { useGltf } from '@threlte/extras';
 	import * as THREE from 'three';
+	import Props from './Props.svelte';
 
 	let {
 		renderData,
@@ -98,4 +99,10 @@
 		rotation={[0, renderData.rotation, 0]}
 		position={[0, renderData.scaleY + 1, 0]}
 	/>
+
+	{#if isVisible}
+		{#each renderData.props as prop}
+			<Props data={prop} />
+		{/each}
+	{/if}
 {/if}

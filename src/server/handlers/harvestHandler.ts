@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
 import { IPosition, IEnergy, IHarvestIntent } from "$shared/components";
-import { HexTile } from "../core/MapGenerator";
 import { findEntityBySocket } from "./utils";
+import { TileData } from "$shared/types";
 
 export class HarvestHandler {
-    constructor(private world: World, private map: HexTile[]) { }
+    constructor(private world: World, private map: TileData[]) { }
 
     register(socket: Socket) {
         socket.on('request_harvest', () => {

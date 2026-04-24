@@ -1,1 +1,1 @@
-export * from './eventResponse';
+export * from './hexTile';

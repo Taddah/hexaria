@@ -20,8 +20,6 @@ export function getTopAssetPath(type: TileData): string {
 
 export function getBottomAssetPath(type: TileData): string {
     switch (type.type) {
-        case 'WATER':
-            return '/assets/models/tiles/base/hex_grass_bottom.gltf';
         case 'LAND':
             return '/assets/models/tiles/base/hex_grass_bottom.gltf';
         default:

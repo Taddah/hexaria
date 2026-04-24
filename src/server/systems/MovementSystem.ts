@@ -1,10 +1,10 @@
 import { World } from '../core/World';
-import { HexTile } from '../core/MapGenerator';
+import { TileData } from '$shared/types';
 import { IMovementIntent, IPosition, IEnergy } from '$shared';
 
 const MOVEMENT_TICK_MS = 500;
 
-export function runMovementSystem(world: World, map: HexTile[]): void {
+export function runMovementSystem(world: World, map: TileData[]): void {
     const entities = world.query(['Position', 'MovementIntent']);
 
     for (const entity of entities) {

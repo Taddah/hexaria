@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
 import { IPosition, IEnergy, IMovementIntent } from "$shared/components";
-import { HexTile } from "../core/MapGenerator";
+import { TileData } from "$shared/types";
 import { findEntityBySocket } from "./utils";
 
 export class MovementHandler {
-    constructor(private world: World, private map: HexTile[]) { }
+    constructor(private world: World, private map: TileData[]) { }
 
     register(socket: Socket) {
         socket.on('request_move', (target: { q: number; r: number }) => {

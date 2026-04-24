@@ -1,8 +1,7 @@
 import { World } from '../core/World';
-import { HexTile } from '../core/MapGenerator';
-import { IHarvestIntent, IInventory, IPosition, IEnergy } from '$shared';
+import { IHarvestIntent, IInventory, IPosition, IEnergy, TileData } from '$shared';
 
-export function runHarvestSystem(world: World, map: HexTile[]): boolean {
+export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
     let harvested = false;
 

@@ -13,7 +13,7 @@
 	import HexTile from './HexTile.svelte';
 	import { resolveTile } from '$lib/utils/tiles/tileResolver';
 
-	const mapData = $derived($mapStore);
+	const mapData = $derived(Object.values($mapStore));
 	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
 
 	const pQ = $derived(localPlayer?.position.q ?? 0);
@@ -46,6 +46,8 @@
 			state.raycaster.setFromCamera(state.pointer.current, $camera);
 		}
 	});
+
+	const gltfPlayer = useGltf('/assets/models/units/red/unit_red_accent.gltf');
 </script>
 
 {#each mapData as tile (`${tile.q},${tile.r}`)}
@@ -59,7 +61,7 @@
 		<T.Group position={pos}>
 			<T.Mesh
 				interactive
-				position={[0, 0.1, 0]}
+				position={[0, tileRenderData.scaleY + 1, 0]}
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
 					selectedHexStore.set({ q: tile.q, r: tile.r });
@@ -72,8 +74,8 @@
 			<HexTile renderData={tileRenderData} {isVisible} />
 
 			{#if isSelected}
-				<T.Mesh position={[0, 0.6, 0]} rotation={[0, Math.PI / 3, 0]}>
-					<T.CylinderGeometry args={[1.22, 1.22, 0.12, 6, 1, true]} />
+				<T.Mesh position={[0, tileRenderData.scaleY + 1, 0]} rotation={[0, Math.PI / 3, 0]}>
+					<T.CylinderGeometry args={[1, 1, 0.3, 6, 1, true]} />
 					<T.MeshBasicMaterial color="#ffaa00" side={2} />
 				</T.Mesh>
 			{/if}
@@ -81,10 +83,13 @@
 	{/if}
 {/each}
 
-{#if localPlayer}
+{#if localPlayer && $gltfPlayer}
 	{@const playerWorldPos = hexToWorld(pQ, pR)}
-	<T.Mesh position={[playerWorldPos[0], 0.6, playerWorldPos[2]]} rotation={[0, Math.PI / 3, 0]}>
-		<T.CylinderGeometry args={[1.22, 1.22, 0.12, 6, 1, true]} />
-		<T.MeshBasicMaterial color="#0000ff" side={2} />
-	</T.Mesh>
+	{@const playerTile = $mapStore[`${localPlayer.position.q},${localPlayer.position.r}`]}
+	{@const tileRenderData = resolveTile(playerTile)}
+	<T
+		is={$gltfPlayer.scene}
+		position={[playerWorldPos[0], tileRenderData.scaleY + 1, playerWorldPos[2]]}
+		scale={[3, 3, 3]}
+	/>
 {/if}
