@@ -29,7 +29,8 @@ export class MovementHandler {
 
             this.world.addComponent<IMovementIntent>(entityId, 'MovementIntent', {
                 targetQ: target.q,
-                targetR: target.r
+                targetR: target.r,
+                startedAt: Date.now()
             });
         });
     }

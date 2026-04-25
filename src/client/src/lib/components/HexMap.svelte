@@ -7,7 +7,8 @@
 		entitiesStore,
 		myEntityIdStore,
 		optimizedMapData,
-		exploredTilesStore
+		exploredTilesStore,
+		playerAnimPosition
 	} from '$lib/stores/gameStore';
 	import { hexToWorld } from '$lib/utils/hexTo3D';
 	import { hexDistance } from '$lib/utils/hexUtils';
@@ -91,13 +92,13 @@
 {/each}
 
 {#if localPlayer && $gltfPlayer}
-	{@const playerWorldPos = hexToWorld(pQ, pR)}
 	{@const playerTile = $mapStore[`${pQ},${pR}`]}
 	{@const tileRenderData = playerTile ? resolveTile(playerTile) : { scaleY: 0 }}
 
+	{@const pos = $playerAnimPosition ?? { x: hexToWorld(pQ, pR)[0], y: 0, z: hexToWorld(pQ, pR)[2] }}
 	<T
 		is={$gltfPlayer.scene}
-		position={[playerWorldPos[0], tileRenderData.scaleY + 1, playerWorldPos[2]]}
+		position={[pos.x, pos.y + tileRenderData.scaleY + 1, pos.z]}
 		scale={[3, 3, 3]}
 	/>
 {/if}

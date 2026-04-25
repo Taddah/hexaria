@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Canvas, T } from '@threlte/core';
 	import HexMap from './HexMap.svelte';
-	import { entitiesStore, myEntityIdStore } from '$lib/stores/gameStore';
+	import { entitiesStore, myEntityIdStore, playerAnimPosition } from '$lib/stores/gameStore';
 	import { hexToWorld } from '$lib/utils/hexTo3D';
 	import type { OrthographicCamera } from 'three';
 	import { browser } from '$app/environment';
@@ -39,6 +39,12 @@
 				break;
 		}
 	}
+
+	const cameraTarget: [x: number, y: number, z: number] = $derived(
+		$playerAnimPosition
+			? [-$playerAnimPosition.x, 0, -$playerAnimPosition.z]
+			: [-playerPos[0], 0, -playerPos[2]]
+	);
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
@@ -57,7 +63,7 @@
 			<T.DirectionalLight position={[15, 30, 10]} intensity={2.0} color="#ffffff" castShadow />
 			<T.DirectionalLight position={[-10, 5, -15]} intensity={1.5} color="#ffffff" />
 
-			<T.Group position={[-playerPos[0], 0, -playerPos[2]]}>
+			<T.Group position={cameraTarget}>
 				<HexMap />
 			</T.Group>
 		</Canvas>

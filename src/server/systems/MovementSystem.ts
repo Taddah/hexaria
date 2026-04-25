@@ -3,6 +3,7 @@ import { TileData } from '$shared/types';
 import { IMovementIntent, IPosition, IEnergy } from '$shared';
 
 const MOVEMENT_TICK_MS = 500;
+const MOVEMENT_DURATION_MS = 5000;
 
 export function runMovementSystem(world: World, map: TileData[]): void {
     const entities = world.query(['Position', 'MovementIntent']);
@@ -12,7 +13,9 @@ export function runMovementSystem(world: World, map: TileData[]): void {
         const intent = world.getComponent<IMovementIntent>(entity, 'MovementIntent');
         const energy = world.getComponent<IEnergy>(entity, 'Energy');
 
+
         if (!pos || !intent) continue;
+        if (Date.now() - intent.startedAt < MOVEMENT_DURATION_MS) continue;
 
         const distance =
             (Math.abs(pos.q - intent.targetQ) +

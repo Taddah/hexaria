@@ -6,7 +6,9 @@
 		entitiesStore,
 		selectedHexStore,
 		mapStore,
-		myEntityIdStore
+		myEntityIdStore,
+		pathStore,
+		playerAnimPosition
 	} from '$lib/stores/gameStore';
 
 	import Sidebar from '$lib/components/ui/Sidebar.svelte';
@@ -17,6 +19,9 @@
 	import HexInfoPanel from '$lib/components/ui/HexInfoPanel.svelte';
 	import EventLogPanel from '$lib/components/ui/EventLogPanel.svelte';
 	import { addGameEvent } from '$lib/services/eventService';
+	import { findPath } from '$lib/utils/pathfinding';
+	import { get } from 'svelte/store';
+	import { hexToWorld } from '$lib/utils/hexTo3D';
 
 	let socket: ReturnType<typeof initializeSocket>;
 
@@ -42,20 +47,72 @@
 		if (!localPlayer || !selectedTile) return false;
 		if (selectedTile.type === 'WATER') return false;
 
-		const p = localPlayer.position;
-		const h = selectedTile;
-		const distance =
-			(Math.abs(p.q - h.q) + Math.abs(p.r - h.r) + Math.abs(p.q + p.r - h.q - h.r)) / 2;
-
-		return distance === 1;
+		return true;
 	});
 
+	const MOVE_DURATION = 5000;
+	let isMoving = false;
+
+	async function startMovement(path: { q: number; r: number }[]) {
+		if (path.length === 0 || isMoving) return;
+		isMoving = true;
+
+		const pQ = $derived(localPlayer?.position.q ?? 0);
+		const pR = $derived(localPlayer?.position.r ?? 0);
+
+		for (const step of path) {
+			const current = get(playerAnimPosition) ?? {
+				x: hexToWorld(pQ, pR)[0],
+				y: 0,
+				z: hexToWorld(pQ, pR)[2]
+			};
+			const target = hexToWorld(step.q, step.r);
+
+			// Envoie l'étape au serveur
+			socket.emit('request_move', { q: step.q, r: step.r });
+
+			// Anime pendant MOVE_DURATION
+			const startTime = performance.now();
+			await new Promise<void>((resolve) => {
+				function animate() {
+					const elapsed = performance.now() - startTime;
+					const t = Math.min(elapsed / MOVE_DURATION, 1);
+					const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // easeInOut
+
+					playerAnimPosition.set({
+						x: current.x + (target[0] - current.x) * eased,
+						y: current.y + (target[1] - current.y) * eased,
+						z: current.z + (target[2] - current.z) * eased
+					});
+
+					if (t < 1) {
+						requestAnimationFrame(animate);
+					} else {
+						resolve();
+					}
+				}
+				requestAnimationFrame(animate);
+			});
+		}
+
+		isMoving = false;
+		pathStore.set([]);
+	}
+
 	function requestMove() {
-		if (isMoveValid && $selectedHexStore) {
-			socket.emit('request_move', { q: $selectedHexStore.q, r: $selectedHexStore.r });
-			addGameEvent(
-				`Vous vous déplacez vers l'hexagone [${$selectedHexStore.q}, ${$selectedHexStore.r}].`
+		if (isMoveValid && $selectedHexStore && localPlayer) {
+			const path = findPath(
+				localPlayer.position.q,
+				localPlayer.position.r,
+				$selectedHexStore.q,
+				$selectedHexStore.r,
+				$mapStore
 			);
+
+			if (path.length === 0) return;
+
+			pathStore.set(path);
+			startMovement(path);
 		}
 	}
 

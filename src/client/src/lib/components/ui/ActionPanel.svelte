@@ -39,7 +39,6 @@
 							<span class="icon drop-shadow-md">🏃</span>
 							<span class="font-semibold text-[#e1d5c2]">Déplacer</span>
 						</div>
-						<span class="text-[11px] text-[#938a7c]">(Coût: 1)</span>
 					</button>
 				{/if}
 

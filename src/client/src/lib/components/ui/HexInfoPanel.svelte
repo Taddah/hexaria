@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TileData, EntityDTO } from '$lib/stores/gameStore';
-	import { Biome } from '$shared';
+	import type { EntityDTO } from '$lib/stores/gameStore';
+	import { Biome, type TileData } from '$shared';
 
 	let {
 		displayedHex,

@@ -23,6 +23,9 @@ export const myEntityIdStore = writable<number | null>(null);
 
 export const exploredTilesStore = writable<string[]>([]);
 
+export const pathStore = writable<{ q: number, r: number }[]>([]);
+export const playerAnimPosition = writable<{ x: number, y: number, z: number } | null>(null);
+
 
 export const optimizedMapData = derived(
     [mapStore, updatedTilesStore],
