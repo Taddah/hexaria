@@ -42,7 +42,7 @@ export class NetworkSystem {
             this.eventHandler.register(socket);
 
             socket.emit('player_init', { entityId: playerId });
-            socket.emit('map_init', this.map);
+            socket.emit('full_map', this.map);
             socket.emit('world_update', getWorldState(this.world));
 
             socket.on('disconnect', () => {

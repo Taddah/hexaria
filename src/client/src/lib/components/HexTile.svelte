@@ -101,7 +101,7 @@
 	/>
 
 	{#if isVisible}
-		{#each renderData.props as prop}
+		{#each renderData.props as prop (prop.assetPath + prop.x + prop.z)}
 			<Props data={prop} />
 		{/each}
 	{/if}

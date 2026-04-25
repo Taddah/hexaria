@@ -1,10 +1,12 @@
-import type { TileData } from "$lib/stores/gameStore";
+import type { TileData } from "$shared";
+import { Biome } from "$shared";
 
-const TEXTURES: Record<string, string> = {
-    SUMMER: '/assets/models/tiles/base/hexagons_medieval_Summer.png',
-    WINTER: '/assets/models/tiles/base/hexagons_medieval_Winter.png',
-    FALL: '/assets/models/tiles/base/hexagons_medieval_Fall.png',
-    SPRING: '/assets/models/tiles/base/hexagons_medieval.png',
+const TEXTURES: Record<Biome, string> = {
+    [Biome.TAIGA]: '/assets/models/tiles/base/hexagons_medieval_Summer.png',
+    [Biome.MOUNTAIN]: '/assets/models/tiles/base/hexagons_medieval_Winter.png',
+    [Biome.DESERT]: '/assets/models/tiles/base/hexagons_medieval_Fall.png',
+    [Biome.PRAIRIE]: '/assets/models/tiles/base/hexagons_medieval.png',
+    [Biome.WATER]: '/assets/models/tiles/base/hexagons_medieval.png'
 }
 
 export function getTopAssetPath(type: TileData): string {
@@ -28,6 +30,6 @@ export function getBottomAssetPath(type: TileData): string {
 }
 
 export function getMaterial(tile: TileData): string {
-    if (tile.type === 'WATER') return TEXTURES.SPRING;
+    if (tile.biome === Biome.WATER) return TEXTURES[Biome.WATER];
     return TEXTURES[tile.biome];
 }

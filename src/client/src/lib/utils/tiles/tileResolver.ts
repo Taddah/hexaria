@@ -1,6 +1,4 @@
-import type { EntityDTO, TileData } from "$lib/stores/gameStore";
-import { VISION_RADIUS } from "../fogOfWar";
-import { hexDistance } from "../hexUtils";
+import type { TileData } from "$shared";
 import { getBottomAssetPath, getMaterial, getTopAssetPath } from "./biomeResolver";
 import { getTreeProps, type PropData } from "./propsResolver";
 

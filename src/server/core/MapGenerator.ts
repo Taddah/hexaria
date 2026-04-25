@@ -7,6 +7,7 @@ const SEED = "storyteller"
 export class MapGenerator {
   private noise2D = createNoise2D();
   private biomeNoise2D = createNoise2D();
+  private forestNoise2D = createNoise2D();
   private rng = seedrandom(SEED);
 
   generateMap(width: number, height: number): TileData[] {
@@ -15,11 +16,12 @@ export class MapGenerator {
     for (let q = 0; q < width; q++) {
       for (let r = 0; r < height; r++) {
         const elevation = this.getFractalNoise(q, r);
-        const biome = this.determineBiome(q, r, elevation);
         const type = this.determineTileType(elevation);
+        const biome = this.determineBiome(q, r, elevation);
+
 
         const tile: TileData = { q, r, type, elevation, biome };
-        const resource = this.generateResource(type);
+        const resource = this.generateResource(type, q, r, elevation, biome);
         if (resource !== undefined) tile.resource = resource;
         tiles.push(tile);
       }
@@ -51,15 +53,17 @@ export class MapGenerator {
   }
 
   private determineBiome(q: number, r: number, elevation: number): Biome {
+    if (elevation < 0.3) return Biome.WATER;
+
     const humidity = (this.biomeNoise2D(q * 0.03, r * 0.03) + 1) / 2;
 
-    if (elevation > 0.70) return Biome.WINTER;
+    if (elevation > 0.70) return Biome.MOUNTAIN;
 
     if (elevation < 0.5) {
-      return humidity < 0.35 ? Biome.SUMMER : Biome.FALL;
+      return humidity < 0.35 ? Biome.PRAIRIE : Biome.DESERT;
     }
 
-    return humidity < 0.3 ? Biome.SUMMER : Biome.SPRING;
+    return humidity < 0.3 ? Biome.PRAIRIE : Biome.TAIGA;
   }
 
   private determineTileType(e: number): TileType {
@@ -67,13 +71,22 @@ export class MapGenerator {
     return TileType.LAND;
   }
 
-  private generateResource(type: TileType): TileResource | undefined {
-    if (type === TileType.LAND && this.rng() < 0.4) {
-      return { type: 'wood', amount: Math.floor(this.rng() * 8) + 3 };
+  private generateResource(type: TileType, q: number, r: number, elevation: number, biome: Biome): TileResource | undefined {
+    if (type !== TileType.LAND) return undefined;
+
+    const forestValue = (this.forestNoise2D(q * 0.08, r * 0.15) + 1) / 2;
+    const allowedForestBiomes = [Biome.PRAIRIE, Biome.TAIGA];
+    const allowedMountainForest = biome === Biome.MOUNTAIN && elevation < 0.8;
+
+    if (forestValue > 0.65 && (allowedForestBiomes.includes(biome) || allowedMountainForest)) {
+      const amount = Math.floor(2 + (forestValue - 0.65) / 0.35 * 8);
+      return { type: 'wood', amount };
     }
-    if (type === TileType.LAND && this.rng() < 0.1) {
+
+    if (elevation > 0.65 && this.rng() < 0.15) {
       return { type: 'iron', amount: Math.floor(this.rng() * 6) + 2 };
     }
+
     return undefined;
   }
 }

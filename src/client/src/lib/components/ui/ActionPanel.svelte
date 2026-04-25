@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TileData } from '$lib/stores/gameStore';
+	import type { TileData } from '$shared';
 
 	let {
 		selectedHex,
@@ -19,8 +19,10 @@
 </script>
 
 <div class="pointer-events-auto absolute top-24 right-6 z-20 w-[320px]">
-	<div class="rounded-md border border-[#4a433a] bg-[#1a1715]/95 p-1 shadow-[0_8px_30px_rgba(0,0,0,0.7)] backdrop-blur-md ring-1 ring-[#695d4e] ring-inset">
-		<div class="border border-[#3e3831] bg-[#24211d]/90 px-3 pt-3 pb-3 shadow-inner rounded-sm">
+	<div
+		class="rounded-md border border-[#4a433a] bg-[#1a1715]/95 p-1 shadow-[0_8px_30px_rgba(0,0,0,0.7)] ring-1 ring-[#695d4e] backdrop-blur-md ring-inset"
+	>
+		<div class="rounded-sm border border-[#3e3831] bg-[#24211d]/90 px-3 pt-3 pb-3 shadow-inner">
 			<!-- Header -->
 			<div
 				class="relative mb-3 rounded-sm border border-[#3e3831] bg-[#1c1917] py-1 text-center shadow-inner"

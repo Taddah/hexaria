@@ -27,8 +27,6 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         if (resource.type === 'wood') inventory.wood += amount;
         if (resource.type === 'iron') inventory.iron += amount;
 
-        if (resource.amount === 0) delete tile.resource;
-
         if (energy) energy.current = Math.max(0, energy.current - 1);
 
         harvested = true;

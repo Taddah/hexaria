@@ -46,11 +46,10 @@
 {#if browser}
 	<div class="absolute inset-0 h-full w-full overflow-hidden bg-[#1e1e2f]">
 		<Canvas toneMapping={0}>
-			<!-- Caméra isométrique -->
 			<T.OrthographicCamera
 				makeDefault
 				position={[20 + camOffset.x, 20, 20 + camOffset.z]}
-				zoom={75}
+				zoom={60}
 				bind:ref={camRef}
 			/>
 
@@ -58,7 +57,6 @@
 			<T.DirectionalLight position={[15, 30, 10]} intensity={2.0} color="#ffffff" castShadow />
 			<T.DirectionalLight position={[-10, 5, -15]} intensity={1.5} color="#ffffff" />
 
-			<!-- Carte centrée sur le joueur -->
 			<T.Group position={[-playerPos[0], 0, -playerPos[2]]}>
 				<HexMap />
 			</T.Group>

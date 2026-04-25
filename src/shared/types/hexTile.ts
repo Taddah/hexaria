@@ -14,10 +14,11 @@ export enum TileType {
 }
 
 export enum Biome {
-    WINTER = "WINTER",
-    SUMMER = "SUMMER",
-    FALL = "FALL",
-    SPRING = "SPRING",
+    WATER = "WATER",
+    MOUNTAIN = "MOUNTAIN",
+    DESERT = "DESERT",
+    TAIGA = "TAIGA",
+    PRAIRIE = "PRAIRIE",
 }
 
 export type ResourceType = 'wood' | 'iron';

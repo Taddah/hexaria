@@ -5,31 +5,28 @@
 		mapStore,
 		selectedHexStore,
 		entitiesStore,
-		myEntityIdStore
+		myEntityIdStore,
+		optimizedMapData,
+		exploredTilesStore
 	} from '$lib/stores/gameStore';
 	import { hexToWorld } from '$lib/utils/hexTo3D';
 	import { hexDistance } from '$lib/utils/hexUtils';
-	import { exploredTiles, expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar';
+	import { expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar';
 	import HexTile from './HexTile.svelte';
 	import { resolveTile } from '$lib/utils/tiles/tileResolver';
 
-	const mapData = $derived(Object.values($mapStore));
-	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
+	// Stores réactifs
+	const mapData = $derived(Object.values($optimizedMapData));
 
+	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
 	const pQ = $derived(localPlayer?.position.q ?? 0);
 	const pR = $derived(localPlayer?.position.r ?? 0);
+	const exploredSet = $derived(new Set($exploredTilesStore));
 
-	let exploredSet = $state(new Set(exploredTiles));
-
-	let lastQ = -1;
-	let lastR = -1;
-
+	// Mise à jour du brouillard de guerre
 	$effect(() => {
-		if (localPlayer && mapData.length > 0 && (pQ !== lastQ || pR !== lastR)) {
+		if (localPlayer && mapData.length > 0) {
 			expandFog(pQ, pR, mapData);
-			exploredSet = new Set(exploredTiles);
-			lastQ = pQ;
-			lastR = pR;
 		}
 	});
 
@@ -65,6 +62,16 @@
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
 					selectedHexStore.set({ q: tile.q, r: tile.r });
+
+					console.log('TILE CLICKED:', {
+						q: tile.q,
+						r: tile.r,
+						data: $mapStore[`${tile.q},${tile.r}`]
+					});
+
+					if (tile.q === 24 && tile.r === 24) {
+						console.log('renderData pour 24,24:', tileRenderData);
+					}
 				}}
 			>
 				<T.CylinderGeometry args={[1.155, 1.155, 0.2, 6]} />
@@ -85,8 +92,9 @@
 
 {#if localPlayer && $gltfPlayer}
 	{@const playerWorldPos = hexToWorld(pQ, pR)}
-	{@const playerTile = $mapStore[`${localPlayer.position.q},${localPlayer.position.r}`]}
-	{@const tileRenderData = resolveTile(playerTile)}
+	{@const playerTile = $mapStore[`${pQ},${pR}`]}
+	{@const tileRenderData = playerTile ? resolveTile(playerTile) : { scaleY: 0 }}
+
 	<T
 		is={$gltfPlayer.scene}
 		position={[playerWorldPos[0], tileRenderData.scaleY + 1, playerWorldPos[2]]}

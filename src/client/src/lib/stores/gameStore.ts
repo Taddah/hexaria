@@ -1,19 +1,8 @@
-import { writable } from 'svelte/store';
-import type { IPosition, IIdentity, IInventory, IEnergy, GameEvent, EventComponent } from '$shared';
+import { derived, writable } from 'svelte/store';
+import type { IPosition, IIdentity, IInventory, IEnergy, GameEvent, EventComponent, Biome, TileData } from '$shared';
 
-export interface TileResource {
-    type: 'wood' | 'iron';
-    amount: number;
-}
 
-export interface TileData {
-    q: number;
-    r: number;
-    type: string;
-    elevation: number;
-    biome: string;
-    resource?: TileResource;
-}
+
 
 export interface EntityDTO {
     id: number;
@@ -25,7 +14,23 @@ export interface EntityDTO {
 }
 
 export const mapStore = writable<Record<string, TileData>>({});
+export const updatedTilesStore = writable<TileData[]>([]);
+
 export const entitiesStore = writable<EntityDTO[]>([]);
 export const hexSizeStore = writable<number>(75);
 export const selectedHexStore = writable<{ q: number; r: number } | null>(null);
 export const myEntityIdStore = writable<number | null>(null);
+
+export const exploredTilesStore = writable<string[]>([]);
+
+
+export const optimizedMapData = derived(
+    [mapStore, updatedTilesStore],
+    ([$mapStore, $updatedTiles]) => {
+        const newMap = { ...$mapStore };
+        $updatedTiles.forEach(tile => {
+            newMap[`${tile.q},${tile.r}`] = tile;
+        });
+        return Object.values(newMap);
+    }
+);
