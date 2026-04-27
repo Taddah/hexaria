@@ -41,9 +41,10 @@ export class NetworkSystem {
             this.movementHandler.register(socket);
             this.eventHandler.register(socket);
 
-            socket.emit('player_init', { entityId: playerId });
+
             socket.emit('full_map', this.map);
             socket.emit('world_update', getWorldState(this.world));
+            socket.emit('player_init', { entityId: playerId });
 
             socket.on('disconnect', () => {
                 console.log(`[NETWORK] Client déconnecté: ${socket.id}`);

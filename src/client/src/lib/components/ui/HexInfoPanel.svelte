@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { EntityDTO } from '$lib/stores/gameStore';
+	import type { EntityDTO } from '$lib/stores/gameState.svelte';
 	import { Biome, type TileData } from '$shared';
 
 	let {

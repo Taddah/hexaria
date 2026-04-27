@@ -1,35 +1,19 @@
 <script lang="ts">
 	import { T, useThrelte } from '@threlte/core';
 	import { interactivity, useGltf } from '@threlte/extras';
-	import {
-		mapStore,
-		selectedHexStore,
-		entitiesStore,
-		myEntityIdStore,
-		optimizedMapData,
-		exploredTilesStore,
-		playerAnimPosition
-	} from '$lib/stores/gameStore';
-	import { hexToWorld } from '$lib/utils/hexTo3D';
-	import { hexDistance } from '$lib/utils/hexUtils';
-	import { expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar';
+
+	import { getTile, hexDistance, hexToWorld } from '$lib/utils/hexUtils';
+	import { expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar.svelte';
 	import HexTile from './HexTile.svelte';
-	import { resolveTile } from '$lib/utils/tiles/tileResolver';
+	import { getScaleY, resolveTile } from '$lib/utils/tiles/tileResolver';
+	import { gameState } from '$lib/stores/gameState.svelte';
 
 	// Stores réactifs
-	const mapData = $derived(Object.values($optimizedMapData));
-
-	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
-	const pQ = $derived(localPlayer?.position.q ?? 0);
-	const pR = $derived(localPlayer?.position.r ?? 0);
-	const exploredSet = $derived(new Set($exploredTilesStore));
-
-	// Mise à jour du brouillard de guerre
-	$effect(() => {
-		if (localPlayer && mapData.length > 0) {
-			expandFog(pQ, pR, mapData);
-		}
-	});
+	const mapData = $derived(Object.values(gameState.map));
+	const localPlayer = $derived(gameState.localPlayer);
+	const pQ = $derived((gameState.currentQ || localPlayer?.position.q) ?? 0);
+	const pR = $derived((gameState.currentR || localPlayer?.position.r) ?? 0);
+	const exploredSet = $derived(new Set(gameState.exploredTiles));
 
 	const { camera, renderer } = useThrelte();
 
@@ -49,10 +33,10 @@
 </script>
 
 {#each mapData as tile (`${tile.q},${tile.r}`)}
-	{@const isVisible = localPlayer && hexDistance(pQ, pR, tile.q, tile.r) <= VISION_RADIUS}
+	{@const isVisible = hexDistance(pQ, pR, tile.q, tile.r) <= VISION_RADIUS}
 	{@const isExplored = exploredSet.has(`${tile.q},${tile.r}`)}
 	{@const pos = hexToWorld(tile.q, tile.r)}
-	{@const isSelected = $selectedHexStore?.q === tile.q && $selectedHexStore?.r === tile.r}
+	{@const isSelected = gameState.selectedHex?.q === tile.q && gameState.selectedHex?.r === tile.r}
 	{@const tileRenderData = resolveTile(tile)}
 
 	{#if isExplored || isVisible}
@@ -62,17 +46,7 @@
 				position={[0, tileRenderData.scaleY + 1, 0]}
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
-					selectedHexStore.set({ q: tile.q, r: tile.r });
-
-					console.log('TILE CLICKED:', {
-						q: tile.q,
-						r: tile.r,
-						data: $mapStore[`${tile.q},${tile.r}`]
-					});
-
-					if (tile.q === 24 && tile.r === 24) {
-						console.log('renderData pour 24,24:', tileRenderData);
-					}
+					gameState.selectedHex = getTile(tile.q, tile.r);
 				}}
 			>
 				<T.CylinderGeometry args={[1.155, 1.155, 0.2, 6]} />
@@ -92,13 +66,10 @@
 {/each}
 
 {#if localPlayer && $gltfPlayer}
-	{@const playerTile = $mapStore[`${pQ},${pR}`]}
-	{@const tileRenderData = playerTile ? resolveTile(playerTile) : { scaleY: 0 }}
-
-	{@const pos = $playerAnimPosition ?? { x: hexToWorld(pQ, pR)[0], y: 0, z: hexToWorld(pQ, pR)[2] }}
-	<T
-		is={$gltfPlayer.scene}
-		position={[pos.x, pos.y + tileRenderData.scaleY + 1, pos.z]}
-		scale={[3, 3, 3]}
-	/>
+	{@const pos = gameState.playerAnimPosition ?? {
+		x: hexToWorld(pQ, pR)[0],
+		y: getScaleY(gameState.map[`${pQ},${pR}`]?.elevation ?? 0) + 1,
+		z: hexToWorld(pQ, pR)[2]
+	}}
+	<T is={$gltfPlayer.scene} position={[pos.x, pos.y, pos.z]} scale={[3, 3, 3]} />
 {/if}

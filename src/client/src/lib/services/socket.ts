@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
-import { mapStore, entitiesStore, myEntityIdStore, updatedTilesStore } from '../stores/gameStore';
 import type { TileData } from '$shared';
+import { gameState } from '$lib/stores/gameState.svelte';
 
 const SERVER_URL = 'http://localhost:3000';
 
@@ -13,7 +13,9 @@ export function initializeSocket() {
     });
 
     socket.on('player_init', (data: { entityId: number }) => {
-        myEntityIdStore.set(data.entityId);
+        console.log("init player with id: ", data.entityId);
+        gameState.localPlayer = gameState.entities.find(e => e.id === data.entityId) ?? null;
+        console.log("localPlayer: ", gameState.localPlayer);
     });
 
     socket.on('full_map', (fullMap: TileData[]) => {
@@ -21,38 +23,36 @@ export function initializeSocket() {
         fullMap.forEach(tile => {
             mapRecord[`${tile.q},${tile.r}`] = tile;
         });
-        mapStore.set(mapRecord); // Initialise le store principal
+        gameState.map = mapRecord;
     });
 
     socket.on('map_update', (mapData: TileData[]) => {
         const record: Record<string, TileData> = {};
         mapData.forEach(tile => { record[`${tile.q},${tile.r}`] = tile; });
-        mapStore.set(record);
+        gameState.map = record;
     });
 
     socket.on('tile_update', (updatedTiles: TileData[]) => {
-        mapStore.update(currentMap => {
-            const newMap = { ...currentMap };
+        const newMap = { ...gameState.map };
 
-            updatedTiles.forEach(tile => {
-                const key = `${tile.q},${tile.r}`;
-                newMap[key] = { ...tile };
-            });
-
-            return newMap;
+        updatedTiles.forEach(tile => {
+            const key = `${tile.q},${tile.r}`;
+            newMap[key] = { ...tile };
         });
 
-        updatedTilesStore.set(updatedTiles);
+        gameState.map = newMap;
+        gameState.updatedTiles = updatedTiles;
     });
 
 
     socket.on('world_update', (entities) => {
-        entitiesStore.set(entities);
+        gameState.entities = entities;
+        gameState.localPlayer = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
     });
 
     socket.on('disconnect', () => {
         console.warn('[CLIENT NETWORK] Déconnecté du serveur');
-        myEntityIdStore.set(null);
+        gameState.localPlayer = null;
     });
 
     return socket;

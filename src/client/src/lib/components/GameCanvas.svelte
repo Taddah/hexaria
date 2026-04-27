@@ -1,15 +1,10 @@
 <script lang="ts">
 	import { Canvas, T } from '@threlte/core';
 	import HexMap from './HexMap.svelte';
-	import { entitiesStore, myEntityIdStore, playerAnimPosition } from '$lib/stores/gameStore';
-	import { hexToWorld } from '$lib/utils/hexTo3D';
 	import type { OrthographicCamera } from 'three';
 	import { browser } from '$app/environment';
-
-	const localPlayer = $derived($entitiesStore.find((e) => e.id === $myEntityIdStore));
-	const playerPos = $derived(
-		localPlayer ? hexToWorld(localPlayer.position.q, localPlayer.position.r) : [0, 0, 0]
-	);
+	import { gameState } from '$lib/stores/gameState.svelte';
+	import { hexToWorld } from '$lib/utils/hexUtils';
 
 	let camRef: OrthographicCamera | undefined = $state();
 
@@ -22,6 +17,7 @@
 
 	let camOffset = $state({ x: 0, z: 0 });
 	const CAMERA_SPEED = 0.5;
+	const localPlayer = $derived(gameState.localPlayer);
 
 	function handleKeyDown(e: KeyboardEvent) {
 		switch (e.key) {
@@ -40,16 +36,22 @@
 		}
 	}
 
-	const cameraTarget: [x: number, y: number, z: number] = $derived(
-		$playerAnimPosition
-			? [-$playerAnimPosition.x, 0, -$playerAnimPosition.z]
-			: [-playerPos[0], 0, -playerPos[2]]
-	);
+	const cameraTarget = $derived.by((): [number, number, number] => {
+		const player = gameState.localPlayer;
+		if (gameState.playerAnimPosition) {
+			return [-gameState.playerAnimPosition.x, 0, -gameState.playerAnimPosition.z];
+		}
+		if (player?.position) {
+			const pos = hexToWorld(player.position.q, player.position.r);
+			return [-pos[0], 0, -pos[2]];
+		}
+		return [0, 0, 0];
+	});
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
 
-{#if browser}
+{#if browser && localPlayer}
 	<div class="absolute inset-0 h-full w-full overflow-hidden bg-[#1e1e2f]">
 		<Canvas toneMapping={0}>
 			<T.OrthographicCamera
