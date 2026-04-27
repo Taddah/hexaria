@@ -3,7 +3,7 @@ import { TileData } from '$shared/types';
 import { IMovementIntent, IPosition, IEnergy } from '$shared';
 
 const MOVEMENT_TICK_MS = 500;
-const MOVEMENT_DURATION_MS = 5000;
+const MOVEMENT_DURATION_MS = 100;
 
 export function runMovementSystem(world: World, map: TileData[]): void {
     const entities = world.query(['Position', 'MovementIntent']);

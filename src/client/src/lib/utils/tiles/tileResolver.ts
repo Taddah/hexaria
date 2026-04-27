@@ -25,14 +25,16 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
             props: []
         };
     }
-    const scaleY = tileData.type === 'WATER' ? 1 : getScaleY(tileData.elevation);
+
+    const scaleY = getScaleY(tileData);
+
     const tile: TileRenderData = {
         bottomAsset: getBottomAssetPath(tileData),
         topAsset: getTopAssetPath(tileData),
         material: getMaterial(tileData),
         props: getTreeProps(tileData, scaleY),
         scaleY,
-        rotation: 0,
+        rotation: tileData.type?.includes("COAST") ? (tileData.coastRotation ?? 0) * (Math.PI / 3) : 0,
         isWater: tileData.type === 'WATER'
     };
 
@@ -41,7 +43,10 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
 
 
 
-export function getScaleY(elevation: number): number {
+export function getScaleY(tileData: TileData): number {
+    let elevation = tileData.elevation
+    if (tileData.type === 'WATER' || tileData.type?.includes("COAST")) elevation = 0.3;
+
     const level = Math.round(elevation * 10)
     return level * 0.5;
 }

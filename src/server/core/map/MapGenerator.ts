@@ -1,14 +1,16 @@
 import { createNoise2D } from 'simplex-noise';
 import seedrandom from 'seedrandom';
-import { TileData, TileType, Biome, TileResource } from '$shared/index';
+import { TileData, TileType, Biome, TileResource, HEX_DIRECTIONS } from '$shared/index';
+import { applyCoastPass } from './coastGenerator';
 
 const SEED = "storyteller"
 
 export class MapGenerator {
-  private noise2D = createNoise2D();
-  private biomeNoise2D = createNoise2D();
-  private forestNoise2D = createNoise2D();
   private rng = seedrandom(SEED);
+  private noise2D = createNoise2D(seedrandom(`${SEED}_elevation`));
+  private biomeNoise2D = createNoise2D(seedrandom(`${SEED}_biome`));
+  private forestNoise2D = createNoise2D(seedrandom(`${SEED}_forest`));
+
 
   generateMap(width: number, height: number): TileData[] {
     const tiles: TileData[] = [];
@@ -26,6 +28,8 @@ export class MapGenerator {
         tiles.push(tile);
       }
     }
+
+    applyCoastPass(tiles);
 
     return tiles;
   }
@@ -89,4 +93,6 @@ export class MapGenerator {
 
     return undefined;
   }
+
+
 }

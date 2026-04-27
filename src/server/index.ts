@@ -1,5 +1,5 @@
 import { World } from './core/World';
-import { MapGenerator } from './core/MapGenerator';
+import { MapGenerator } from './core/map/MapGenerator';
 import { runAgingSystem } from './systems/AgingSystem';
 import { NetworkSystem } from './systems/NetworkSystem';
 import { runMovementSystem } from './systems/MovementSystem';

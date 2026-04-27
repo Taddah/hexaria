@@ -47,6 +47,7 @@
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
 					gameState.selectedHex = getTile(tile.q, tile.r);
+					console.log(getTile(tile.q, tile.r)?.type);
 				}}
 			>
 				<T.CylinderGeometry args={[1.155, 1.155, 0.2, 6]} />
@@ -68,7 +69,7 @@
 {#if localPlayer && $gltfPlayer}
 	{@const pos = gameState.playerAnimPosition ?? {
 		x: hexToWorld(pQ, pR)[0],
-		y: getScaleY(gameState.map[`${pQ},${pR}`]?.elevation ?? 0) + 1,
+		y: getScaleY(gameState.map[`${pQ},${pR}`]) + 1,
 		z: hexToWorld(pQ, pR)[2]
 	}}
 	<T is={$gltfPlayer.scene} position={[pos.x, pos.y, pos.z]} scale={[3, 3, 3]} />

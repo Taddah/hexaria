@@ -1,11 +1,6 @@
-import type { TileData } from "$shared";
+import { HEX_DIRECTIONS, type TileData } from "$shared";
 import { hexDistance } from "./hexUtils";
 
-const HEX_DIRECTIONS = [
-    { q: 1, r: 0 }, { q: -1, r: 0 },
-    { q: 0, r: 1 }, { q: 0, r: -1 },
-    { q: 1, r: -1 }, { q: -1, r: 1 }
-];
 
 function isBlocked(tile: TileData | undefined): boolean {
     if (!tile) return true;

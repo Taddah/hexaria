@@ -6,7 +6,7 @@ import { getScaleY } from "$lib/utils/tiles/tileResolver";
 import type { TileData } from "$shared";
 import type { Socket } from "socket.io-client";
 
-const MOVE_DURATION = 5000;
+const MOVE_DURATION = 100;
 let isMoving = false;
 
 export async function startMovement(socket: Socket, path: { q: number, r: number }[], localPlayer: EntityDTO) {
@@ -27,8 +27,8 @@ export async function startMovement(socket: Socket, path: { q: number, r: number
         // Récupère les élévations
         const fromTile = gameState.map[`${gameState.currentQ},${gameState.currentR}`];
         const toTile = gameState.map[`${step.q},${step.r}`];
-        const fromY = fromTile ? getScaleY(fromTile.elevation) + 1 : current.y;
-        const toY = toTile ? getScaleY(toTile.elevation) + 1 : fromY;
+        const fromY = fromTile ? getScaleY(fromTile) + 1 : current.y;
+        const toY = toTile ? getScaleY(toTile) + 1 : fromY;
 
         socket.emit('request_move', { q: step.q, r: step.r });
 

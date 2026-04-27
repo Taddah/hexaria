@@ -32,26 +32,35 @@
 			}
 		});
 
-		if (!renderData.isWater) {
-			const newTexture = await loadTexture(renderData.material);
-			clone.traverse((child) => {
-				const mesh = child as THREE.Mesh;
-				if (mesh.isMesh) {
-					const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-					mats.forEach((m) => {
-						const mat = m as THREE.MeshStandardMaterial;
-						if (mat.map) {
-							newTexture.wrapS = mat.map.wrapS;
-							newTexture.wrapT = mat.map.wrapT;
-							newTexture.repeat.copy(mat.map.repeat);
-							newTexture.offset.copy(mat.map.offset);
+		const newTexture = await loadTexture(renderData.material);
+		clone.traverse((child) => {
+			const mesh = child as THREE.Mesh;
+			if (mesh.isMesh) {
+				if (renderData.topAsset === '/assets/models/tiles/coast/hex_coast_B.gltf') {
+					// adapte selon ton enum/string
+					const uvAttr = mesh.geometry.getAttribute('uv');
+					if (uvAttr) {
+						console.log(`=== UV for mesh: ${mesh.name} ===`);
+						for (let i = 0; i < uvAttr.count; i++) {
+							console.log(`UV[${i}]: ${uvAttr.getX(i).toFixed(4)}, ${uvAttr.getY(i).toFixed(4)}`);
 						}
-						mat.map = newTexture;
-						mat.needsUpdate = true;
-					});
+					}
 				}
-			});
-		}
+
+				const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+				mats.forEach((m) => {
+					const mat = m as THREE.MeshStandardMaterial;
+					if (mat.map) {
+						newTexture.wrapS = mat.map.wrapS;
+						newTexture.wrapT = mat.map.wrapT;
+						newTexture.repeat.copy(mat.map.repeat);
+						newTexture.offset.copy(mat.map.offset);
+					}
+					mat.map = newTexture;
+					mat.needsUpdate = true;
+				});
+			}
+		});
 
 		return clone;
 	}

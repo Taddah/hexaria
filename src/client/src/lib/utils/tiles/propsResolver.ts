@@ -22,21 +22,21 @@ const TREE_ASSETS_BY_BIOME: Record<Biome, { single: string, singleCut: string, c
         singleCut: 'tree_A_cut',
         clusters: ['trees_A_large', 'trees_A_medium', 'trees_A_small'],
         clustersCut: 'trees_A_cut',
-        material: "/assets/models/tiles/base/hexagons_medieval_Summer.png"
+        material: "/assets/models/tiles/base/taiga.png"
     },
     [Biome.TAIGA]: {
         single: 'tree_single_A',
         singleCut: 'tree_A_cut',
         clusters: ['trees_A_large', 'trees_A_medium', 'trees_A_small'],
         clustersCut: 'trees_A_cut',
-        material: "/assets/models/tiles/base/hexagons_medieval.png"
+        material: "/assets/models/tiles/base/prairie.png"
     },
     [Biome.MOUNTAIN]: {
         single: 'tree_single_B',
         singleCut: 'tree_B_cut',
         clusters: ['trees_B_large', 'trees_B_medium', 'trees_B_small'],
         clustersCut: 'trees_B_cut',
-        material: "/assets/models/tiles/base/hexagons_medieval_Winter.png"
+        material: "/assets/models/tiles/base/mountain.png"
     }
 };
 
