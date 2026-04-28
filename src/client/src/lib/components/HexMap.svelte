@@ -47,7 +47,7 @@
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
 					gameState.selectedHex = getTile(tile.q, tile.r);
-					console.log(getTile(tile.q, tile.r)?.type);
+					console.log(getTile(tile.q, tile.r)?.decoZone?.density);
 				}}
 			>
 				<T.CylinderGeometry args={[1.155, 1.155, 0.2, 6]} />

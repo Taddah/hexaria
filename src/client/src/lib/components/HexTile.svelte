@@ -36,17 +36,6 @@
 		clone.traverse((child) => {
 			const mesh = child as THREE.Mesh;
 			if (mesh.isMesh) {
-				if (renderData.topAsset === '/assets/models/tiles/coast/hex_coast_B.gltf') {
-					// adapte selon ton enum/string
-					const uvAttr = mesh.geometry.getAttribute('uv');
-					if (uvAttr) {
-						console.log(`=== UV for mesh: ${mesh.name} ===`);
-						for (let i = 0; i < uvAttr.count; i++) {
-							console.log(`UV[${i}]: ${uvAttr.getX(i).toFixed(4)}, ${uvAttr.getY(i).toFixed(4)}`);
-						}
-					}
-				}
-
 				const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
 				mats.forEach((m) => {
 					const mat = m as THREE.MeshStandardMaterial;
@@ -111,7 +100,7 @@
 
 	{#if isVisible}
 		{#each renderData.props as prop (prop.assetPath + prop.x + prop.z)}
-			<Props data={prop} />
+			<Props data={prop} material={renderData.material} />
 		{/each}
 	{/if}
 {/if}

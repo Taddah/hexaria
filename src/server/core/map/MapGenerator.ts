@@ -1,6 +1,6 @@
 import { createNoise2D } from 'simplex-noise';
 import seedrandom from 'seedrandom';
-import { TileData, TileType, Biome, TileResource, HEX_DIRECTIONS } from '$shared/index';
+import { TileData, TileType, Biome, TileResource, HEX_DIRECTIONS, DecoType } from '$shared/index';
 import { applyCoastPass } from './coastGenerator';
 
 const SEED = "storyteller"
@@ -10,6 +10,7 @@ export class MapGenerator {
   private noise2D = createNoise2D(seedrandom(`${SEED}_elevation`));
   private biomeNoise2D = createNoise2D(seedrandom(`${SEED}_biome`));
   private forestNoise2D = createNoise2D(seedrandom(`${SEED}_forest`));
+  private decoNoise2D = createNoise2D(seedrandom(`${SEED}_deco`))
 
 
   generateMap(width: number, height: number): TileData[] {
@@ -29,9 +30,57 @@ export class MapGenerator {
       }
     }
 
+    //applySlopeInfo(tiles);
     applyCoastPass(tiles);
+    this.applyDecorationZones(tiles);
 
     return tiles;
+  }
+
+  private applyDecorationZones(tiles: TileData[]): void {
+    const tileMap = new Map(tiles.map(t => [`${t.q},${t.r}`, t]));
+
+    for (const tile of tiles) {
+      if (tile.type === 'WATER' || tile.resource) continue;
+
+      const decoValue = (this.decoNoise2D(tile.q * 0.5, tile.r * 0.5) + 1) / 2;
+      const type = this.getDecoType(decoValue, tile.biome);
+
+      if (type === DecoType.EMPTY) continue; // ← ne pas assigner
+
+      tile.decoZone = { density: decoValue, type };
+    }
+
+    for (const tile of tiles) {
+      if (tile.decoZone?.type !== DecoType.DENSE) continue;
+
+      const hasAdjacentDense = HEX_DIRECTIONS.some(dir => {
+        const neighbor = tileMap.get(`${tile.q + dir.q},${tile.r + dir.r}`);
+        return neighbor?.decoZone?.type === DecoType.DENSE;
+      });
+
+      if (hasAdjacentDense) tile.decoZone!.type = DecoType.SPARSE;
+    }
+
+    const empty = tiles.filter(t => !t.decoZone).length;
+    const total = tiles.filter(t => t.type !== 'WATER').length;
+    console.log(`Deco: ${empty}/${total} tiles vides`);
+
+  }
+
+
+  private getDecoType(density: number, biome: Biome): DecoType {
+
+    if (biome === Biome.MOUNTAIN) {
+      if (density < 0.6) return DecoType.EMPTY;
+      if (density < 0.7) return DecoType.SPARSE;
+      if (density < 0.8) return DecoType.MEDIUM;
+      return DecoType.DENSE;
+    }
+    if (density < 0.7) return DecoType.EMPTY;
+    if (density < 0.8) return DecoType.SPARSE;
+    if (density < 0.9) return DecoType.MEDIUM;
+    return DecoType.DENSE;
   }
 
   private getFractalNoise(q: number, r: number): number {

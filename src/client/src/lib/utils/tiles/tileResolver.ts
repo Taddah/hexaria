@@ -1,6 +1,7 @@
-import type { TileData } from "$shared";
-import { getBottomAssetPath, getMaterial, getTopAssetPath } from "./biomeResolver";
-import { getTreeProps, type PropData } from "./propsResolver";
+import { TileType, type TileData } from "$shared";
+import { getBottomAssetPath, getTopAssetPath } from "./biomeResolver";
+import { getMaterial } from "./materialResolver";
+import { getProps, type PropData } from "./propsResolver";
 
 export interface TileRenderData {
     bottomAsset: string;
@@ -32,9 +33,9 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
         bottomAsset: getBottomAssetPath(tileData),
         topAsset: getTopAssetPath(tileData),
         material: getMaterial(tileData),
-        props: getTreeProps(tileData, scaleY),
+        props: getProps(tileData, scaleY),
         scaleY,
-        rotation: tileData.type?.includes("COAST") ? (tileData.coastRotation ?? 0) * (Math.PI / 3) : 0,
+        rotation: getRotation(tileData),
         isWater: tileData.type === 'WATER'
     };
 
@@ -42,6 +43,15 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
 }
 
 
+function getRotation(tileData: TileData) {
+    if (tileData.type === TileType.SLOPE)
+        return (tileData.slope?.directionIndex ?? 0) * (Math.PI / 3);
+
+    if (tileData.type?.includes("COAST"))
+        return (tileData.coastRotation ?? 0) * (Math.PI / 3);
+
+    return 0;
+}
 
 export function getScaleY(tileData: TileData): number {
     let elevation = tileData.elevation

@@ -6,8 +6,22 @@ export interface TileData {
     biome: Biome;
     resource?: TileResource;
     coastRotation?: number;
+    slope?: {
+        directionIndex: number;
+        goesUp: boolean;
+    }
+    decoZone?: {
+        density: number;
+        type: DecoType;
+    }
 }
 
+export enum DecoType {
+    EMPTY = 'EMPTY',
+    SPARSE = 'SPARSE',
+    MEDIUM = 'MEDIUM',
+    DENSE = 'DENSE'
+}
 
 export enum TileType {
     WATER = 'WATER',
@@ -16,6 +30,7 @@ export enum TileType {
     COAST_2 = 'COAST_2',
     COAST_3 = 'COAST_3',
     COAST_4 = 'COAST_4',
+    SLOPE = 'SLOPE'
 }
 
 export const HEX_DIRECTIONS = [

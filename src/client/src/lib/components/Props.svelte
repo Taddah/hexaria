@@ -5,7 +5,7 @@
 	import { useGltf } from '@threlte/extras';
 	import * as THREE from 'three';
 
-	let { data }: { data: PropData } = $props();
+	let { data, material }: { data: PropData; material: string } = $props();
 	const gltf = useGltf(data.assetPath);
 	let scene = $state<THREE.Group | null>(null);
 
@@ -24,7 +24,7 @@
 			}
 		});
 
-		loadTexture(data.material).then((newTexture) => {
+		loadTexture(material).then((newTexture) => {
 			clone.traverse((child) => {
 				const mesh = child as THREE.Mesh;
 				if (mesh.isMesh) {
