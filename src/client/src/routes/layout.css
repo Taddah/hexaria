@@ -1,1 +1,121 @@
 @import 'tailwindcss';
+
+/* =====================
+   TOKENS
+   ===================== */
+:root {
+    --color-bg-dark: #0d1520;
+    --color-bg-panel: #141e2d;
+    --color-bg-panel-2: #1e2a3a;
+    --color-bg-btn: #1a2636;
+    --color-bg-btn-hover: #1e2c3e;
+
+    --color-gold: #c9a84c;
+    --color-gold-dark: #a07828;
+    --color-gold-deep: #5a3a0a;
+    --color-gold-ring: #3a3010;
+
+    --color-text-light: #e8d9b0;
+    --color-text-muted: #8a9ab0;
+    --color-text-dim: #4a5a6a;
+    --color-text-white: #ffffff;
+
+    --color-hp: #a83232;
+    --color-hp-dark: #7a1e1e;
+    --color-hp-text: #f0d0d0;
+
+    --color-border-btn: #2a3a4a;
+    --color-border-separator: #1e2a3a;
+
+    --shadow-panel: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
+
+    --font-serif: Georgia, 'Times New Roman', serif;
+}
+
+/* =====================
+   UTILITAIRES PARTAGÉS
+   ===================== */
+.panel-shadow {
+    filter: var(--shadow-panel);
+}
+
+/* Bouton interactif style RPG */
+.panel-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: var(--color-bg-btn);
+    border: 1px solid var(--color-border-btn);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.panel-btn:hover {
+    border-color: var(--color-gold);
+    background: var(--color-bg-btn-hover);
+}
+
+/* Badge notification */
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--color-hp);
+    border: 1.5px solid var(--color-gold);
+    border-radius: 9999px;
+    color: var(--color-hp-text);
+    font-size: 0.6rem;
+    font-weight: 700;
+    z-index: 10;
+}
+
+/* Barre de progression (HP, XP, etc.) */
+.progress-bar {
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--color-bg-dark);
+    border: 1px solid var(--color-gold);
+}
+
+.progress-bar__fill {
+    position: absolute;
+    inset: 0;
+    right: auto;
+}
+
+.progress-bar__text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Texte réutilisable */
+.text-panel-title {
+    color: var(--color-text-light);
+    font-family: var(--font-serif);
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.text-panel-subtitle {
+    color: var(--color-text-muted);
+    font-family: var(--font-serif);
+}
+
+.label-uppercase {
+    font-family: var(--font-serif);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}

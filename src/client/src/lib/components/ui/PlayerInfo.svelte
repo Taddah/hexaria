@@ -1,53 +1,99 @@
-<script lang="ts">
-	import type { EntityDTO } from '$lib/stores/gameState.svelte';
-
-	let { player }: { player: EntityDTO } = $props();
-
-	const energyPct = $derived(
-		player?.energy ? Math.round((player.energy.current / player.energy.max) * 100) : 0
-	);
+<script>
+	import PanelBg from './PanelBg.svelte';
 </script>
 
 <div
-	class="pointer-events-auto absolute top-0 left-[5.5rem] z-10 flex h-[7.5rem] w-[370px] items-center rounded-br-[2rem] border-r-[3px] border-b-[3px] border-[#695d4e] bg-[#1a1715]/95 pr-6 pl-10 shadow-xl backdrop-blur-md"
+	class="panel-shadow relative flex items-center"
+	style="width: 23rem; height: 5.75rem; margin: 1rem 0 1rem 1rem; z-index: 20; position: relative;"
 >
-	<div class="relative -top-1 flex w-full flex-col gap-1">
-		<div class="flex w-full items-baseline justify-between">
-			<span class="text-2xl font-bold tracking-wider text-[#e6decb] drop-shadow-md">
-				{player?.identity?.name || 'Aldric'}
-			</span>
-			<div class="text-[13px] text-[#a19688]">
-				<span>Age: 64</span>
-				<span class="mx-1">|</span>
-				<span>Forgeron</span>
-			</div>
-		</div>
-		<!-- Health Bar -->
-		<div class="mt-1 flex items-center gap-2">
-			<span class="text-sm drop-shadow">❤️</span>
+	<svg
+		class="absolute inset-0 ml-4 h-full w-full"
+		viewBox="0 0 370 92"
+		xmlns="http://www.w3.org/2000/svg"
+		preserveAspectRatio="none"
+	>
+		<defs>
+			<linearGradient id="playerInfoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+				<stop offset="0%" stop-color="var(--color-bg-panel-2)" />
+				<stop offset="100%" stop-color="var(--color-bg-panel)" />
+			</linearGradient>
+		</defs>
+		<polygon points="0,0 358,0 325,92 0,92" fill="url(#playerInfoGrad)" />
+		<polygon points="0,0 358,0 325,92 0,92" fill="none" stroke="var(--color-gold)" stroke-width="1.5" />
+	</svg>
+
+	<div
+		class="relative z-10 flex h-full w-full items-center"
+		style="padding-left: 7rem; padding-right: 2.5rem; gap: 0.75rem;"
+	>
+		<!-- Avatar circle -->
+		<div
+			class="avatar-ring"
+			style="
+				width: 6.25rem;
+				height: 6.25rem;
+				left: -0.3rem;
+				top: 50%;
+				transform: translateY(-50%);
+			"
+		>
 			<div
-				class="relative box-content h-2 w-48 flex-shrink-0 overflow-hidden rounded-sm border border-[#2b2723] bg-[#0a0908] shadow-inner"
+				class="absolute inset-0 rounded-full"
+				style="
+					background: linear-gradient(to bottom, var(--color-gold) 0%, var(--color-gold-dark) 50%, var(--color-gold-deep) 100%);
+					padding: 0.25rem;
+					border-radius: 9999px;
+					z-index: -1;
+					margin: -0.25rem;
+				"
 			>
-				<div
-					class="h-full bg-gradient-to-r from-[#af2320] to-[#e03a36] transition-all duration-300"
-					style="width: 80%; box-shadow: inset 0 2px 4px rgba(255,255,255,0.2);"
-				></div>
+				<div class="h-full w-full rounded-full" style="background: var(--color-bg-dark);"></div>
 			</div>
+
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				style="width: 2.8rem; height: 2.8rem; position: relative; z-index: 1;"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="#6b7a8d"
+				stroke-width="1.5"
+			>
+				<circle cx="12" cy="8" r="4" />
+				<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+			</svg>
 		</div>
-		<!-- Energy Bar -->
-		<div class="flex items-center gap-2">
-			<span class="text-sm drop-shadow">⚡</span>
-			<div
-				class="relative box-content h-2 w-48 flex-shrink-0 overflow-hidden rounded-sm border border-[#2b2723] bg-[#0a0908] shadow-inner"
-			>
-				<div
-					class="h-full bg-gradient-to-r from-[#7a5c10] to-[#f0c030] transition-all duration-500"
-					style="width: {energyPct}%; box-shadow: inset 0 2px 4px rgba(255,255,255,0.15);"
-				></div>
+
+		<div class="flex flex-col gap-1">
+			<span class="text-panel-title text-lg leading-tight">Le_Grand_Sieur</span>
+			<span class="text-sm font-semibold" style="color: var(--color-gold);">Chevalier - Nv. 24</span>
+
+			<div class="mt-0.5">
+				<div class="progress-bar" style="width: 9.5rem; height: 1.125rem;">
+					<div
+						class="progress-bar__fill"
+						style="width: 90.6%; background: linear-gradient(to bottom, var(--color-hp) 0%, var(--color-hp-dark) 50%, #8b2323 100%);"
+					></div>
+					<span class="progress-bar__text" style="color: var(--color-hp-text); font-size: 0.7rem;">
+						PV: 1450/1600
+					</span>
+				</div>
 			</div>
-			<span class="text-[11px] text-[#a19688] tabular-nums">
-				{player?.energy?.current ?? 100}/{player?.energy?.max ?? 100}
-			</span>
 		</div>
 	</div>
 </div>
+
+<style>
+	.avatar-ring {
+		position: absolute;
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		background: var(--color-bg-dark);
+		border: 0.25rem solid transparent;
+		background-clip: padding-box;
+		box-shadow: 0 0 0 0.25rem var(--color-gold-ring), inset 0 0 0.625rem rgba(0, 0, 0, 0.8);
+		z-index: 20;
+	}
+</style>

@@ -1,102 +1,40 @@
 <script lang="ts">
-	import type { TileData } from '$shared';
+	import PanelBg from './PanelBg.svelte';
 
-	let {
-		selectedHex,
-		isMoveValid,
-		canHarvest,
-		playerTile,
-		onRequestMove,
-		onRequestHarvest
-	}: {
-		selectedHex: { q: number; r: number } | null;
-		isMoveValid: boolean;
-		canHarvest: boolean;
-		playerTile: TileData | null | undefined;
-		onRequestMove: () => void;
-		onRequestHarvest: () => void;
-	} = $props();
+	const actions = [
+		{ emoji: '🏰', title: 'Caserne', subtitle: 'Améliorer Nv.15' },
+		{ emoji: '🏪', title: 'Marché', subtitle: 'Vendre Ressources' },
+		{ emoji: '⚔️', title: 'Forge', subtitle: 'Forger Épée' }
+	];
 </script>
 
-<div class="pointer-events-auto absolute top-24 right-6 z-20 w-[320px]">
-	<div
-		class="rounded-md border border-[#4a433a] bg-[#1a1715]/95 p-1 shadow-[0_8px_30px_rgba(0,0,0,0.7)] ring-1 ring-[#695d4e] backdrop-blur-md ring-inset"
-	>
-		<div class="rounded-sm border border-[#3e3831] bg-[#24211d]/90 px-3 pt-3 pb-3 shadow-inner">
-			<!-- Header -->
-			<div
-				class="relative mb-3 rounded-sm border border-[#3e3831] bg-[#1c1917] py-1 text-center shadow-inner"
-			>
-				<span class="text-[13px] font-semibold tracking-widest text-[#cfc5b3]">
-					Actions Disponibles - [Hex {selectedHex ? `${selectedHex.q}, ${selectedHex.r}` : '—'}]
-				</span>
-			</div>
+<div
+	class="panel-shadow absolute top-36 right-4"
+	style="width: 13.75rem;"
+>
+	<PanelBg width={220} height={260} shape="pentagon" gradientId="actionGrad" bevel={28} dividerY={44} />
 
-			<div class="flex flex-col gap-[7px]">
-				{#if isMoveValid}
-					<button onclick={onRequestMove} class="action-btn">
-						<div class="flex items-center gap-3">
-							<span class="icon drop-shadow-md">🏃</span>
-							<span class="font-semibold text-[#e1d5c2]">Déplacer</span>
-						</div>
-					</button>
-				{/if}
-
-				{#if canHarvest}
-					<button
-						onclick={onRequestHarvest}
-						class="action-btn border-[#3b4731] bg-gradient-to-b from-[#253022] to-[#161c14]"
-					>
-						<div class="flex items-center gap-3">
-							<span class="icon drop-shadow-md"
-								>{playerTile?.resource?.type === 'iron' ? '⛏️' : '🌲'}</span
-							> <span class="font-semibold text-[#8eb87e] drop-shadow-sm">Récolter</span>
-						</div>
-						<span class="text-[11px] text-[#718d65]"
-							>({playerTile?.resource?.type === 'iron' ? 'Fer' : 'Bois'})</span
-						>
-					</button>
-				{/if}
-			</div>
+	<div class="relative flex flex-col" style="width: 13.75rem;">
+		<div class="flex items-center gap-2 px-3" style="height: 2.75rem;">
+			<span class="text-base">👑</span>
+			<span class="text-panel-title text-sm tracking-wide">Actions disponibles</span>
 		</div>
+
+		{#each actions as action, i}
+			<div
+				class="px-2 py-1.5"
+				style={i < actions.length - 1 ? `border-bottom: 1px solid var(--color-border-separator);` : ''}
+			>
+				<button class="panel-btn gap-3 rounded-md px-3 py-2">
+					<span class="shrink-0 text-2xl leading-none">{action.emoji}</span>
+					<div class="flex flex-col items-start gap-0.5">
+						<span class="text-panel-title text-sm leading-tight">{action.title}</span>
+						<span class="text-panel-subtitle text-xs leading-tight">{action.subtitle}</span>
+					</div>
+				</button>
+			</div>
+		{/each}
+
+		<div style="height: 1.75rem;"></div>
 	</div>
 </div>
-
-<style>
-	.action-btn {
-		display: flex;
-		width: 100%;
-		align-items: center;
-		justify-content: space-between;
-		border-radius: 4px;
-		border: 1px solid #4a433a;
-		background: linear-gradient(180deg, #2e2a25 0%, #1e1b18 100%);
-		padding: 8px 12px;
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.05),
-			0 2px 4px rgba(0, 0, 0, 0.3);
-		transition: all 150ms ease;
-		cursor: pointer;
-	}
-
-	.action-btn:hover {
-		filter: brightness(1.2);
-		transform: translateY(-1px);
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.1),
-			0 4px 6px rgba(0, 0, 0, 0.4);
-	}
-
-	.action-btn:active {
-		filter: brightness(0.9);
-		transform: translateY(1px);
-		box-shadow:
-			inset 0 1px 0 rgba(0, 0, 0, 0.2),
-			0 1px 2px rgba(0, 0, 0, 0.5);
-	}
-
-	.action-btn .icon {
-		font-size: 18px;
-		line-height: 1;
-	}
-</style>
