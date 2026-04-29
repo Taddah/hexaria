@@ -10,7 +10,6 @@ export function expandFog(playerQ: number, playerR: number, allTiles: TileData[]
         .map(tile => `${tile.q},${tile.r}`);
 
     const currentExplored = new Set(gameState.exploredTiles);
-    console.log(gameState.exploredTiles)
     let hasChanged = false;
 
     visibleTiles.forEach(tile => {

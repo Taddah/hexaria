@@ -1,5 +1,7 @@
 <script>
-	import PanelBg from './PanelBg.svelte';
+	import { gameState } from '$lib/stores/gameState.svelte';
+
+	const localPlayer = $derived(gameState.localPlayer);
 </script>
 
 <div
@@ -19,7 +21,12 @@
 			</linearGradient>
 		</defs>
 		<polygon points="0,0 358,0 325,92 0,92" fill="url(#playerInfoGrad)" />
-		<polygon points="0,0 358,0 325,92 0,92" fill="none" stroke="var(--color-gold)" stroke-width="1.5" />
+		<polygon
+			points="0,0 358,0 325,92 0,92"
+			fill="none"
+			stroke="var(--color-gold)"
+			stroke-width="1.5"
+		/>
 	</svg>
 
 	<div
@@ -64,20 +71,10 @@
 		</div>
 
 		<div class="flex flex-col gap-1">
-			<span class="text-panel-title text-lg leading-tight">Le_Grand_Sieur</span>
-			<span class="text-sm font-semibold" style="color: var(--color-gold);">Chevalier - Nv. 24</span>
-
-			<div class="mt-0.5">
-				<div class="progress-bar" style="width: 9.5rem; height: 1.125rem;">
-					<div
-						class="progress-bar__fill"
-						style="width: 90.6%; background: linear-gradient(to bottom, var(--color-hp) 0%, var(--color-hp-dark) 50%, #8b2323 100%);"
-					></div>
-					<span class="progress-bar__text" style="color: var(--color-hp-text); font-size: 0.7rem;">
-						PV: 1450/1600
-					</span>
-				</div>
-			</div>
+			<span class="text-panel-title text-lg leading-tight">{localPlayer?.identity.name}</span>
+			<span class="text-panel-title text-lg leading-tight" style="color: var(--color-gold)"
+				>Âge: {localPlayer?.identity.currentAge}</span
+			>
 		</div>
 	</div>
 </div>
@@ -93,7 +90,9 @@
 		background: var(--color-bg-dark);
 		border: 0.25rem solid transparent;
 		background-clip: padding-box;
-		box-shadow: 0 0 0 0.25rem var(--color-gold-ring), inset 0 0 0.625rem rgba(0, 0, 0, 0.8);
+		box-shadow:
+			0 0 0 0.25rem var(--color-gold-ring),
+			inset 0 0 0.625rem rgba(0, 0, 0, 0.8);
 		z-index: 20;
 	}
 </style>

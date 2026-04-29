@@ -64,7 +64,6 @@ export class MapGenerator {
 
     const empty = tiles.filter(t => !t.decoZone).length;
     const total = tiles.filter(t => t.type !== 'WATER').length;
-    console.log(`Deco: ${empty}/${total} tiles vides`);
 
   }
 

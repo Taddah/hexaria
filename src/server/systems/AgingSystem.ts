@@ -9,8 +9,6 @@ export function runAgingSystem(world: World): void {
 
         if (identity) {
             identity.currentAge += 1;
-            console.log(`L'entité ${identity.name} (ID: ${entity}) a vieilli : ${identity.currentAge}/${identity.ageMax}`);
-
             if (identity.currentAge >= identity.ageMax) {
                 handleDeath(world, identity, entity);
             }
@@ -20,5 +18,4 @@ export function runAgingSystem(world: World): void {
 
 function handleDeath(world: World, identity: IIdentity, entity: number): void {
     world.deleteEntity(entity);
-    console.log(`-> ${identity.name} est mort de vieillesse.`);
 }

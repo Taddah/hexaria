@@ -1,21 +1,30 @@
-import { io } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 import type { TileData } from '$shared';
 import { gameState } from '$lib/stores/gameState.svelte';
+import { goto } from '$app/navigation';
 
 const SERVER_URL = 'http://localhost:3000';
+
+let socketInstance: Socket | null = null;
+
+export function getSocket(): Socket {
+    if (!socketInstance) throw new Error('Socket not initialized');
+    return socketInstance;
+}
 
 export function initializeSocket() {
     console.log('[CLIENT NETWORK] Connexion au serveur...');
     const socket = io(SERVER_URL);
+    socketInstance = socket;
 
     socket.on('connect', () => {
         console.log(`[CLIENT NETWORK] Connecté au serveur: ${socket.id}`);
     });
 
     socket.on('player_init', (data: { entityId: number }) => {
-        console.log("init player with id: ", data.entityId);
         gameState.localPlayer = gameState.entities.find(e => e.id === data.entityId) ?? null;
-        console.log("localPlayer: ", gameState.localPlayer);
+        goto('/game');
+
     });
 
     socket.on('full_map', (fullMap: TileData[]) => {

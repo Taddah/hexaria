@@ -1,76 +1,75 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
-	import GameCanvas from '$lib/components/GameCanvas.svelte';
-	import { initializeSocket } from '$lib/services/socket';
-	import { gameState } from '$lib/stores/gameState.svelte';
-	import Sidebar from '$lib/components/ui/Sidebar.svelte';
-	import ActionPanel from '$lib/components/ui/ActionPanel.svelte';
-	import { processGameEvents } from '$lib/services/eventService';
-	import { getPlayerTile } from '$lib/utils/tiles/playerUtils';
-	import PlayerInfo from '$lib/components/ui/PlayerInfo.svelte';
-	import HexInfoBar from '$lib/components/ui/HexInfoBar.svelte';
-	import ChatPanel from '$lib/components/ui/ChatPanel.svelte';
+	import { getSocket } from '$lib/services/socket';
 
-	let socket = initializeSocket();
-	onDestroy(() => socket.disconnect());
+	let firstName = $state('');
+	let lastName = $state('');
+	let loading = $state(false);
+	let error = $state('');
 
-	let activeMenu = $state('');
-	let activePopup = $state<string | null>(null);
+	let socket = getSocket();
 
-	const localPlayer = $derived(gameState.localPlayer);
-	const selectedTile = $derived(gameState.selectedHex);
-	const playerTile = $derived(getPlayerTile(localPlayer));
-	const canHarvest = $derived(!!playerTile?.resource && (playerTile.resource.amount ?? 0) > 0);
-	const isMoveValid = $derived(!!(localPlayer && selectedTile && selectedTile.type !== 'WATER'));
-	const displayedHexData = $derived(selectedTile ?? playerTile);
-	const playersOnHex = $derived(
-		displayedHexData
-			? gameState.entities.filter(
-					(e) => e.position.q === displayedHexData.q && e.position.r === displayedHexData.r
-				)
-			: []
-	);
-
-	$effect(() => {
-		if (localPlayer) processGameEvents(socket);
-	});
-
-	function handleMenuClick(menuId: string) {
-		activeMenu = activeMenu === menuId ? '' : menuId;
-		if (menuId === 'inventaire') activePopup = 'inventaire';
+	function handleSubmit() {
+		if (!firstName.trim() || !lastName.trim()) {
+			error = 'Veuillez renseigner prénom et nom.';
+			return;
+		}
+		error = '';
+		loading = true;
+		socket.emit('create_character', { firstName, lastName });
+		socket.once('character_created', (data) => {
+			loading = false;
+		});
+		socket.once('character_error', (msg) => {
+			loading = false;
+			error = msg;
+		});
 	}
 </script>
 
-<svelte:head>
-	<title>Hexaria</title>
-</svelte:head>
+<main class="flex min-h-screen items-center justify-center bg-stone-900">
+	<div
+		class="flex w-[min(400px,90vw)] flex-col gap-6 rounded-md border border-stone-600 bg-stone-800 p-8"
+	>
+		<h1 class="text-center text-xl tracking-wider text-stone-100">⚔️ Entrez dans le monde</h1>
 
-<main class="relative h-screen w-full overflow-hidden bg-[#1a1410] font-serif select-none">
-	{#if localPlayer}
-		<!-- Canvas 3D — plein écran derrière tout -->
-		<GameCanvas />
-
-		<!-- PlayerInfo — panneau horizontal haut gauche -->
-		<PlayerInfo />
-
-		<!-- Sidebar — colonne gauche sous PlayerInfo -->
-		<Sidebar />
-
-		<!-- HexInfoBar — barre info bas gauche -->
-		<HexInfoBar />
-
-		<ActionPanel />
-
-		<ChatPanel />
-	{:else}
-		<!-- Loading -->
-		<div class="flex h-full items-center justify-center">
-			<div class="flex flex-col items-center gap-4">
-				<span class="animate-pulse text-4xl">⚔️</span>
-				<span class="text-sm tracking-widest text-[#8a7a68] uppercase">
-					Connexion au monde...
-				</span>
+		<form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-4">
+			<div class="flex flex-col gap-1">
+				<label for="firstName" class="text-xs tracking-widest text-stone-400 uppercase"
+					>Prénom</label
+				>
+				<input
+					id="firstName"
+					type="text"
+					bind:value={firstName}
+					placeholder="ex: Aldric"
+					disabled={loading}
+					class="rounded border border-stone-600 bg-stone-700 px-3 py-2 text-sm text-stone-100 transition-colors outline-none focus:border-amber-500 disabled:opacity-50"
+				/>
 			</div>
-		</div>
-	{/if}
+
+			<div class="flex flex-col gap-1">
+				<label for="lastName" class="text-xs tracking-widest text-stone-400 uppercase">Nom</label>
+				<input
+					id="lastName"
+					type="text"
+					bind:value={lastName}
+					placeholder="ex: Varen"
+					disabled={loading}
+					class="rounded border border-stone-600 bg-stone-700 px-3 py-2 text-sm text-stone-100 transition-colors outline-none focus:border-amber-500 disabled:opacity-50"
+				/>
+			</div>
+
+			{#if error}
+				<p class="text-center text-xs text-red-400">{error}</p>
+			{/if}
+
+			<button
+				type="submit"
+				disabled={loading}
+				class="mt-2 rounded bg-amber-600 py-2 text-sm font-medium tracking-wide text-white transition-colors hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+			>
+				{loading ? 'Connexion...' : 'Entrer'}
+			</button>
+		</form>
+	</div>
 </main>

@@ -6,6 +6,7 @@ import { HarvestHandler } from '../handlers/harvestHandler';
 import { MovementHandler } from '../handlers/movementHandler';
 import { EventHandler } from '../handlers/eventHandler';
 import { TileData } from '$shared';
+import { CharacterHandler } from '../handlers/characterHandler';
 
 export class NetworkSystem {
     private io: Server;
@@ -13,6 +14,7 @@ export class NetworkSystem {
     private harvestHandler: HarvestHandler;
     private movementHandler: MovementHandler;
     private eventHandler: EventHandler;
+    private characterHandler: CharacterHandler;
 
     private previousWorldState = {};
     private previousMap: TileData[] = [];
@@ -27,24 +29,14 @@ export class NetworkSystem {
         this.harvestHandler = new HarvestHandler(this.world, this.map);
         this.movementHandler = new MovementHandler(this.world, this.map);
         this.eventHandler = new EventHandler(this.world);
+        this.characterHandler = new CharacterHandler(this.world, this.map);
 
         this.io.on('connection', (socket: Socket) => {
-
-            const playerId = PlayerFactory.create({
-                socketId: socket.id,
-                world: this.world,
-                name: `Joueur_${socket.id}`,
-                age: 0
-            });
 
             this.harvestHandler.register(socket);
             this.movementHandler.register(socket);
             this.eventHandler.register(socket);
-
-
-            socket.emit('full_map', this.map);
-            socket.emit('world_update', getWorldState(this.world));
-            socket.emit('player_init', { entityId: playerId });
+            this.characterHandler.register(socket);
 
             socket.on('disconnect', () => {
                 console.log(`[NETWORK] Client déconnecté: ${socket.id}`);
