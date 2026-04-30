@@ -6,6 +6,7 @@ import { runMovementSystem } from './systems/MovementSystem';
 import { runHarvestSystem } from './systems/HarvestSystem';
 import { EventRegistry } from './core/EventRegistry';
 import { runEventSystem } from './systems/EventSystem';
+import { runResourceRenewalSystem } from './systems/ResourceRenewalSystem';
 
 function bootstrap() {
   const world = new World();
@@ -30,8 +31,10 @@ function bootstrap() {
     runMovementSystem(world, map);
     runEventSystem(world);
 
+    const renewed = runResourceRenewalSystem(map);
+
     const harvestOccurred = runHarvestSystem(world, map);
-    if (harvestOccurred) network.broadcastMapUpdate();
+    if (harvestOccurred || renewed.length > 0) network.broadcastMapUpdate();
 
 
     network.broadcastWorldState();

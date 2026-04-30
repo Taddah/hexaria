@@ -20,24 +20,34 @@
 	const VIEW_WIDTH = 220;
 
 	const localPlayer = $derived(gameState.localPlayer);
-	const playerTile = $derived(getPlayerTile(localPlayer));
+	const playerTile = $derived.by(() => {
+		const tile = getPlayerTile(localPlayer, gameState.map);
+		return tile;
+	});
+
 	const selectedTile = $derived(gameState.selectedHex);
 
-	const canHarvestWood = $derived(
-		!!playerTile?.resource &&
+	const canHarvestWood = $derived.by(() => {
+		return (
+			!!playerTile?.resource &&
 			playerTile.resource.type === Resource.WOOD &&
 			playerTile.resource.amount > 0
-	);
-	const canHarvestStone = $derived(
-		!!playerTile?.resource &&
+		);
+	});
+	const canHarvestStone = $derived.by(() => {
+		return (
+			!!playerTile?.resource &&
 			playerTile.resource.type === Resource.STONE &&
 			playerTile.resource.amount > 0
-	);
-	const canHarvestSilver = $derived(
-		!!playerTile?.resource &&
+		);
+	});
+	const canHarvestSilver = $derived.by(() => {
+		return (
+			!!playerTile?.resource &&
 			playerTile.resource.type === Resource.SILVER &&
 			playerTile.resource.amount > 0
-	);
+		);
+	});
 
 	const isMoveValid = $derived(!!(localPlayer && selectedTile && selectedTile.type !== 'WATER'));
 

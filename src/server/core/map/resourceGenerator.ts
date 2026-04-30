@@ -23,20 +23,20 @@ export class ResourceGenerator {
         const allowedMountainForest = biome === Biome.MOUNTAIN && elevation < 0.8;
         if (forestValue > 0.65 && (allowedForestBiomes.includes(biome) || allowedMountainForest)) {
             const amount = Math.floor(2 + (forestValue - 0.65) / 0.35 * 8);
-            return { type: Resource.WOOD, amount };
+            return { type: Resource.WOOD, amount, maxAmount: amount };
         }
 
         const stoneValue = (this.stoneNoise2D(q * 0.4, r * 0.4) + 1) / 2;
         if (biome === Biome.MOUNTAIN && elevation > 0.65 && stoneValue > 0.72) {
             const amount = Math.floor(2 + (stoneValue - 0.72) / 0.28 * 6);
-            return { type: Resource.STONE, amount };
+            return { type: Resource.STONE, amount, maxAmount: amount };
         }
 
         const silverValue = (this.silverNoise2D(q * 0.7, r * 0.7) + 1) / 2;
         const allowedSilverBiomes = [Biome.MOUNTAIN, Biome.TAIGA];
         if (allowedSilverBiomes.includes(biome) && silverValue > 0.88) {
             const amount = Math.floor(1 + (silverValue - 0.88) / 0.12 * 3);
-            return { type: Resource.SILVER, amount };
+            return { type: Resource.SILVER, amount, maxAmount: amount };
         }
 
         return undefined;

@@ -23,6 +23,7 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         const resource = tile.resource;
         const amount = Math.min(1, resource.amount);
         resource.amount -= amount;
+        resource.lastHarvestedAt = Date.now();
 
         inventory[resource.type] += amount;
 

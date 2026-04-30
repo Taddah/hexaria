@@ -60,4 +60,6 @@ export enum Resource {
 export interface TileResource {
     type: Resource;
     amount: number;
+    maxAmount: number;
+    lastHarvestedAt?: number;
 }

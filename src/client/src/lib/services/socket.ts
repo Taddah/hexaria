@@ -58,9 +58,17 @@ export function initializeSocket() {
     socket.on('world_update', (entities) => {
         gameState.entities = entities;
         const fresh = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
+        if (!fresh || !gameState.localPlayer) {
+            gameState.localPlayer = fresh;
+            return;
+        }
 
-        if (fresh && gameState.localPlayer && isMoving()) {
-            // On garde la position locale, on update le reste
+        const targetQ = gameState.localPlayer.position.q;
+        const targetR = gameState.localPlayer.position.r;
+        const serverQ = fresh.position.q;
+        const serverR = fresh.position.r;
+
+        if (isMoving() || serverQ !== targetQ || serverR !== targetR) {
             gameState.localPlayer = {
                 ...fresh,
                 position: gameState.localPlayer.position

@@ -5,8 +5,14 @@
 	import { Resource, type Biome } from '$shared';
 
 	const localPlayer = $derived(gameState.localPlayer);
-	const playerTile = $derived(getPlayerTile(localPlayer));
-	const selectedTile = $derived(gameState.selectedHex);
+	const playerTile = $derived.by(() => {
+		return getPlayerTile(localPlayer, gameState.map);
+	});
+	const selectedTile = $derived(
+		gameState.selectedHex
+			? (gameState.map[`${gameState.selectedHex.q},${gameState.selectedHex.r}`] ?? null)
+			: null
+	);
 	const displayedTile = $derived(selectedTile ?? playerTile);
 
 	const BIOME_LABELS: Record<Biome, string> = {
