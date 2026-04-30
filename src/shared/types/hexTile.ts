@@ -51,9 +51,13 @@ export enum Biome {
     PRAIRIE = "PRAIRIE",
 }
 
-export type ResourceType = 'wood' | 'iron';
+export enum Resource {
+    WOOD = 'wood',
+    STONE = 'stone',
+    SILVER = 'silver'
+}
 
 export interface TileResource {
-    type: ResourceType;
+    type: Resource;
     amount: number;
 }

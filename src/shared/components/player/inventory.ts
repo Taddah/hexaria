@@ -1,4 +1,7 @@
+import { Resource } from "$shared/types";
+
 export interface IInventory {
-    wood: number;
-    iron: number;
+    [Resource.WOOD]: number;
+    [Resource.STONE]: number;
+    [Resource.SILVER]: number;
 }

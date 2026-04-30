@@ -1,6 +1,7 @@
 import type { TileData } from "$shared";
 import { getDecorationProps } from "./props/decorationResolver";
-import { getTreeProps } from "./props/treesResolver";
+import { getMineralProps } from "./resource/mineralsResolver";
+import { getTreeProps } from "./resource/treesResolver";
 
 export interface PropData {
     assetPath: string;
@@ -20,6 +21,7 @@ export function seededRandom(q: number, r: number, seed: number = 0): number {
 export function getProps(tileData: TileData, scaleY: number): PropData[] {
     return [
         ...getTreeProps(tileData, scaleY),
+        ...getMineralProps(tileData, scaleY),
         ...getDecorationProps(tileData, scaleY)
     ]
 }

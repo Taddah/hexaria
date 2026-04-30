@@ -25,7 +25,7 @@ const DENSE_ASSETS = {
     [Biome.PRAIRIE]: ['dense_1', 'dense_2_B', 'dense_3_B', 'dense_4_B', 'dense_5', 'dense_6', 'dense_7_B', 'dense_8', 'dense_9', 'dense_10_B', 'dense_11', 'dense_12', 'dense_13_B'],
     [Biome.TAIGA]: ['dense_1', 'dense_2_A', 'dense_3_A', 'dense_4_A', 'dense_5', 'dense_6', 'dense_7_A', 'dense_8', 'dense_9', 'dense_10_A', 'dense_11', 'dense_12', 'dense_13_A'],
     [Biome.DESERT]: ['dense_1', 'dense_5', 'dense_6', 'dense_8', 'dense_9', 'dense_11', 'dense_12',],
-    [Biome.MOUNTAIN]: ['dense_1', 'dense_2_A', 'dense_3_A', 'dense_4_A', 'dense_5', 'dense_6', 'dense_7_A', 'dense_8', 'dense_9', 'dense_10_A', 'dense_11', 'dense_12', 'dense13_A'],
+    [Biome.MOUNTAIN]: ['dense_1', 'dense_2_A', 'dense_3_A', 'dense_4_A', 'dense_5', 'dense_6', 'dense_7_A', 'dense_8', 'dense_9', 'dense_10_A', 'dense_11', 'dense_12', 'dense_13_A'],
     [Biome.WATER]: [],
 };
 

@@ -1,5 +1,5 @@
 import { World } from '../core/World';
-import { IHarvestIntent, IInventory, IPosition, IEnergy, TileData } from '$shared';
+import { IHarvestIntent, IInventory, IPosition, IEnergy, TileData, Resource } from '$shared';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
@@ -24,8 +24,7 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         const amount = Math.min(1, resource.amount);
         resource.amount -= amount;
 
-        if (resource.type === 'wood') inventory.wood += amount;
-        if (resource.type === 'iron') inventory.iron += amount;
+        inventory[resource.type] += amount;
 
         if (energy) energy.current = Math.max(0, energy.current - 1);
 

@@ -1,4 +1,4 @@
-import { Biome, type TileData } from "$shared";
+import { Biome, Resource, type TileData } from "$shared";
 import { seededRandom, type PropData } from "../propsResolver";
 
 const TREE_ASSETS_BY_BIOME: Record<Biome, { single: string, singleCut: string, clusters: string[], clustersCut: string }> = {
@@ -38,7 +38,7 @@ const PROPS_PATH = "/assets/models/decoration/nature/"
 
 export function getTreeProps(tile: TileData, scaleY: number): PropData[] {
     const props: PropData[] = [];
-    if (!tile.resource || tile.resource.type !== 'wood') return props;
+    if (!tile.resource || tile.resource.type !== Resource.WOOD) return props;
 
     const amount = tile.resource.amount ?? 0;
     const biomeAssets = TREE_ASSETS_BY_BIOME[tile.biome] ?? TREE_ASSETS_BY_BIOME.PRAIRIE;

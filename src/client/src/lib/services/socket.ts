@@ -2,6 +2,7 @@ import { io, type Socket } from 'socket.io-client';
 import type { TileData } from '$shared';
 import { gameState } from '$lib/stores/gameState.svelte';
 import { goto } from '$app/navigation';
+import { isMoving } from './movementService';
 
 const SERVER_URL = 'http://localhost:3000';
 
@@ -56,7 +57,17 @@ export function initializeSocket() {
 
     socket.on('world_update', (entities) => {
         gameState.entities = entities;
-        gameState.localPlayer = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
+        const fresh = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
+
+        if (fresh && gameState.localPlayer && isMoving()) {
+            // On garde la position locale, on update le reste
+            gameState.localPlayer = {
+                ...fresh,
+                position: gameState.localPlayer.position
+            };
+        } else {
+            gameState.localPlayer = fresh;
+        }
     });
 
     socket.on('disconnect', () => {

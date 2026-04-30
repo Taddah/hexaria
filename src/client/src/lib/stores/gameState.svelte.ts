@@ -19,8 +19,6 @@ interface GameState {
     updatedTiles: TileData[];
     entities: EntityDTO[];
     hexSize: number;
-    currentQ: number;
-    currentR: number;
 }
 
 export const gameState = $state<GameState>({
@@ -33,6 +31,4 @@ export const gameState = $state<GameState>({
     updatedTiles: [],
     entities: [],
     hexSize: 75,
-    currentQ: 0,
-    currentR: 0,
 });

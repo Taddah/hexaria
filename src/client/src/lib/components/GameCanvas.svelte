@@ -52,7 +52,9 @@
 <svelte:window onkeydown={handleKeyDown} />
 
 {#if browser && localPlayer}
-	<div class="absolute inset-0 h-full w-full overflow-hidden bg-[#1e1e2f] padding-top: 4rem; padding-left: 5rem">
+	<div
+		class="padding-top: 4rem; padding-left: 5rem absolute inset-0 h-full w-full overflow-hidden bg-[#1e1e2f]"
+	>
 		<Canvas toneMapping={0}>
 			<T.OrthographicCamera
 				makeDefault

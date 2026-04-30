@@ -2,7 +2,7 @@
 	import { gameState } from '$lib/stores/gameState.svelte';
 	import { getPlayerTile } from '$lib/utils/tiles/playerUtils';
 	import PanelBg from '$lib/components/ui/PanelBg.svelte';
-	import type { Biome, ResourceType } from '$shared';
+	import { Resource, type Biome } from '$shared';
 
 	const localPlayer = $derived(gameState.localPlayer);
 	const playerTile = $derived(getPlayerTile(localPlayer));
@@ -17,17 +17,18 @@
 		PRAIRIE: 'Prairie'
 	};
 
-	const RESOURCE_LABELS: Record<ResourceType, { emoji: string; label: string }> = {
-		wood: { emoji: '🌳', label: 'Bois' },
-		iron: { emoji: '⛏️', label: 'Fer' }
+	const RESOURCE_LABELS: Record<Resource, { emoji: string; label: string }> = {
+		[Resource.WOOD]: { emoji: '🌳', label: 'Bois' },
+		[Resource.STONE]: { emoji: '🪨', label: 'Pierre' },
+		[Resource.SILVER]: { emoji: '⛏️', label: 'Argent' }
 	};
 
-	const biomeName = $derived(displayedTile ? BIOME_LABELS[displayedTile.biome] ?? displayedTile.biome : '—');
+	const biomeName = $derived(
+		displayedTile ? (BIOME_LABELS[displayedTile.biome] ?? displayedTile.biome) : '—'
+	);
 	const resource = $derived(displayedTile?.resource);
 	const resourceInfo = $derived(
-		resource && resource.amount > 0
-			? RESOURCE_LABELS[resource.type]
-			: null
+		resource && resource.amount > 0 ? RESOURCE_LABELS[resource.type] : null
 	);
 </script>
 

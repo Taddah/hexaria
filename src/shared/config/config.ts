@@ -1,1 +1,1 @@
-export const MOVEMENT_DURATION_MS = 100;
+export const MOVEMENT_DURATION_MS = 1000;

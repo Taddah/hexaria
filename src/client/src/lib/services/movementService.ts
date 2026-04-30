@@ -6,46 +6,44 @@ import { getScaleY } from "$lib/utils/tiles/tileResolver";
 import { MOVEMENT_DURATION_MS, type TileData } from "$shared";
 import type { Socket } from "socket.io-client";
 
-let isMoving = false;
+let _isMoving = false;
+export const isMoving = () => _isMoving;
 
 export async function startMovement(socket: Socket, path: { q: number, r: number }[], localPlayer: EntityDTO) {
-    if (path.length === 0 || isMoving) return;
-    isMoving = true;
+    if (path.length === 0 || _isMoving || !localPlayer) return;
+    _isMoving = true;
 
-    const pQ = localPlayer.position.q;
-    const pR = localPlayer.position.r;
+    let currentQ = localPlayer.position.q;
+    let currentR = localPlayer.position.r;
 
     for (const step of path) {
+
         const current = gameState.playerAnimPosition ?? {
-            x: hexToWorld(pQ, pR)[0],
+            x: hexToWorld(currentQ, currentR)[0],
             y: 0,
-            z: hexToWorld(pQ, pR)[2]
+            z: hexToWorld(currentQ, currentR)[2]
         };
         const target = hexToWorld(step.q, step.r);
 
-        // Récupère les élévations
-        const fromTile = gameState.map[`${gameState.currentQ},${gameState.currentR}`];
+        const fromTile = gameState.map[`${currentQ},${currentR}`];
         const toTile = gameState.map[`${step.q},${step.r}`];
         const fromY = fromTile ? getScaleY(fromTile) + 1 : current.y;
         const toY = toTile ? getScaleY(toTile) + 1 : fromY;
 
         socket.emit('request_move', { q: step.q, r: step.r });
-
         const sameElevation = fromY === toY;
-
         const startTime = performance.now();
+
         await new Promise<void>((resolve) => {
             function animate() {
                 const elapsed = performance.now() - startTime;
                 const t = Math.min(elapsed / MOVEMENT_DURATION_MS, 1);
                 const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-
                 gameState.playerAnimPosition = {
                     x: current.x + (target[0] - current.x) * eased,
                     y: sameElevation ? fromY : fromY + (toY - fromY) * t,
                     z: current.z + (target[2] - current.z) * eased
                 };
-
                 if (t < 1) {
                     requestAnimationFrame(animate);
                 } else {
@@ -55,13 +53,18 @@ export async function startMovement(socket: Socket, path: { q: number, r: number
             requestAnimationFrame(animate);
         });
 
+        currentQ = step.q;
+        currentR = step.r;
+
         const mapData = Object.values(gameState.map);
-        gameState.currentQ = step.q;
-        gameState.currentR = step.r;
+
+        const fresh = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
+        if (fresh) gameState.localPlayer = fresh;
+
         expandFog(step.q, step.r, mapData);
     }
 
-    isMoving = false;
+    _isMoving = false;
     gameState.path = [];
 }
 

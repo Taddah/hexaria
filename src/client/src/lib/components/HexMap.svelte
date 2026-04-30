@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { T, useThrelte } from '@threlte/core';
-	import { interactivity, useGltf } from '@threlte/extras';
-
+	import { interactivity } from '@threlte/extras';
 	import { getTile, hexDistance, hexToWorld } from '$lib/utils/hexUtils';
-	import { expandFog, VISION_RADIUS } from '$lib/utils/fogOfWar.svelte';
+	import { VISION_RADIUS } from '$lib/utils/fogOfWar.svelte';
 	import HexTile from './HexTile.svelte';
-	import { getScaleY, resolveTile } from '$lib/utils/tiles/tileResolver';
+	import { resolveTile } from '$lib/utils/tiles/tileResolver';
 	import { gameState } from '$lib/stores/gameState.svelte';
+	import Players from './Players.svelte';
 
 	// Stores réactifs
 	const mapData = $derived(Object.values(gameState.map));
 	const localPlayer = $derived(gameState.localPlayer);
-	const pQ = $derived((gameState.currentQ || localPlayer?.position.q) ?? 0);
-	const pR = $derived((gameState.currentR || localPlayer?.position.r) ?? 0);
+	const pQ = $derived(localPlayer?.position.q ?? 0);
+	const pR = $derived(localPlayer?.position.r ?? 0);
 	const exploredSet = $derived(new Set(gameState.exploredTiles));
 
 	const { camera, renderer } = useThrelte();
@@ -28,8 +28,6 @@
 			state.raycaster.setFromCamera(state.pointer.current, $camera);
 		}
 	});
-
-	const gltfPlayer = useGltf('/assets/models/units/red/unit_red_accent.gltf');
 </script>
 
 {#each mapData as tile (`${tile.q},${tile.r}`)}
@@ -65,11 +63,4 @@
 	{/if}
 {/each}
 
-{#if localPlayer && $gltfPlayer}
-	{@const pos = gameState.playerAnimPosition ?? {
-		x: hexToWorld(pQ, pR)[0],
-		y: getScaleY(gameState.map[`${pQ},${pR}`]) + 1,
-		z: hexToWorld(pQ, pR)[2]
-	}}
-	<T is={$gltfPlayer.scene} position={[pos.x, pos.y, pos.z]} scale={[3, 3, 3]} />
-{/if}
+<Players />

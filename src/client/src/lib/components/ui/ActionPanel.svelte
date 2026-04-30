@@ -5,6 +5,7 @@
 	import { requestMove } from '$lib/services/movementService';
 	import { requestHarvest } from '$lib/services/harvestService';
 	import PanelBg from '$lib/components/ui/PanelBg.svelte';
+	import { Resource } from '$shared';
 
 	interface Action {
 		id: string;
@@ -22,7 +23,22 @@
 	const playerTile = $derived(getPlayerTile(localPlayer));
 	const selectedTile = $derived(gameState.selectedHex);
 
-	const canHarvest = $derived(!!playerTile?.resource && (playerTile.resource.amount ?? 0) > 0);
+	const canHarvestWood = $derived(
+		!!playerTile?.resource &&
+			playerTile.resource.type === Resource.WOOD &&
+			playerTile.resource.amount > 0
+	);
+	const canHarvestStone = $derived(
+		!!playerTile?.resource &&
+			playerTile.resource.type === Resource.STONE &&
+			playerTile.resource.amount > 0
+	);
+	const canHarvestSilver = $derived(
+		!!playerTile?.resource &&
+			playerTile.resource.type === Resource.SILVER &&
+			playerTile.resource.amount > 0
+	);
+
 	const isMoveValid = $derived(!!(localPlayer && selectedTile && selectedTile.type !== 'WATER'));
 
 	const actions = $derived(buildActions());
@@ -40,11 +56,29 @@
 			});
 		}
 
-		if (canHarvest) {
+		if (canHarvestWood) {
 			list.push({
-				id: 'harvest',
+				id: 'harvestWood',
 				emoji: '🌳',
 				title: 'Couper du bois',
+				execute: () => requestHarvest(getSocket(), playerTile)
+			});
+		}
+
+		if (canHarvestStone) {
+			list.push({
+				id: 'harvestStone',
+				emoji: '🪨',
+				title: 'Miner de la pierre',
+				execute: () => requestHarvest(getSocket(), playerTile)
+			});
+		}
+
+		if (canHarvestSilver) {
+			list.push({
+				id: 'harvestSilver',
+				emoji: '⛏️',
+				title: "Miner de l'argent",
 				execute: () => requestHarvest(getSocket(), playerTile)
 			});
 		}
@@ -77,10 +111,7 @@
 						? `border-bottom: 1px solid var(--color-border-separator);`
 						: ''}
 				>
-					<button
-						class="panel-btn gap-3 rounded-md px-3 py-2"
-						onclick={action.execute}
-					>
+					<button class="panel-btn gap-3 rounded-md px-3 py-2" onclick={action.execute}>
 						<span class="shrink-0 text-2xl leading-none">{action.emoji}</span>
 						<span class="text-panel-title text-sm leading-tight">{action.title}</span>
 					</button>
