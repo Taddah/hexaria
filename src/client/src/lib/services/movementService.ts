@@ -3,10 +3,9 @@ import { expandFog } from "$lib/utils/fogOfWar.svelte";
 import { hexToWorld } from "$lib/utils/hexUtils"
 import { findPath } from "$lib/utils/pathfinding";
 import { getScaleY } from "$lib/utils/tiles/tileResolver";
-import type { TileData } from "$shared";
+import { MOVEMENT_DURATION_MS, type TileData } from "$shared";
 import type { Socket } from "socket.io-client";
 
-const MOVE_DURATION = 100;
 let isMoving = false;
 
 export async function startMovement(socket: Socket, path: { q: number, r: number }[], localPlayer: EntityDTO) {
@@ -38,7 +37,7 @@ export async function startMovement(socket: Socket, path: { q: number, r: number
         await new Promise<void>((resolve) => {
             function animate() {
                 const elapsed = performance.now() - startTime;
-                const t = Math.min(elapsed / MOVE_DURATION, 1);
+                const t = Math.min(elapsed / MOVEMENT_DURATION_MS, 1);
                 const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
                 gameState.playerAnimPosition = {

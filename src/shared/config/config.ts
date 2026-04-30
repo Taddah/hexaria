@@ -1,0 +1,1 @@
+export const MOVEMENT_DURATION_MS = 100;
