@@ -2,7 +2,6 @@
 	import { T, useThrelte } from '@threlte/core';
 	import { interactivity } from '@threlte/extras';
 	import { getTile, hexDistance, hexToWorld } from '$lib/utils/hexUtils';
-	import { VISION_RADIUS } from '$lib/utils/fogOfWar.svelte';
 	import HexTile from './HexTile.svelte';
 	import { resolveTile } from '$lib/utils/tiles/tileResolver';
 	import { gameState } from '$lib/stores/gameState.svelte';
@@ -31,7 +30,7 @@
 </script>
 
 {#each mapData as tile (`${tile.q},${tile.r}`)}
-	{@const isVisible = hexDistance(pQ, pR, tile.q, tile.r) <= VISION_RADIUS}
+	{@const isVisible = hexDistance(pQ, pR, tile.q, tile.r) <= gameState.time.visionRadius}
 	{@const isExplored = exploredSet.has(`${tile.q},${tile.r}`)}
 	{@const pos = hexToWorld(tile.q, tile.r)}
 	{@const isSelected = gameState.selectedHex?.q === tile.q && gameState.selectedHex?.r === tile.r}

@@ -3,6 +3,7 @@
 	import { getPlayerTile } from '$lib/utils/tiles/playerUtils';
 	import PanelBg from '$lib/components/ui/PanelBg.svelte';
 	import { Resource, type Biome } from '$shared';
+	import TimeIndicator from './TimeIndicator.svelte';
 
 	const localPlayer = $derived(gameState.localPlayer);
 	const playerTile = $derived.by(() => {
@@ -58,6 +59,10 @@
 					{resource.amount}
 				</span>
 			{/if}
+
+			<span class="ml-auto">
+				<TimeIndicator />
+			</span>
 		</div>
 	</div>
 </div>

@@ -5,6 +5,7 @@
 	import { browser } from '$app/environment';
 	import { gameState } from '$lib/stores/gameState.svelte';
 	import { hexToWorld } from '$lib/utils/hexUtils';
+	import SceneLighting from './SceneLighting.svelte';
 
 	let camRef: OrthographicCamera | undefined = $state();
 
@@ -63,9 +64,7 @@
 				bind:ref={camRef}
 			/>
 
-			<T.AmbientLight intensity={0.5} color="#ffffff" />
-			<T.DirectionalLight position={[15, 30, 10]} intensity={2.0} color="#ffffff" castShadow />
-			<T.DirectionalLight position={[-10, 5, -15]} intensity={1.5} color="#ffffff" />
+			<SceneLighting />
 
 			<T.Group position={cameraTarget}>
 				<HexMap />

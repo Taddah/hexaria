@@ -9,6 +9,13 @@ export interface EntityDTO {
     gameEvents?: EventComponent;
 }
 
+export interface TimeDTO {
+    timeOfDay: number;
+    isDay: boolean;
+    visionRadius: number;
+
+}
+
 interface GameState {
     selectedHex: TileData | null;
     localPlayer: EntityDTO | null;
@@ -19,6 +26,7 @@ interface GameState {
     updatedTiles: TileData[];
     entities: EntityDTO[];
     hexSize: number;
+    time: TimeDTO;
 }
 
 export const gameState = $state<GameState>({
@@ -31,4 +39,9 @@ export const gameState = $state<GameState>({
     updatedTiles: [],
     entities: [],
     hexSize: 75,
+    time: {
+        timeOfDay: 0.5,
+        isDay: true,
+        visionRadius: 3,
+    }
 });

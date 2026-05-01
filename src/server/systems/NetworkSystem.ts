@@ -4,7 +4,7 @@ import { findEntityBySocket, getWorldState } from '../handlers/utils';
 import { HarvestHandler } from '../handlers/harvestHandler';
 import { MovementHandler } from '../handlers/movementHandler';
 import { EventHandler } from '../handlers/eventHandler';
-import { TileData } from '$shared';
+import { TileData, type TimeState } from '$shared';
 import { CharacterHandler } from '../handlers/characterHandler';
 
 export class NetworkSystem {
@@ -75,6 +75,11 @@ export class NetworkSystem {
             ...(tile.resource ? { resource: { ...tile.resource } } : {})
         }));
     }
+
+    broadcastTimeUpdate(time: TimeState) {
+        this.io.emit('time_update', time);
+    }
+
     private getMapDiff(currentMap: TileData[], previousMap: TileData[]): TileData[] {
         const diff: TileData[] = [];
 

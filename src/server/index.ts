@@ -7,6 +7,7 @@ import { runHarvestSystem } from './systems/HarvestSystem';
 import { EventRegistry } from './core/EventRegistry';
 import { runEventSystem } from './systems/EventSystem';
 import { runResourceRenewalSystem } from './systems/ResourceRenewalSystem';
+import { getTimeState } from './systems/TimeSystem';
 
 function bootstrap() {
   const world = new World();
@@ -19,7 +20,7 @@ function bootstrap() {
 
   const network = new NetworkSystem(3000, world, map);
 
-
+  const serverStartTime = Date.now();
   //Main heartbeat
   let tickCount = 0;
   setInterval(() => {
@@ -37,6 +38,11 @@ function bootstrap() {
 
     const harvestOccurred = runHarvestSystem(world, map);
     if (harvestOccurred || renewed.length > 0) network.broadcastMapUpdate();
+
+    if (tickCount % 10 === 0) {
+      const timeState = getTimeState(serverStartTime);
+      network.broadcastTimeUpdate(timeState);
+    }
 
 
     network.broadcastWorldState();

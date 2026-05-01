@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { gameState } from '$lib/stores/gameState.svelte';
-	import { VISION_RADIUS } from '$lib/utils/fogOfWar.svelte';
 	import { hexDistance, hexToWorld } from '$lib/utils/hexUtils';
 	import { getPlayerOffsetOnTile } from '$lib/utils/playerPlacement';
 	import { getScaleY } from '$lib/utils/tiles/tileResolver';
@@ -15,7 +14,7 @@
 
 	const visibleEntities = $derived(
 		Object.values(gameState.entities).filter(
-			(e) => hexDistance(pQ, pR, e.position.q, e.position.r) <= VISION_RADIUS
+			(e) => hexDistance(pQ, pR, e.position.q, e.position.r) <= gameState.time.visionRadius
 		)
 	);
 

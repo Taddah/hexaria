@@ -1,5 +1,5 @@
 import { io, type Socket } from 'socket.io-client';
-import type { TileData } from '$shared';
+import type { TileData, TimeState } from '$shared';
 import { gameState } from '$lib/stores/gameState.svelte';
 import { goto } from '$app/navigation';
 import { isMoving, onMoveConfirmed } from './movementService';
@@ -40,6 +40,12 @@ export function initializeSocket() {
         const record: Record<string, TileData> = {};
         mapData.forEach(tile => { record[`${tile.q},${tile.r}`] = tile; });
         gameState.map = record;
+    });
+
+    socket.on('time_update', (time: TimeState) => {
+        gameState.time.timeOfDay = time.timeOfDay;
+        gameState.time.isDay = time.isDay;
+        gameState.time.visionRadius = time.visionRadius;
     });
 
     socket.on('tile_update', (updatedTiles: TileData[]) => {
