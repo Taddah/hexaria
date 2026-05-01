@@ -28,7 +28,9 @@ function bootstrap() {
       runAgingSystem(world);
     }
 
-    runMovementSystem(world, map);
+    runMovementSystem(world, map, (socketId, pos) => {
+      network.emitTo(socketId, 'move_confirmed', pos);
+    });
     runEventSystem(world);
 
     const renewed = runResourceRenewalSystem(map);

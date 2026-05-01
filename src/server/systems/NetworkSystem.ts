@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { World } from '../core/World';
 import { findEntityBySocket, getWorldState } from '../handlers/utils';
-import { PlayerFactory } from '../factories/PlayerFactory';
 import { HarvestHandler } from '../handlers/harvestHandler';
 import { MovementHandler } from '../handlers/movementHandler';
 import { EventHandler } from '../handlers/eventHandler';
@@ -49,7 +48,9 @@ export class NetworkSystem {
         });
     }
 
-
+    emitTo(socketId: string, event: string, data: unknown) {
+        this.io.to(socketId).emit(event, data);
+    }
 
     broadcastWorldState(): void {
         const world = JSON.stringify(getWorldState(this.world));

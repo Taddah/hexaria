@@ -1,17 +1,15 @@
 import { World } from '../core/World';
 import { TileData } from '$shared/types';
-import { IMovementIntent, IPosition, IEnergy, MOVEMENT_DURATION_MS } from '$shared';
+import { IMovementIntent, IPosition, IEnergy, MOVEMENT_DURATION_MS, IPlayer } from '$shared';
 
 
-export function runMovementSystem(world: World, map: TileData[]): void {
+
+export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed: (socketId: string, pos: { q: number, r: number }) => void): void {
     const entities = world.query(['Position', 'MovementIntent']);
-
     for (const entity of entities) {
         const pos = world.getComponent<IPosition>(entity, 'Position');
         const intent = world.getComponent<IMovementIntent>(entity, 'MovementIntent');
         const energy = world.getComponent<IEnergy>(entity, 'Energy');
-
-
         if (!pos || !intent) continue;
         if (Date.now() - intent.startedAt < MOVEMENT_DURATION_MS) continue;
 
@@ -33,9 +31,12 @@ export function runMovementSystem(world: World, map: TileData[]): void {
 
         pos.q = intent.targetQ;
         pos.r = intent.targetR;
-
         if (energy) energy.current = Math.max(0, energy.current - 1);
-
         world.removeComponent(entity, 'MovementIntent');
+
+        const player = world.getComponent<IPlayer>(entity, 'Player');
+        if (player?.socketId) {
+            onMoveConfirmed(player.socketId, { q: pos.q, r: pos.r });
+        }
     }
 }

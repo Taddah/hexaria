@@ -1,6 +1,6 @@
 import { gameState, type EntityDTO } from "$lib/stores/gameState.svelte";
 import { expandFog } from "$lib/utils/fogOfWar.svelte";
-import { hexToWorld } from "$lib/utils/hexUtils"
+import { hexToWorld } from "$lib/utils/hexUtils";
 import { findPath } from "$lib/utils/pathfinding";
 import { getScaleY } from "$lib/utils/tiles/tileResolver";
 import { MOVEMENT_DURATION_MS, type TileData } from "$shared";
@@ -9,7 +9,57 @@ import type { Socket } from "socket.io-client";
 let _isMoving = false;
 export const isMoving = () => _isMoving;
 
-export async function startMovement(socket: Socket, path: { q: number, r: number }[], localPlayer: EntityDTO) {
+let _moveConfirmResolve: ((pos: { q: number, r: number }) => void) | null = null;
+
+export function onMoveConfirmed(pos: { q: number, r: number }) {
+    _moveConfirmResolve?.(pos);
+    _moveConfirmResolve = null;
+}
+
+function waitForMoveConfirmation(timeoutMs = MOVEMENT_DURATION_MS + 500): Promise<{ q: number, r: number }> {
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            _moveConfirmResolve = null;
+            reject(new Error('move_confirmed timeout'));
+        }, timeoutMs);
+
+        _moveConfirmResolve = (pos) => {
+            clearTimeout(timeout);
+            resolve(pos);
+        };
+    });
+}
+
+function animateStep(
+    current: { x: number, y: number, z: number },
+    target: [number, number, number],
+    fromY: number,
+    toY: number,
+    sameElevation: boolean
+): Promise<void> {
+    return new Promise((resolve) => {
+        const startTime = performance.now();
+        function animate() {
+            const elapsed = performance.now() - startTime;
+            const t = Math.min(elapsed / MOVEMENT_DURATION_MS, 1);
+            const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+            gameState.playerAnimPosition = {
+                x: current.x + (target[0] - current.x) * eased,
+                y: sameElevation ? fromY : fromY + (toY - fromY) * t,
+                z: current.z + (target[2] - current.z) * eased
+            };
+            if (t < 1) requestAnimationFrame(animate);
+            else resolve();
+        }
+        requestAnimationFrame(animate);
+    });
+}
+
+export async function startMovement(
+    socket: Socket,
+    path: { q: number, r: number }[],
+    localPlayer: EntityDTO
+) {
     if (path.length === 0 || _isMoving || !localPlayer) return;
     _isMoving = true;
 
@@ -24,65 +74,44 @@ export async function startMovement(socket: Socket, path: { q: number, r: number
                 z: hexToWorld(currentQ, currentR)[2]
             };
             const target = hexToWorld(step.q, step.r);
-
             const fromTile = gameState.map[`${currentQ},${currentR}`];
             const toTile = gameState.map[`${step.q},${step.r}`];
             const fromY = fromTile ? getScaleY(fromTile) + 1 : current.y;
             const toY = toTile ? getScaleY(toTile) + 1 : fromY;
 
-            await new Promise(resolve => setTimeout(resolve, 150));
             socket.emit('request_move', { q: step.q, r: step.r });
-            const sameElevation = fromY === toY;
-            const startTime = performance.now();
+            try {
+                const [confirmedPos] = await Promise.all([
+                    waitForMoveConfirmation(),
+                    animateStep(current, target, fromY, toY, fromY === toY)
+                ]);
 
-            await new Promise<void>((resolve) => {
-                function animate() {
-                    const elapsed = performance.now() - startTime;
-                    const t = Math.min(elapsed / MOVEMENT_DURATION_MS, 1);
-                    const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-                    gameState.playerAnimPosition = {
-                        x: current.x + (target[0] - current.x) * eased,
-                        y: sameElevation ? fromY : fromY + (toY - fromY) * t,
-                        z: current.z + (target[2] - current.z) * eased
-                    };
-                    if (t < 1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        resolve();
-                    }
-                }
-                requestAnimationFrame(animate);
-            });
+                currentQ = confirmedPos.q;
+                currentR = confirmedPos.r;
 
-            currentQ = step.q;
-            currentR = step.r;
-
-            const mapData = Object.values(gameState.map);
-
-            const fresh = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
-            if (fresh) {
                 gameState.localPlayer = {
-                    ...fresh,
-                    position: { q: currentQ, r: currentR }
+                    ...gameState.entities.find(e => e.id === gameState.localPlayer?.id)!,
+                    position: confirmedPos
                 };
+
+                expandFog(currentQ, currentR, Object.values(gameState.map));
             }
-
-            expandFog(step.q, step.r, mapData);
+            catch {
+                break;
+            }
         }
-
-    }
-    finally {
+    } finally {
         _isMoving = false;
         gameState.path = [];
     }
-
-
 }
 
-export function requestMove(socket: Socket, localPlayer: EntityDTO, selectedHex: TileData | null | undefined) {
-
+export function requestMove(
+    socket: Socket,
+    localPlayer: EntityDTO,
+    selectedHex: TileData | null | undefined
+) {
     if (!selectedHex) return;
-
     const path = findPath(
         localPlayer.position.q,
         localPlayer.position.r,
@@ -90,17 +119,13 @@ export function requestMove(socket: Socket, localPlayer: EntityDTO, selectedHex:
         selectedHex.r,
         gameState.map
     );
-
     if (path.length === 0) return;
-
     gameState.path = path;
     startMovement(socket, path, localPlayer);
-
 }
 
 export const isMoveValid = () => {
     if (!gameState.localPlayer || !gameState.selectedHex) return false;
     if (gameState.selectedHex.type === 'WATER') return false;
-
     return true;
 };

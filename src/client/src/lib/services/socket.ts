@@ -2,7 +2,7 @@ import { io, type Socket } from 'socket.io-client';
 import type { TileData } from '$shared';
 import { gameState } from '$lib/stores/gameState.svelte';
 import { goto } from '$app/navigation';
-import { isMoving } from './movementService';
+import { isMoving, onMoveConfirmed } from './movementService';
 
 const SERVER_URL = 'http://localhost:3000';
 
@@ -58,24 +58,16 @@ export function initializeSocket() {
     socket.on('world_update', (entities) => {
         gameState.entities = entities;
         const fresh = gameState.entities.find(e => e.id === gameState.localPlayer?.id) ?? null;
-        if (!fresh || !gameState.localPlayer) {
-            gameState.localPlayer = fresh;
-            return;
-        }
+        if (!fresh) return;
 
-        const targetQ = gameState.localPlayer.position.q;
-        const targetR = gameState.localPlayer.position.r;
-        const serverQ = fresh.position.q;
-        const serverR = fresh.position.r;
+        gameState.localPlayer = {
+            ...fresh,
+            position: isMoving() ? gameState.localPlayer!.position : fresh.position
+        };
+    });
 
-        if (isMoving() || serverQ !== targetQ || serverR !== targetR) {
-            gameState.localPlayer = {
-                ...fresh,
-                position: gameState.localPlayer.position
-            };
-        } else {
-            gameState.localPlayer = fresh;
-        }
+    socket.on('move_confirmed', (pos: { q: number, r: number }) => {
+        onMoveConfirmed(pos);
     });
 
     socket.on('disconnect', () => {
