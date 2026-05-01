@@ -1,5 +1,5 @@
 import { World } from '../core/World';
-import { IHarvestIntent, IInventory, IPosition, IEnergy, TileData, Resource } from '$shared';
+import { IHarvestIntent, IInventory, IPosition, IEnergy, TileData, Resource, ActionType } from '$shared';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
@@ -30,8 +30,18 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         if (energy) energy.current = Math.max(0, energy.current - 1);
 
         harvested = true;
-        world.addComponent(entity, 'ActionTag', { type: 'CHOP_WOOD', timestamp: Date.now() });
+        world.addComponent(entity, 'ActionTag', { type: getActionType(resource.type), timestamp: Date.now() });
     }
 
     return harvested;
+}
+
+
+function getActionType(resourceType: Resource): ActionType {
+    switch (resourceType) {
+        case Resource.WOOD: return ActionType.CHOP_WOOD;
+        case Resource.STONE: return ActionType.MINE_STONE;
+        case Resource.SILVER: return ActionType.MINE_SILVER;
+        default: return ActionType.CHOP_WOOD;
+    }
 }

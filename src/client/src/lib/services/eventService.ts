@@ -1,6 +1,5 @@
 import { gameState } from '$lib/stores/gameState.svelte';
 import { writable } from 'svelte/store';
-import type { initializeSocket } from './socket';
 import type { Socket } from 'socket.io-client';
 import type { DefaultEventsMap } from 'socket.io';
 
@@ -28,6 +27,6 @@ export function processGameEvents(socket: Socket<DefaultEventsMap, DefaultEvents
     const pending = gameState.localPlayer?.gameEvents?.events?.filter(e => e.status === 'PENDING') ?? [];
     pending.forEach(event => {
         addGameEvent(event.event.description);
-        socket.emit('event_response', event.uuid);
+
     });
 }

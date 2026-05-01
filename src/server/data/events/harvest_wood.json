@@ -1,0 +1,187 @@
+[
+    {
+        "id": "falling_tree",
+        "title": "The tree falls badly",
+        "description": "A tree falls on you and crushes your leg",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 100,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "legLeft",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "rich_vein_of_wood",
+        "title": "A magnificent tree",
+        "description": "This tree is exceptionally large, you harvest twice as much wood",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 8,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "wood",
+                "value": 3
+            }
+        ]
+    },
+    {
+        "id": "splinter_in_hand",
+        "title": "Splinter",
+        "description": "A large splinter pierces your hand, your arm is weakened",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 5,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "armRight",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "beehive_disturbed",
+        "title": "Disturbed beehive",
+        "description": "A beehive hidden in the tree falls on you, the bees sting your face",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 2,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "head",
+                "value": -1
+            },
+            {
+                "type": "STAT",
+                "stat": "endurance",
+                "value": -2
+            }
+        ]
+    },
+    {
+        "id": "bird_nest_found",
+        "title": "Bird nest",
+        "description": "You find a bird nest with eggs in it, a welcome snack",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 4,
+        "effects": [
+            {
+                "type": "STAT",
+                "stat": "hunger",
+                "value": 10
+            }
+        ]
+    },
+    {
+        "id": "axe_slips",
+        "title": "The axe slips",
+        "description": "Your axe slips and cuts your leg, you bleed",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "legRight",
+                "value": -1
+            },
+            {
+                "type": "STAT",
+                "stat": "endurance",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "hollow_tree",
+        "title": "Hollow tree",
+        "description": "The tree is hollow and rotten, you waste your time and energy",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 6,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "wood",
+                "value": -2
+            },
+            {
+                "type": "STAT",
+                "stat": "fatigue",
+                "value": -5
+            }
+        ]
+    },
+    {
+        "id": "ancient_tree",
+        "title": "Ancient tree",
+        "description": "You stumble upon an ancient tree, its wood is denser and more valuable",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 2,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "wood",
+                "value": 5
+            },
+            {
+                "type": "SKILL",
+                "stat": "woodcutting",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "snake_in_bark",
+        "title": "Snake in the bark",
+        "description": "A snake was hiding under the bark and bites your hand",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 2,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "armLeft",
+                "value": -1
+            },
+            {
+                "type": "STAT",
+                "stat": "endurance",
+                "value": -3
+            }
+        ]
+    },
+    {
+        "id": "perfect_rhythm",
+        "title": "Perfect rhythm",
+        "description": "You find a perfect chopping rhythm, your technique improves",
+        "triggers": [
+            "CHOP_WOOD"
+        ],
+        "probability": 5,
+        "effects": [
+            {
+                "type": "SKILL",
+                "stat": "woodcutting",
+                "value": 1
+            }
+        ]
+    }
+]

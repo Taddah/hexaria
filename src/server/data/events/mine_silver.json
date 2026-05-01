@@ -1,0 +1,197 @@
+[
+    {
+        "id": "silver_vein_collapse",
+        "title": "Vein collapse",
+        "description": "The silver vein crumbles under your pickaxe, rubble pins your legs",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "legLeft",
+                "value": -2
+            },
+            {
+                "type": "BODY",
+                "stat": "legRight",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "rich_silver_vein",
+        "title": "Rich silver vein",
+        "description": "The vein is exceptionally pure, silver ore pours out with every strike",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 6,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "silver",
+                "value": 4
+            }
+        ]
+    },
+    {
+        "id": "silver_toxic_gas",
+        "title": "Toxic gas pocket",
+        "description": "Your pickaxe pierces a gas pocket trapped near the vein, the fumes are nauseating",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "torso",
+                "value": -2
+            },
+            {
+                "type": "STAT",
+                "stat": "endurance",
+                "value": -4
+            }
+        ]
+    },
+    {
+        "id": "silver_dust_poisoning",
+        "title": "Silver dust poisoning",
+        "description": "Fine silver dust coats your lungs, a slow poison that weakens your whole body",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 4,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "torso",
+                "value": -1
+            },
+            {
+                "type": "STAT",
+                "stat": "endurance",
+                "value": -3
+            },
+            {
+                "type": "STAT",
+                "stat": "strength",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "silver_nugget_pure",
+        "title": "Pure nugget",
+        "description": "You extract a flawless silver nugget, far more valuable than standard ore",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 2,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "silver",
+                "value": 6
+            }
+        ]
+    },
+    {
+        "id": "ancient_silver_coins",
+        "title": "Ancient coins",
+        "description": "Embedded in the rock you find a cache of ancient silver coins, a relic of a lost civilization",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 1,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "silver",
+                "value": 8
+            },
+            {
+                "type": "SKILL",
+                "stat": "survival",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "pickaxe_shattered_silver",
+        "title": "Pickaxe shattered",
+        "description": "The extreme hardness of the silver-bearing rock shatters your pickaxe head",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 4,
+        "effects": [
+            {
+                "type": "EQUIPMENT",
+                "stat": "pickaxe",
+                "value": -2
+            }
+        ]
+    },
+    {
+        "id": "silver_eye_fragment",
+        "title": "Silver fragment",
+        "description": "A sharp sliver of silver ore flies into your eye, the wound is deep",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "eyeLeft",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "silver_tremor",
+        "title": "Ground tremor",
+        "description": "Your mining triggers a small tremor, the walls shake and gravel rains on your back",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "torso",
+                "value": -1
+            },
+            {
+                "type": "RESOURCE",
+                "stat": "silver",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "silver_master_eye",
+        "title": "Trained eye",
+        "description": "You develop a keen eye for spotting silver veins, your mining instinct sharpens",
+        "triggers": [
+            "MINE_SILVER"
+        ],
+        "probability": 5,
+        "effects": [
+            {
+                "type": "SKILL",
+                "stat": "mining",
+                "value": 1
+            },
+            {
+                "type": "RESOURCE",
+                "stat": "silver",
+                "value": 1
+            }
+        ]
+    }
+]

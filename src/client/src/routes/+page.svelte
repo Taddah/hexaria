@@ -32,7 +32,7 @@
 	>
 		<h1 class="text-center text-xl tracking-wider text-stone-100">⚔️ Entrez dans le monde</h1>
 
-		<form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-4">
+		<form onsubmit={handleSubmit} class="flex flex-col gap-4">
 			<div class="flex flex-col gap-1">
 				<label for="firstName" class="text-xs tracking-widest text-stone-400 uppercase"
 					>Prénom</label

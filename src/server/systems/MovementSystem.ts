@@ -1,6 +1,6 @@
 import { World } from '../core/World';
 import { TileData } from '$shared/types';
-import { IMovementIntent, IPosition, IEnergy, MOVEMENT_DURATION_MS, IPlayer } from '$shared';
+import { IMovementIntent, IPosition, IEnergy, MOVEMENT_DURATION_MS, IPlayer, ActionType } from '$shared';
 
 
 
@@ -38,5 +38,7 @@ export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed
         if (player?.socketId) {
             onMoveConfirmed(player.socketId, { q: pos.q, r: pos.r });
         }
+
+        world.addComponent(entity, 'ActionTag', { type: ActionType.TRAVEL, timestamp: Date.now() });
     }
 }

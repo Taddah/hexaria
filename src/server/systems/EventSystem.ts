@@ -1,50 +1,95 @@
-import { World } from "../core/World";
-import { ActionType, EventComponent, GameEvent, IActionTag, IEventsHistory } from "$shared";
+// systems/eventSystem.ts
+import { IActionTag, IEventsHistory, EventComponent, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent } from "$shared/components";
+import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
-import { v4 as uuidv4 } from 'uuid';
+import { World } from "../core/World";
 
-const BASE_EVENT_CHANCE = 0.05;
-
+const BASE_EVENT_CHANCE = 0.3;
 
 export function runEventSystem(world: World): void {
     const entities = world.query(['ActionTag']);
 
-    if (entities.length > 0)
+    for (const entity of entities) {
+        const action = world.getComponent<IActionTag>(entity, 'ActionTag');
+        const history = world.getComponent<IEventsHistory>(entity, 'EventHistory');
+        let eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
 
-        for (const entity of entities) {
-            const action = world.getComponent<IActionTag>(entity, 'ActionTag');
-            const history = world.getComponent<IEventsHistory>(entity, 'EventHistory');
-            let eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
+        if (!action) continue;
 
-            if (!action) continue;
-
-            if (!eventComponent) {
-                world.addComponent(entity, 'EventComponent', { events: [] });
-                eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
-            }
-
-            if (shouldTriggerEvent(history)) {
-                const event = pickEvent(action.type);
-                if (event) {
-
-                    eventComponent?.events.push({
-                        uuid: uuidv4(),
-                        event: event,
-                        status: "PENDING",
-                        appliedAt: Date.now()
-                    });
-
-                    // Mise à jour historique
-                    world.addComponent(entity, 'EventHistory',
-                        history ? { history: [...history.history, action.type].slice(-20) } : { history: [action.type] }
-                    );
-                }
-            }
-
-            // Retire le tag après traitement
-            world.removeComponent(entity, 'ActionTag');
+        if (!eventComponent) {
+            world.addComponent(entity, 'EventComponent', { events: [] });
+            eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
         }
+
+        if (shouldTriggerEvent(history)) {
+            const event = pickEvent(action.type);
+            if (event && eventComponent) {
+                eventComponent.events.push({
+                    uuid: uuidv4(),
+                    event,
+                    status: "PENDING",
+                    appliedAt: Date.now()
+                });
+
+                applyEffects(world, entity, event.effects);
+
+                world.addComponent(entity, 'EventHistory',
+                    history
+                        ? { history: [...history.history, action.type].slice(-20) }
+                        : { history: [action.type] }
+                );
+            }
+        }
+
+        world.removeComponent(entity, 'ActionTag');
+    }
 }
+
+// ─── Apply Effects ────────────────────────────────────────────────────────────
+
+function applyEffects(world: World, entity: number, effects: EventEffect[]): void {
+    for (const effect of effects) {
+        switch (effect.type) {
+            case EffectType.RESOURCE:
+                applyResourceEffect(world, entity, effect.stat, effect.value);
+                break;
+            case EffectType.BODY:
+                applyBodyEffect(world, entity, effect.stat, effect.value);
+                break;
+        }
+    }
+}
+
+function applyResourceEffect(world: World, entity: number, stat: string, value: number): void {
+    const inventory = world.getComponent<IInventory>(entity, 'Inventory');
+    if (!inventory) return;
+
+    const current = (inventory as any)[stat] ?? 0;
+    (inventory as any)[stat] = Math.max(0, current + value);
+}
+
+function applyBodyEffect(world: World, entity: number, part: BodyPart, delta: number): void {
+    const body = world.getComponent<IBody>(entity, 'Body');
+    if (!body) return;
+
+    const states = [
+        BodyPartState.INTACT,
+        BodyPartState.INJURED,
+        BodyPartState.HANDICAPPED,
+        BodyPartState.LOST,
+    ];
+
+    console.log("apply effect", body[part], body, part, delta)
+
+    const current = states.indexOf(body[part]);
+    const next = Math.min(Math.max(current + delta, 0), states.length - 1);
+    const nextState = states[next] as BodyPartState;
+
+    console.log("next state", nextState)
+    body[part] = nextState;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function shouldTriggerEvent(history: IEventsHistory | undefined): boolean {
     const recentSameActions = history ? history.history.slice(-5).length : 0;
@@ -53,21 +98,16 @@ function shouldTriggerEvent(history: IEventsHistory | undefined): boolean {
 }
 
 function pickEvent(actionType: ActionType): GameEvent | undefined {
-    const events = EventRegistry.getAll();
-    const candidates = (events as GameEvent[]).filter(e =>
-        e.triggers.includes(actionType)
-    );
-    if (candidates.length === 0) return undefined;
-
-    const totalWeight = candidates.reduce((sum, e) => sum + e.weight, 0);
-    let roll = Math.random() * totalWeight;
+    const events = EventRegistry.getAll() as GameEvent[];
+    const candidates = events
+        .filter(e => e.triggers.includes(actionType))
+        .sort(() => Math.random() - 0.5);
 
     for (const event of candidates) {
-        roll -= event.weight;
-        if (roll <= 0) return event;
+        if (Math.random() * 100 < event.probability) {
+            return event;
+        }
     }
 
-    return candidates[candidates.length - 1];
+    return undefined;
 }
-
-

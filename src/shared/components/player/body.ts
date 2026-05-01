@@ -1,5 +1,4 @@
 
-
 export enum BodyPart {
     HEAD = 'head',
     EYE_LEFT = 'eyeLeft',

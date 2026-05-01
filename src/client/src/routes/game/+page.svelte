@@ -9,6 +9,7 @@
 	import HexInfoBar from '$lib/components/ui/HexInfoBar.svelte';
 	import ChatPanel from '$lib/components/ui/ChatPanel.svelte';
 	import { goto } from '$app/navigation';
+	import EventModal from '$lib/components/ui/EventModal.svelte';
 
 	const localPlayer = $derived(gameState.localPlayer);
 	const socket = getSocket();
@@ -41,6 +42,8 @@
 		<ActionPanel />
 
 		<ChatPanel />
+
+		<EventModal />
 	{:else}
 		<!-- Loading -->
 		<div class="flex h-full items-center justify-center">

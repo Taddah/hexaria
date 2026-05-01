@@ -1,0 +1,182 @@
+[
+    {
+        "id": "rock_collapse",
+        "title": "Rock collapse",
+        "description": "A section of rock collapses on you, crushing your arm",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "armLeft",
+                "value": -2
+            }
+        ]
+    },
+    {
+        "id": "rich_stone_vein",
+        "title": "Rich vein",
+        "description": "You strike a particularly dense pocket of stone, yielding much more than expected",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 7,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "stone",
+                "value": 4
+            }
+        ]
+    },
+    {
+        "id": "stone_splinter_eye",
+        "title": "Stone splinter",
+        "description": "A sharp fragment of rock flies into your eye, your vision is blurred",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 3,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "head",
+                "value": -1
+            },
+            {
+                "type": "STAT",
+                "stat": "perception",
+                "value": -2
+            }
+        ]
+    },
+    {
+        "id": "pickaxe_breaks",
+        "title": "Pickaxe breaks",
+        "description": "Your pickaxe cracks under the pressure and becomes unusable",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 4,
+        "effects": [
+            {
+                "type": "EQUIPMENT",
+                "stat": "pickaxe",
+                "value": -1
+            }
+        ]
+    },
+    {
+        "id": "fossil_discovered",
+        "title": "Fossil discovered",
+        "description": "You uncover a rare fossil embedded in the rock, a valuable curiosity",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 2,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "fossil",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "dust_inhalation",
+        "title": "Dust inhalation",
+        "description": "You breathe in too much stone dust, your lungs burn",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 5,
+        "effects": [
+            {
+                "type": "BODY",
+                "stat": "torso",
+                "value": -1
+            },
+            {
+                "type": "STAT",
+                "stat": "endurance",
+                "value": -2
+            }
+        ]
+    },
+    {
+        "id": "hidden_cave",
+        "title": "Hidden cave",
+        "description": "Your pickaxe breaks through into a small hidden cave, you find supplies left by someone",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 1,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "food",
+                "value": 2
+            },
+            {
+                "type": "RESOURCE",
+                "stat": "silver",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "flint_node",
+        "title": "Flint node",
+        "description": "You discover a cluster of flint, useful for crafting",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 6,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "flint",
+                "value": 2
+            }
+        ]
+    },
+    {
+        "id": "perfect_strike",
+        "title": "Perfect strike",
+        "description": "You hit the rock at the perfect angle, your mining technique sharpens",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 5,
+        "effects": [
+            {
+                "type": "SKILL",
+                "stat": "mining",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "underground_spring",
+        "title": "Underground spring",
+        "description": "You break through to a small underground spring, fresh water flows out",
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "probability": 2,
+        "effects": [
+            {
+                "type": "RESOURCE",
+                "stat": "water",
+                "value": 3
+            },
+            {
+                "type": "STAT",
+                "stat": "thirst",
+                "value": 10
+            }
+        ]
+    }
+]
