@@ -11,7 +11,7 @@
             {
                 "type": "BODY",
                 "stat": "legRight",
-                "value": -2
+                "value": 2
             },
             {
                 "type": "STAT",
@@ -53,7 +53,7 @@
             {
                 "type": "BODY",
                 "stat": "torso",
-                "value": -3
+                "value": 3
             },
             {
                 "type": "RESOURCE",
@@ -163,7 +163,7 @@
             {
                 "type": "BODY",
                 "stat": "legLeft",
-                "value": -2
+                "value": 2
             },
             {
                 "type": "STAT",
@@ -226,17 +226,17 @@
             {
                 "type": "BODY",
                 "stat": "torso",
-                "value": -2
+                "value": 2
             },
             {
                 "type": "BODY",
                 "stat": "armLeft",
-                "value": -1
+                "value": 1
             },
             {
                 "type": "BODY",
                 "stat": "legRight",
-                "value": -2
+                "value": 2
             }
         ]
     }

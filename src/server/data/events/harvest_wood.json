@@ -43,7 +43,7 @@
             {
                 "type": "BODY",
                 "stat": "armRight",
-                "value": -1
+                "value": 1
             }
         ]
     },
@@ -59,7 +59,7 @@
             {
                 "type": "BODY",
                 "stat": "head",
-                "value": -1
+                "value": 1
             },
             {
                 "type": "STAT",
@@ -96,7 +96,7 @@
             {
                 "type": "BODY",
                 "stat": "legRight",
-                "value": -1
+                "value": 1
             },
             {
                 "type": "STAT",
@@ -159,7 +159,7 @@
             {
                 "type": "BODY",
                 "stat": "armLeft",
-                "value": -1
+                "value": 1
             },
             {
                 "type": "STAT",
