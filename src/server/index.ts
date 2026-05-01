@@ -8,6 +8,7 @@ import { EventRegistry } from './core/EventRegistry';
 import { runEventSystem } from './systems/EventSystem';
 import { runResourceRenewalSystem } from './systems/ResourceRenewalSystem';
 import { getTimeState } from './systems/TimeSystem';
+import { runBodySystem } from './systems/BodySystem';
 
 function bootstrap() {
   const world = new World();
@@ -33,6 +34,7 @@ function bootstrap() {
       network.emitTo(socketId, 'move_confirmed', pos);
     });
     runEventSystem(world);
+    runBodySystem(world);
 
     const renewed = runResourceRenewalSystem(map);
 
