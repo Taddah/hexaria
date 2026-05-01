@@ -1,5 +1,5 @@
 import { World } from '../core/World';
-import { IHarvestIntent, IInventory, IPosition, IEnergy, TileData, Resource, ActionType } from '$shared';
+import { IHarvestIntent, IInventory, IPosition, TileData, Resource, ActionType } from '$shared';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
@@ -9,7 +9,6 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         const pos = world.getComponent<IPosition>(entity, 'Position');
         const inventory = world.getComponent<IInventory>(entity, 'Inventory');
         const intent = world.getComponent<IHarvestIntent>(entity, 'HarvestIntent');
-        const energy = world.getComponent<IEnergy>(entity, 'Energy');
 
         world.removeComponent(entity, 'HarvestIntent');
 
@@ -26,8 +25,6 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         resource.lastHarvestedAt = Date.now();
 
         inventory[resource.type] += amount;
-
-        if (energy) energy.current = Math.max(0, energy.current - 1);
 
         harvested = true;
         world.addComponent(entity, 'ActionTag', { type: getActionType(resource.type), timestamp: Date.now() });

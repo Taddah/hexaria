@@ -18,7 +18,8 @@
                 "stat": "endurance",
                 "value": 5
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "nightmare",
@@ -39,7 +40,8 @@
                 "stat": "stamina",
                 "value": -3
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "supplies_stolen",
@@ -60,7 +62,8 @@
                 "stat": "silver",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "healing_rest",
@@ -86,7 +89,8 @@
                 "stat": "armRight",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "insect_swarm",
@@ -112,7 +116,8 @@
                 "stat": "morale",
                 "value": -3
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "prophetic_dream",
@@ -138,7 +143,8 @@
                 "stat": "morale",
                 "value": 8
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "campfire_dies",
@@ -159,7 +165,8 @@
                 "stat": "endurance",
                 "value": -3
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "wild_animal_camp",
@@ -180,7 +187,8 @@
                 "stat": "morale",
                 "value": -5
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "inspired_rest",
@@ -201,7 +209,8 @@
                 "stat": "morale",
                 "value": 6
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "rain_soaked_sleep",
@@ -227,6 +236,7 @@
                 "stat": "water",
                 "value": 2
             }
-        ]
+        ],
+        "polarity": "negative"
     }
 ]

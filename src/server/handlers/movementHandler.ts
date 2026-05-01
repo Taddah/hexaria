@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
-import { IPosition, IEnergy, IMovementIntent } from "$shared/components";
+import { IPosition, IMovementIntent } from "$shared/components";
 import { TileData } from "$shared/types";
 import { findEntityBySocket } from "./utils";
 
@@ -17,11 +17,6 @@ export class MovementHandler {
 
             const pos = this.world.getComponent<IPosition>(entityId, 'Position');
             if (!pos) return;
-
-            const energy = this.world.getComponent<IEnergy>(entityId, 'Energy');
-            if (!energy || energy.current < 1) return;
-
-
 
             const tile = this.map.find(t => t.q === target.q && t.r === target.r);
             if (!tile || tile.type === 'WATER') return;

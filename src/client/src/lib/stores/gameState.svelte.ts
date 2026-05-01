@@ -1,11 +1,10 @@
-import type { IPosition, IIdentity, IInventory, IEnergy, EventComponent, TileData, IBody, IBodyModifiers } from '$shared';
+import type { IPosition, IIdentity, IInventory, EventComponent, TileData, IBody, IBodyModifiers } from '$shared';
 
 export interface EntityDTO {
     id: number;
     position: IPosition;
     identity: IIdentity;
     inventory?: IInventory;
-    energy?: IEnergy;
     gameEvents?: EventComponent;
     body: IBody;
     bodyModifiers: IBodyModifiers;

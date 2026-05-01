@@ -6,14 +6,15 @@
         "triggers": [
             "CHOP_WOOD"
         ],
-        "probability": 100,
+        "probability": 1,
         "effects": [
             {
                 "type": "BODY",
                 "stat": "legLeft",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "rich_vein_of_wood",
@@ -29,7 +30,8 @@
                 "stat": "wood",
                 "value": 3
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "splinter_in_hand",
@@ -45,7 +47,8 @@
                 "stat": "armRight",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "beehive_disturbed",
@@ -66,7 +69,8 @@
                 "stat": "endurance",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "bird_nest_found",
@@ -82,7 +86,8 @@
                 "stat": "hunger",
                 "value": 10
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "axe_slips",
@@ -103,7 +108,8 @@
                 "stat": "endurance",
                 "value": -1
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "hollow_tree",
@@ -124,7 +130,8 @@
                 "stat": "fatigue",
                 "value": -5
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "ancient_tree",
@@ -145,7 +152,8 @@
                 "stat": "woodcutting",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "snake_in_bark",
@@ -166,7 +174,8 @@
                 "stat": "endurance",
                 "value": -3
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "perfect_rhythm",
@@ -182,6 +191,7 @@
                 "stat": "woodcutting",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     }
 ]

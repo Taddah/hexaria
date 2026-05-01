@@ -18,7 +18,8 @@
                 "stat": "speed",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "discovered_shortcut",
@@ -39,7 +40,8 @@
                 "stat": "stamina",
                 "value": 5
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "ambush_bandit",
@@ -60,7 +62,8 @@
                 "stat": "silver",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "wild_berry_bush",
@@ -81,7 +84,8 @@
                 "stat": "hunger",
                 "value": 8
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "fresh_water_stream",
@@ -102,7 +106,8 @@
                 "stat": "thirst",
                 "value": 10
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "exhaustion",
@@ -123,7 +128,8 @@
                 "stat": "endurance",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "abandoned_camp",
@@ -149,7 +155,8 @@
                 "stat": "stone",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "snake_bite",
@@ -170,7 +177,8 @@
                 "stat": "endurance",
                 "value": -5
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "lost_in_fog",
@@ -191,7 +199,8 @@
                 "stat": "hunger",
                 "value": -5
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "merchants_trail",
@@ -212,7 +221,8 @@
                 "stat": "speed",
                 "value": 2
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "fall_into_ravine",
@@ -238,6 +248,7 @@
                 "stat": "legRight",
                 "value": 2
             }
-        ]
+        ],
+        "polarity": "negative"
     }
 ]

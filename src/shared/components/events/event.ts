@@ -60,12 +60,14 @@ export interface GameEvent {
     description: string;
     probability: number;
     triggers: ActionType[];
+    polarity: EventPolarity;
     effects: EventEffect[];
 }
 
 // ─── Event Instance ───────────────────────────────────────────────────────────
 
 export type EventStatus = "PENDING" | "SEEN";
+export type EventPolarity = 'positive' | 'negative' | 'neutral'
 
 export interface Event {
     uuid: string;

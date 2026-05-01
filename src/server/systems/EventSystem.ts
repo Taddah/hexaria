@@ -1,5 +1,5 @@
 // systems/eventSystem.ts
-import { IActionTag, IEventsHistory, EventComponent, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent } from "$shared/components";
+import { IActionTag, IEventsHistory, EventComponent, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent, EventPolarity } from "$shared/components";
 import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
 import { World } from "../core/World";
@@ -97,10 +97,15 @@ function shouldTriggerEvent(history: IEventsHistory | undefined): boolean {
     return Math.random() < chance;
 }
 
-function pickEvent(actionType: ActionType): GameEvent | undefined {
+function pickEvent(
+    actionType: ActionType,
+    filter: (EventPolarity | 'all') = 'all'
+): GameEvent | undefined {
     const events = EventRegistry.getAll() as GameEvent[];
+
     const candidates = events
         .filter(e => e.triggers.includes(actionType))
+        .filter(e => filter === 'all' || e.polarity === filter)
         .sort(() => Math.random() - 0.5);
 
     for (const event of candidates) {

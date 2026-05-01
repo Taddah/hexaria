@@ -13,7 +13,8 @@
                 "stat": "armLeft",
                 "value": 2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "rich_stone_vein",
@@ -29,7 +30,8 @@
                 "stat": "stone",
                 "value": 4
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "stone_splinter_eye",
@@ -50,7 +52,8 @@
                 "stat": "perception",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "pickaxe_breaks",
@@ -66,7 +69,8 @@
                 "stat": "pickaxe",
                 "value": -1
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "fossil_discovered",
@@ -82,7 +86,8 @@
                 "stat": "fossil",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "dust_inhalation",
@@ -103,7 +108,8 @@
                 "stat": "endurance",
                 "value": -2
             }
-        ]
+        ],
+        "polarity": "negative"
     },
     {
         "id": "hidden_cave",
@@ -124,7 +130,8 @@
                 "stat": "silver",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "flint_node",
@@ -140,7 +147,8 @@
                 "stat": "flint",
                 "value": 2
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "perfect_strike",
@@ -156,7 +164,8 @@
                 "stat": "mining",
                 "value": 1
             }
-        ]
+        ],
+        "polarity": "positive"
     },
     {
         "id": "underground_spring",
@@ -177,6 +186,7 @@
                 "stat": "thirst",
                 "value": 10
             }
-        ]
+        ],
+        "polarity": "positive"
     }
 ]
