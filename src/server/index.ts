@@ -9,6 +9,7 @@ import { runEventSystem } from './systems/EventSystem';
 import { runResourceRenewalSystem } from './systems/ResourceRenewalSystem';
 import { getTimeState } from './systems/TimeSystem';
 import { runBodySystem } from './systems/BodySystem';
+import { DAY_CYCLE_DURATION_MS, DAY_START } from '$shared/config';
 
 function bootstrap() {
   const world = new World();
@@ -21,7 +22,8 @@ function bootstrap() {
 
   const network = new NetworkSystem(3000, world, map);
 
-  const serverStartTime = Date.now();
+  const DAY_START_MS = DAY_START * DAY_CYCLE_DURATION_MS; // offset en ms du début du jour
+  const serverStartTime = Date.now() - DAY_START_MS;
   //Main heartbeat
   let tickCount = 0;
   setInterval(() => {
@@ -45,7 +47,6 @@ function bootstrap() {
       const timeState = getTimeState(serverStartTime);
       network.broadcastTimeUpdate(timeState);
     }
-
 
     network.broadcastWorldState();
 

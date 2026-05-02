@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { gameState } from '$lib/stores/gameState.svelte';
-	import { getPlayerTile } from '$lib/utils/tiles/playerUtils';
+	import { getPlayerTile } from '$lib/utils/playerUtils';
 	import PanelBg from '$lib/components/ui/PanelBg.svelte';
 	import { Resource, type Biome } from '$shared';
 

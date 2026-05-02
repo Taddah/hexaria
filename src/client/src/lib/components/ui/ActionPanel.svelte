@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { gameState } from '$lib/stores/gameState.svelte';
-	import { getPlayerTile } from '$lib/utils/tiles/playerUtils';
+	import { getPlayerTile } from '$lib/utils/playerUtils';
 	import { getSocket } from '$lib/services/socket';
 	import { requestMove } from '$lib/services/movementService';
 	import { requestHarvest } from '$lib/services/harvestService';
