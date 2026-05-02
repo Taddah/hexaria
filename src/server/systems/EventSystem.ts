@@ -1,8 +1,9 @@
 // systems/eventSystem.ts
-import { IActionTag, IEventsHistory, EventComponent, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent, EventPolarity } from "$shared/components";
+import { IActionTag, IEventsHistory, EventComponent, IFatigue, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent, EventPolarity } from "$shared/components";
 import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
 import { World } from "../core/World";
+import { getThreshold, ThresholdKey } from "./FatigueSystem";
 
 const BASE_EVENT_CHANCE = 0.3;
 
@@ -21,7 +22,10 @@ export function runEventSystem(world: World): void {
             eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
         }
 
-        if (shouldTriggerEvent(history)) {
+        const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
+        const threshold = fatigue ? getThreshold(fatigue.fatigue) : 'RESTED';
+
+        if (shouldTriggerEvent(history, action.type, threshold)) {
             const event = pickEvent(action.type);
             if (event && eventComponent) {
                 eventComponent.events.push({
@@ -91,9 +95,21 @@ function applyBodyEffect(world: World, entity: number, part: BodyPart, delta: nu
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function shouldTriggerEvent(history: IEventsHistory | undefined): boolean {
-    const recentSameActions = history ? history.history.slice(-5).length : 0;
-    const chance = BASE_EVENT_CHANCE * (1 - recentSameActions * 0.01);
+function shouldTriggerEvent(
+    history: IEventsHistory | undefined,
+    actionType: string,
+    threshold: ThresholdKey
+): boolean {
+    const recentSameActions = history
+        ? history.history.slice(-5).filter(a => a.action === actionType).length
+        : 0;
+
+    const fatigueBonus = { RESTED: 0, TIRED: 0.1, EXHAUSTED: 0.2, DONE: 0.35 };
+
+    const chance = BASE_EVENT_CHANCE
+        * (1 + recentSameActions * 0.05)   // +5% par action répétée récente
+        + fatigueBonus[threshold];
+
     return Math.random() < chance;
 }
 

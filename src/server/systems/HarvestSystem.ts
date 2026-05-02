@@ -1,5 +1,6 @@
 import { World } from '../core/World';
 import { IHarvestIntent, IInventory, IPosition, TileData, Resource, ActionType } from '$shared';
+import { addFatigue } from './FatigueSystem';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
@@ -28,6 +29,7 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
 
         harvested = true;
         world.addComponent(entity, 'ActionTag', { type: getActionType(resource.type), timestamp: Date.now() });
+        addFatigue(world, entity, 2);
     }
 
     return harvested;

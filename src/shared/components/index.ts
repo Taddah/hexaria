@@ -8,5 +8,7 @@ export * from './events/event';
 export * from './actions/actionTag';
 export * from './events/events-history';
 export * from './player/body';
+export * from './player/fatigue';
+
 
 

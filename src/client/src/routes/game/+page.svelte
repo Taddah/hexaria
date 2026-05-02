@@ -10,6 +10,7 @@
 	import ChatPanel from '$lib/components/ui/ChatPanel.svelte';
 	import { goto } from '$app/navigation';
 	import EventModal from '$lib/components/ui/EventModal.svelte';
+	import TopBar from '$lib/components/ui/TopBar.svelte';
 
 	const localPlayer = $derived(gameState.localPlayer);
 	const socket = getSocket();
@@ -29,6 +30,8 @@
 	{#if localPlayer}
 		<!-- Canvas 3D — plein écran derrière tout -->
 		<GameCanvas />
+
+		<TopBar />
 
 		<!-- PlayerInfo — panneau horizontal haut gauche -->
 		<PlayerInfo />

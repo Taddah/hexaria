@@ -1,5 +1,6 @@
 import { IPlayer, IPosition, IIdentity, IInventory } from "$shared/components";
 import { BodyPart, BodyPartState, IBody } from "$shared/components/player/body";
+import { IFatigue } from "$shared/components/player/fatigue";
 import { Resource } from "$shared/types";
 import { World } from "../core/World";
 
@@ -15,8 +16,9 @@ export class PlayerFactory {
 
         params.world.addComponent<IPlayer>(player, 'Player', { socketId: params.socketId });
         params.world.addComponent<IPosition>(player, 'Position', { q: 25, r: 25 });
-        params.world.addComponent<IIdentity>(player, 'Identity', { name: params.name, currentAge: params.age, ageMax: 100 });
+        params.world.addComponent<IIdentity>(player, 'Identity', { name: params.name, currentAge: params.age });
         params.world.addComponent<IInventory>(player, 'Inventory', { [Resource.WOOD]: 0, [Resource.STONE]: 0, [Resource.SILVER]: 0 });
+        params.world.addComponent<IFatigue>(player, 'Fatigue', { fatigue: 0 });
 
         params.world.addComponent<IBody>(player, 'Body', {
             [BodyPart.HEAD]: BodyPartState.INTACT,
