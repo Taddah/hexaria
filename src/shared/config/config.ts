@@ -1,3 +1,5 @@
+export const DEBUG_MODE = true;
+
 export const MOVEMENT_DURATION_MS = 1000;
 
 export const DAY_CYCLE_DURATION_MS = 10 * 60 * 1000; // 15 minutes

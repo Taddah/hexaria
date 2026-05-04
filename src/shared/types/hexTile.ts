@@ -36,7 +36,7 @@ export enum TileType {
     RIVER_STRAIGHT = 'RIVER_STRAIGHT',
     RIVER_CURVY = 'RIVER_CURVY',
     RIVER_B = 'RIVER_B',
-    RIVER_C = 'RIVER_C'
+    RIVER_END = 'RIVER_END'
 }
 
 export const HEX_DIRECTIONS = [

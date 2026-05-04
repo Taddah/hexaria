@@ -1,6 +1,6 @@
 // systems/BodySystem.ts
 import { World } from '../core/World';
-import { IBody, IBodyModifiers, BodyPartState, VISION_RADIUS_DAY } from '$shared';
+import { IBody, IBodyModifiers, BodyPartState, VISION_RADIUS_DAY, DEBUG_MODE } from '$shared';
 
 function stateIndex(state: BodyPartState): number {
     return ['intact', 'injured', 'handicapped', 'lost'].indexOf(state);
@@ -27,15 +27,16 @@ function computeHarvestMultiplier(body: IBody): number {
 }
 
 function computeVisionRadius(body: IBody): number {
+    const baseRadius = DEBUG_MODE ? 10 : VISION_RADIUS_DAY;
     const leftLost = body.eyeLeft === 'lost';
     const rightLost = body.eyeRight === 'lost';
     const leftInjured = body.eyeLeft === 'injured';
     const rightInjured = body.eyeRight === 'injured';
 
     if (leftLost && rightLost) return 0;
-    if (leftLost || rightLost) return VISION_RADIUS_DAY - 1;
-    if (leftInjured || rightInjured) return VISION_RADIUS_DAY - 1;
-    return VISION_RADIUS_DAY;
+    if (leftLost || rightLost) return baseRadius - 1;
+    if (leftInjured || rightInjured) return baseRadius - 1;
+    return baseRadius;
 }
 
 export function runBodySystem(world: World): void {

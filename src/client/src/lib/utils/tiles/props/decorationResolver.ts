@@ -83,7 +83,7 @@ function buildSingleProp(tile: TileData, assets: string[], scaleY: number, categ
 }
 
 export function getDecorationProps(tile: TileData, scaleY: number): PropData[] {
-    if (tile.type === 'WATER' || tile.resource) return [];
+    if (tile.type === 'WATER' || tile.resource || tile.type.includes('RIVER')) return [];
     if (!tile.decoZone || tile.decoZone.type === DecoType.EMPTY) return [];
 
     const assetMap = { [DecoType.SPARSE]: SPARSE_ASSETS, [DecoType.MEDIUM]: MEDIUM_ASSETS, [DecoType.DENSE]: DENSE_ASSETS };

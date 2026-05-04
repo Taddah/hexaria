@@ -15,7 +15,7 @@ export class MapGenerator {
   private resourceGenerator = new ResourceGenerator(SEED);
   private decorationGenerator = new DecorationGenerator(SEED);
   private coastGenerator = new CoastGenerator();
-  private riverGenerator = new RiverGenerator();
+  private riverGenerator = new RiverGenerator(SEED);
 
 
   generateMap(width: number, height: number): TileData[] {

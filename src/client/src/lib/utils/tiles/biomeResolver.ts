@@ -22,8 +22,8 @@ export function getTopAssetPath(tileData: TileData): string {
             return '/assets/models/tiles/rivers/hex_river_A_curvy.gltf'
         case 'RIVER_B':
             return '/assets/models/tiles/rivers/hex_river_B.gltf'
-        case 'RIVER_C':
-            return '/assets/models/tiles/rivers/hex_river_C.gltf'
+        case 'RIVER_END':
+            return '/assets/models/tiles/rivers/hex_river_start_end.gltf'
         default:
             return '/assets/models/tiles/base/hex_grass.gltf';
     }

@@ -1,28 +1,82 @@
 import { TileData, HEX_DIRECTIONS, TileType, Biome } from "$shared/index";
+import seedrandom from "seedrandom";
 
 // === REGLAGES DES COURBES ===
-// Modifie ces valeurs (de 0 à 5) et sauvegarde pour voir le résultat direct dans ton navigateur.
-// Cela dépend de l'orientation native de ton modèle 3D RIVER_B dans Blender/Blockbench.
-const OFFSET_LEFT_TURN = 4;   // Pour les virages à gauche
-const OFFSET_RIGHT_TURN = 3;  // Pour les virages à droite avec scaleX = -1
+// Modifie ces valeurs (de 0 à 5) selon l'orientation native de tes modèles 3D.
+const OFFSET_LEFT_TURN = 3;
+const OFFSET_RIGHT_TURN = 0;
+const OFFSET_RIVER_START = 0;
+const OFFSET_RIVER_END = 3;
 // ============================
 
+// === REGLAGES GENERATION ===
+const MAX_RIVER_LENGTH = 100;
+const STRAIGHT_VS_CURVY_RATIO = 0.5;
+// ============================
+
+interface PathNode {
+    tile: TileData;
+    dirIn: number;   // direction d'entrée (-1 si source)
+    dirOut: number;  // direction de sortie (-1 si fin)
+}
+
 export class RiverGenerator {
+    private rng: () => number;
+    private tileMap = new Map<string, TileData>();
+    private distMap = new Map<string, number>();
+
+    constructor(seed: string) {
+        this.rng = seedrandom(`${seed}_rivers`);
+    }
+
+    // ============================================================
+    // POINT D'ENTREE
+    // ============================================================
     generate(tiles: TileData[]): TileData[] {
-        const tileMap = new Map<string, TileData>(
-            tiles.map(t => [`${t.q},${t.r}`, t])
-        );
+        this.buildTileMap(tiles);
+        this.computeDistanceToWater(tiles);
 
-        const getNeighbor = (tile: TileData, dirIndex: number) =>
-            tileMap.get(`${tile.q + HEX_DIRECTIONS[dirIndex]!.q},${tile.r + HEX_DIRECTIONS[dirIndex]!.r}`);
+        const clusters = this.findMountainClusters(tiles);
+        const sources = this.pickSourcesFromClusters(clusters);
 
-        // 1. Calculate distance to water for all tiles (BFS)
-        const distMap = new Map<string, number>();
+        for (const source of sources) {
+            const path = this.tracePathToWater(source);
+            if (path.length < 2) continue;
+            this.applyRiverToPath(path);
+        }
+
+        return tiles;
+    }
+
+    // ============================================================
+    // UTILITAIRES DE BASE
+    // ============================================================
+    private key(tile: TileData): string {
+        return `${tile.q},${tile.r}`;
+    }
+
+    private buildTileMap(tiles: TileData[]): void {
+        this.tileMap.clear();
+        for (const t of tiles) {
+            this.tileMap.set(this.key(t), t);
+        }
+    }
+
+    private getNeighbor(tile: TileData, dirIndex: number): TileData | undefined {
+        const dir = HEX_DIRECTIONS[dirIndex]!;
+        return this.tileMap.get(`${tile.q + dir.q},${tile.r + dir.r}`);
+    }
+
+    // ============================================================
+    // ETAPE 1 : DISTANCE A L'EAU (BFS depuis toutes les tuiles eau)
+    // ============================================================
+    private computeDistanceToWater(tiles: TileData[]): void {
+        this.distMap.clear();
         const queue: TileData[] = [];
 
         for (const tile of tiles) {
             if (tile.type === TileType.WATER) {
-                distMap.set(`${tile.q},${tile.r}`, 0);
+                this.distMap.set(this.key(tile), 0);
                 queue.push(tile);
             }
         }
@@ -30,124 +84,192 @@ export class RiverGenerator {
         let head = 0;
         while (head < queue.length) {
             const current = queue[head++]!;
-            const currentDist = distMap.get(`${current.q},${current.r}`)!;
+            const currentDist = this.distMap.get(this.key(current))!;
 
             for (let i = 0; i < 6; i++) {
-                const neighbor = getNeighbor(current, i);
-                if (neighbor && neighbor.type !== TileType.WATER) {
-                    const key = `${neighbor.q},${neighbor.r}`;
-                    if (!distMap.has(key)) {
-                        // Weighted by elevation: it's harder to go up.
-                        // Actually just distance is fine to find shortest path to water.
-                        distMap.set(key, currentDist + 1);
-                        queue.push(neighbor);
-                    }
-                }
+                const neighbor = this.getNeighbor(current, i);
+                if (!neighbor || neighbor.type === TileType.WATER) continue;
+
+                const nKey = this.key(neighbor);
+                if (this.distMap.has(nKey)) continue;
+
+                this.distMap.set(nKey, currentDist + 1);
+                queue.push(neighbor);
+            }
+        }
+    }
+
+    // ============================================================
+    // ETAPE 2 : CLUSTERING DES MONTAGNES (composantes connexes)
+    // ============================================================
+    private findMountainClusters(tiles: TileData[]): TileData[][] {
+        // Tri pour ordre déterministe
+        const mountainTiles = tiles
+            .filter(t => t.biome === Biome.MOUNTAIN)
+            .sort((a, b) => a.q - b.q || a.r - b.r);
+
+        const visited = new Set<string>();
+        const clusters: TileData[][] = [];
+
+        for (const start of mountainTiles) {
+            if (visited.has(this.key(start))) continue;
+            clusters.push(this.floodFillMountain(start, visited));
+        }
+
+        return clusters;
+    }
+
+    private floodFillMountain(start: TileData, visited: Set<string>): TileData[] {
+        const cluster: TileData[] = [];
+        const stack: TileData[] = [start];
+        visited.add(this.key(start));
+
+        while (stack.length > 0) {
+            const tile = stack.pop()!;
+            cluster.push(tile);
+
+            for (let i = 0; i < 6; i++) {
+                const neighbor = this.getNeighbor(tile, i);
+                if (!neighbor) continue;
+                if (neighbor.biome !== Biome.MOUNTAIN) continue;
+
+                const nKey = this.key(neighbor);
+                if (visited.has(nKey)) continue;
+
+                visited.add(nKey);
+                stack.push(neighbor);
             }
         }
 
-        // 2. Generate rivers from mountains
-        const mountainTiles = tiles.filter(t => t.biome === Biome.MOUNTAIN);
-        // Shuffle and pick up to 2 sources
-        const sources = mountainTiles.sort(() => Math.random() - 0.5).slice(0, 2);
+        return cluster;
+    }
 
-        for (const source of sources) {
-            let current = source;
-            let path: { tile: TileData, dirIn: number, dirOut: number }[] = [];
-            let inDir = -1;
-            let blocked = false;
+    // ============================================================
+    // ETAPE 3 : CHOIX DES SOURCES (une par cluster)
+    // ============================================================
+    private pickSourcesFromClusters(clusters: TileData[][]): TileData[] {
+        return clusters.map(cluster => this.pickSourceInCluster(cluster));
+    }
 
-            while (current.type !== TileType.WATER) {
-                let candidates = HEX_DIRECTIONS.map((_, i) => ({ neighbor: getNeighbor(current, i), dir: i }))
-                    .filter(c => c.neighbor && c.neighbor.elevation <= current.elevation && !path.some(p => p.tile === c.neighbor));
+    private pickSourceInCluster(cluster: TileData[]): TileData {
+        // Stratégie : tuile aléatoire seedée
+        // (alternative possible : la plus haute en élévation)
+        const idx = Math.floor(this.rng() * cluster.length);
+        return cluster[idx]!;
+    }
 
-                if (candidates.length === 0) {
-                    blocked = true;
-                    break;
-                }
+    // ============================================================
+    // ETAPE 4 : TRACE DU CHEMIN VERS L'EAU
+    // ============================================================
+    private tracePathToWater(source: TileData): PathNode[] {
+        const path: PathNode[] = [];
+        const visitedPath = new Set<string>();
 
-                const currentDist = distMap.get(`${current.q},${current.r}`) ?? 999;
+        let current = source;
+        let dirIn = -1;
 
-                let validCandidates = candidates.filter(c => {
-                    const d = distMap.get(`${c.neighbor!.q},${c.neighbor!.r}`) ?? 999;
-                    return d <= currentDist || c.neighbor!.elevation < current.elevation;
-                });
+        for (let step = 0; step < MAX_RIVER_LENGTH; step++) {
+            visitedPath.add(this.key(current));
 
-                if (validCandidates.length === 0) validCandidates = candidates;
+            const next = this.findNextStep(current, visitedPath);
 
-                const weighted = validCandidates.map(c => {
-                    let weight = 10;
-                    const cDist = distMap.get(`${c.neighbor!.q},${c.neighbor!.r}`) ?? 999;
-
-                    if (c.neighbor!.elevation < current.elevation) weight += 200; // Forte préférence pour descendre
-                    if (cDist < currentDist) weight += 30; // Préférence pour se rapprocher de l'eau
-                    if (cDist === currentDist) weight += 20; // Permet de faire des détours (méandres) sur la même hauteur
-                    if (inDir !== -1 && c.dir === (inDir + 3) % 6) weight += 10; // Légère préférence pour aller tout droit
-
-                    return { candidate: c, weight };
-                });
-
-                const totalWeight = weighted.reduce((sum, w) => sum + w.weight, 0);
-                let rand = Math.random() * totalWeight;
-                let next = weighted[0]!.candidate;
-                for (const w of weighted) {
-                    if (rand < w.weight) {
-                        next = w.candidate;
-                        break;
-                    }
-                    rand -= w.weight;
-                }
-
-                path.push({ tile: current, dirIn: inDir, dirOut: next.dir });
-                inDir = (next.dir + 3) % 6; // Opposite direction for next tile
-                current = next.neighbor!;
+            if (!next) {
+                // Bloqué : on termine le chemin ici
+                path.push({ tile: current, dirIn, dirOut: -1 });
+                break;
             }
 
-            if (blocked || path.length < 2) continue; // Skip if it didn't reach water
+            path.push({ tile: current, dirIn, dirOut: next.dir });
 
-            // 3. Process path
-            for (let i = 0; i < path.length; i++) {
-                const node = path[i]!;
-                if (node.tile.type === TileType.WATER) continue;
+            // Si on atteint l'eau, on arrête (sans pousser la tuile d'eau)
+            if (next.neighbor.type === TileType.WATER) break;
 
-                // Determine river type and rotation
-                if (node.dirIn !== -1 && node.dirOut !== -1) {
-                    const diff = (node.dirOut - node.dirIn + 6) % 6;
+            dirIn = (next.dir + 3) % 6; // direction inverse
+            current = next.neighbor;
+        }
 
-                    if (diff === 3) {
-                        node.tile.type = TileType.RIVER_STRAIGHT;
-                        node.tile.riverRotation = (node.dirIn + 3) * (Math.PI / 3);
-                    } else if (diff === 2 || diff === 4) {
-                        node.tile.type = TileType.RIVER_B;
-                        // The RIVER_B asset naturally connects edges 1 and 5 (diff=4, left turn).
-                        // To make it connect the correct edges, we use the offsets defined at the top of the file:
-                        if (diff === 2) { // Right turn
-                            node.tile.riverRotation = ((node.dirIn + OFFSET_RIGHT_TURN) % 6) * (Math.PI / 3);
-                            node.tile.riverScaleX = -1;
-                        } else { // Left turn
-                            node.tile.riverRotation = ((node.dirIn + OFFSET_LEFT_TURN) % 6) * (Math.PI / 3);
-                            node.tile.riverScaleX = 1;
-                        }
-                    } else {
-                        node.tile.type = TileType.RIVER_C;
-                        // Fallback rotation for RIVER_C (might need similar tweaking if asset is misaligned)
-                        node.tile.riverRotation = (node.dirIn + 3) * (Math.PI / 3);
-                    }
-                } else if (node.dirOut !== -1) {
-                    node.tile.type = TileType.RIVER_STRAIGHT;
-                    node.tile.riverRotation = node.dirOut * (Math.PI / 3);
-                } else if (node.dirIn !== -1) {
-                    node.tile.type = TileType.RIVER_STRAIGHT;
-                    node.tile.riverRotation = node.dirIn * (Math.PI / 3);
-                }
+        return path;
+    }
 
-                if (node.tile.resource) delete node.tile.resource;
-                if (node.tile.decoZone) delete node.tile.decoZone;
+    private findNextStep(
+        current: TileData,
+        visitedPath: Set<string>
+    ): { neighbor: TileData; dir: number } | null {
+        let best: { neighbor: TileData; dir: number; dist: number } | null = null;
 
+        for (let i = 0; i < 6; i++) {
+            const neighbor = this.getNeighbor(current, i);
+            if (!neighbor) continue;
+            if (visitedPath.has(this.key(neighbor))) continue;
 
+            const dist = this.distMap.get(this.key(neighbor));
+            if (dist === undefined) continue;
+
+            if (!best || dist < best.dist) {
+                best = { neighbor, dir: i, dist };
             }
         }
 
-        return tiles;
+        return best ? { neighbor: best.neighbor, dir: best.dir } : null;
+    }
+
+    // ============================================================
+    // ETAPE 5 : APPLICATION DU RENDU SUR LE CHEMIN
+    // ============================================================
+    private applyRiverToPath(path: PathNode[]): void {
+        for (const node of path) {
+            if (node.tile.type === TileType.WATER) continue;
+            this.applyRiverTile(node);
+            this.cleanupTile(node.tile);
+        }
+    }
+
+    private applyRiverTile(node: PathNode): void {
+        const { dirIn, dirOut } = node;
+
+        if (dirIn !== -1 && dirOut !== -1) {
+            this.applyRiverMiddle(node);
+        } else if (dirOut !== -1) {
+            this.applyRiverSource(node);
+        } else if (dirIn !== -1) {
+            this.applyRiverDeadEnd(node);
+        }
+    }
+
+    private applyRiverMiddle(node: PathNode): void {
+        const diff = (node.dirOut - node.dirIn + 6) % 6;
+
+        if (diff === 3) {
+            // Tout droit
+            node.tile.type = this.rng() > STRAIGHT_VS_CURVY_RATIO
+                ? TileType.RIVER_STRAIGHT
+                : TileType.RIVER_CURVY;
+            node.tile.riverRotation = (node.dirIn + 3) * (Math.PI / 3);
+        } else if (diff === 2) {
+            // Virage à droite
+            node.tile.type = TileType.RIVER_B;
+            node.tile.riverRotation = ((node.dirIn + OFFSET_RIGHT_TURN) % 6) * (Math.PI / 3);
+            node.tile.riverScaleX = -1;
+        } else if (diff === 4) {
+            // Virage à gauche
+            node.tile.type = TileType.RIVER_B;
+            node.tile.riverRotation = ((node.dirIn + OFFSET_LEFT_TURN) % 6) * (Math.PI / 3);
+            node.tile.riverScaleX = 1;
+        }
+    }
+
+    private applyRiverSource(node: PathNode): void {
+        node.tile.type = TileType.RIVER_END;
+        node.tile.riverRotation = ((node.dirOut + OFFSET_RIVER_START) % 6) * (Math.PI / 3);
+    }
+
+    private applyRiverDeadEnd(node: PathNode): void {
+        node.tile.type = TileType.RIVER_END;
+        node.tile.riverRotation = ((node.dirIn + OFFSET_RIVER_END) % 6) * (Math.PI / 3);
+    }
+
+    private cleanupTile(tile: TileData): void {
+        if (tile.resource) delete tile.resource;
+        if (tile.decoZone) delete tile.decoZone;
     }
 }

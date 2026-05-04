@@ -64,5 +64,5 @@ export function getScaleY(tileData: TileData): number {
     if (tileData.type === 'WATER' || tileData.type?.includes("COAST")) elevation = 0.3;
 
     const level = Math.round(elevation * 10)
-    return level * 0.5;
+    return level * 0.2;
 }

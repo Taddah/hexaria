@@ -44,6 +44,15 @@
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
 					gameState.selectedHex = getTile(tile.q, tile.r);
+					console.log('scaleX:', gameState.selectedHex?.riverScaleX === 1 ? 'Gauche' : 'Droite');
+
+					console.log('Before :', gameState.selectedHex?.riverRotation);
+
+					//Rotate one turn
+					if (gameState.selectedHex?.riverRotation) {
+						gameState.selectedHex.riverRotation += Math.PI / 6;
+						console.log('After :', gameState.selectedHex?.riverRotation);
+					}
 				}}
 			>
 				<T.CylinderGeometry args={[1.155, 1.155, 0.2, 6]} />
