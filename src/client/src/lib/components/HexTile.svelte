@@ -85,18 +85,19 @@
 {#if sceneBottom}
 	<T
 		is={sceneBottom}
-		scale={[1, renderData.scaleY, 1]}
+		scale={[renderData.scaleX, renderData.scaleY, 1]}
 		rotation={[0, renderData.rotation, 0]}
 		position={[0, renderData.scaleY, 0]}
 	/>
 {/if}
 {#if sceneTop}
-	<T
-		is={sceneTop}
-		scale={[1, 1, 1]}
-		rotation={[0, renderData.rotation, 0]}
-		position={[0, renderData.scaleY + 1, 0]}
-	/>
+	<T.Group position={[0, renderData.scaleY + 1, 0]} rotation={[0, renderData.rotation, 0]}>
+		<T
+			is={sceneTop}
+			scale={[renderData.scaleX, 1, 1]}
+			rotation={[0, 0, 0]}
+		/>
+	</T.Group>
 
 	{#if isVisible}
 		{#each renderData.props as prop (prop.assetPath + prop.x + prop.z)}

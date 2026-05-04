@@ -11,11 +11,12 @@ export class PlayerFactory {
         world: World;
         name: string;
         age: number;
+        startPosition: { q: number, r: number };
     }) {
         const player = params.world.createEntity();
 
         params.world.addComponent<IPlayer>(player, 'Player', { socketId: params.socketId });
-        params.world.addComponent<IPosition>(player, 'Position', { q: 25, r: 25 });
+        params.world.addComponent<IPosition>(player, 'Position', { q: params.startPosition.q, r: params.startPosition.r });
         params.world.addComponent<IIdentity>(player, 'Identity', { name: params.name, currentAge: params.age });
         params.world.addComponent<IInventory>(player, 'Inventory', { [Resource.WOOD]: 0, [Resource.STONE]: 0, [Resource.SILVER]: 0 });
         params.world.addComponent<IFatigue>(player, 'Fatigue', { fatigue: 0 });

@@ -7,6 +7,7 @@ export interface TileRenderData {
     bottomAsset: string;
     topAsset: string;
     material: string;
+    scaleX: number;
     scaleY: number;
     rotation: number;
     transitionAsset?: string;
@@ -20,6 +21,7 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
             bottomAsset: '',
             topAsset: '',
             material: '',
+            scaleX: 1,
             scaleY: 0,
             rotation: 0,
             isWater: false,
@@ -34,6 +36,7 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
         topAsset: getTopAssetPath(tileData),
         material: getMaterial(tileData),
         props: getProps(tileData, scaleY),
+        scaleX: tileData.riverScaleX ?? 1,
         scaleY,
         rotation: getRotation(tileData),
         isWater: tileData.type === 'WATER'
@@ -46,6 +49,9 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
 function getRotation(tileData: TileData) {
     if (tileData.type === TileType.SLOPE)
         return (tileData.slope?.directionIndex ?? 0) * (Math.PI / 3);
+
+    if (tileData.type?.includes("RIVER"))
+        return tileData.riverRotation ?? 0;
 
     if (tileData.type?.includes("COAST"))
         return (tileData.coastRotation ?? 0) * (Math.PI / 3);

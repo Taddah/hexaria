@@ -4,6 +4,7 @@ import { TileData, TileType, Biome } from '$shared/index';
 import { CoastGenerator } from './coastGenerator';
 import { ResourceGenerator } from './resourceGenerator';
 import { DecorationGenerator } from './decorationGenerator';
+import { RiverGenerator } from './riverGenerator';
 
 const SEED = "storyteller"
 
@@ -14,6 +15,7 @@ export class MapGenerator {
   private resourceGenerator = new ResourceGenerator(SEED);
   private decorationGenerator = new DecorationGenerator(SEED);
   private coastGenerator = new CoastGenerator();
+  private riverGenerator = new RiverGenerator();
 
 
   generateMap(width: number, height: number): TileData[] {
@@ -34,6 +36,7 @@ export class MapGenerator {
     }
 
     tiles = this.coastGenerator.generate(tiles);
+    tiles = this.riverGenerator.generate(tiles);
     tiles = this.decorationGenerator.generate(tiles);
 
     return tiles;
@@ -59,8 +62,11 @@ export class MapGenerator {
 
     e = e + 0.05;
     e = Math.pow(e, 1.2);
+    e = Math.max(0, Math.min(e, 1));
 
-    return Math.max(0, Math.min(e, 1));
+    // Terracing to create flat plateaus
+    const steps = 4;
+    return Math.floor(e * steps) / steps;
   }
 
   private determineBiome(q: number, r: number, elevation: number): Biome {

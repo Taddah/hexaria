@@ -14,6 +14,8 @@ export interface TileData {
         density: number;
         type: DecoType;
     }
+    riverRotation?: number;
+    riverScaleX?: number;
 }
 
 export enum DecoType {
@@ -30,7 +32,11 @@ export enum TileType {
     COAST_2 = 'COAST_2',
     COAST_3 = 'COAST_3',
     COAST_4 = 'COAST_4',
-    SLOPE = 'SLOPE'
+    SLOPE = 'SLOPE',
+    RIVER_STRAIGHT = 'RIVER_STRAIGHT',
+    RIVER_CURVY = 'RIVER_CURVY',
+    RIVER_B = 'RIVER_B',
+    RIVER_C = 'RIVER_C'
 }
 
 export const HEX_DIRECTIONS = [
