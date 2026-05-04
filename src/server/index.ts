@@ -17,7 +17,7 @@ function bootstrap() {
 
   EventRegistry.loadAll();
 
-  const map = mapGen.generateMap(50, 50);
+  const map = mapGen.generateMap(300, 300);
   console.log(`[INIT] Carte générée avec ${map.length} tuiles.`);
 
   const network = new NetworkSystem(3000, world, map);
@@ -28,9 +28,6 @@ function bootstrap() {
   let tickCount = 0;
   setInterval(() => {
     tickCount++;
-    if (tickCount % 1000 === 0) {
-      runAgingSystem(world);
-    }
 
     runMovementSystem(world, map, (socketId, pos) => {
       network.emitTo(socketId, 'move_confirmed', pos);
@@ -52,6 +49,12 @@ function bootstrap() {
 
     if (tickCount >= 10000) tickCount = 0;
   }, 100);
+
+
+  const AGING_INTERVAL = 12 * 60 * 60 * 1000; // 12h par année dans le jeu
+  setInterval(() => {
+    runAgingSystem(world);
+  }, AGING_INTERVAL);
 }
 
 bootstrap();

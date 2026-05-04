@@ -9,6 +9,7 @@ export interface TileRenderData {
     material: string;
     scaleX: number;
     scaleY: number;
+    scaleZ: number;
     rotation: number;
     transitionAsset?: string;
     isWater: boolean;
@@ -23,6 +24,7 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
             material: '',
             scaleX: 1,
             scaleY: 0,
+            scaleZ: 1,
             rotation: 0,
             isWater: false,
             props: []
@@ -38,12 +40,19 @@ export function resolveTile(tileData: TileData | undefined): TileRenderData {
         props: getProps(tileData, scaleY),
         scaleX: tileData.riverScaleX ?? 1,
         scaleY,
+        scaleZ: getScaleZ(tileData),
         rotation: getRotation(tileData),
         isWater: tileData.type === 'WATER'
     };
 
     return tile;
 }
+
+export function getScaleZ(tileData: TileData): number {
+    if (tileData.type === TileType.SLOPE) return 1;
+    return 1;
+}
+
 
 
 function getRotation(tileData: TileData) {
@@ -60,9 +69,21 @@ function getRotation(tileData: TileData) {
 }
 
 export function getScaleY(tileData: TileData): number {
-    let elevation = tileData.elevation
-    if (tileData.type === 'WATER' || tileData.type?.includes("COAST")) elevation = 0.3;
+    if (tileData.type === 'WATER') {
+        return 0.3;
+    }
 
-    const level = Math.round(elevation * 10)
-    return level * 0.2;
+
+    if (tileData.type?.includes("COAST")) {
+        return 0.3; // même niveau que l'eau
+    }
+
+    if (tileData.elevation <= 0.3) {
+        return 0.3;
+    }
+
+
+    const level = Math.round(tileData.elevation * 10);
+    return Math.max(level * 0.2, 0.3);
 }
+

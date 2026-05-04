@@ -6,6 +6,7 @@ export interface TileData {
     biome: Biome;
     resource?: TileResource;
     coastRotation?: number;
+    slopeRotation?: number;
     slope?: {
         directionIndex: number;
         goesUp: boolean;

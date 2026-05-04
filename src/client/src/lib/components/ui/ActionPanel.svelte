@@ -5,7 +5,7 @@
 	import { requestMove } from '$lib/services/movementService';
 	import { requestHarvest } from '$lib/services/harvestService';
 	import PanelBg from '$lib/components/ui/PanelBg.svelte';
-	import { Resource } from '$shared';
+	import { DecoType, Resource } from '$shared';
 
 	interface Action {
 		id: string;
@@ -49,7 +49,14 @@
 		);
 	});
 
-	const isMoveValid = $derived(!!(localPlayer && selectedTile && selectedTile.type !== 'WATER'));
+	const isMoveValid = $derived(
+		!!(
+			localPlayer &&
+			selectedTile &&
+			selectedTile.type !== 'WATER' &&
+			selectedTile.decoZone?.type !== DecoType.DENSE
+		)
+	);
 
 	const actions = $derived(buildActions());
 	const totalHeight = $derived(HEADER_HEIGHT + actions.length * ITEM_HEIGHT + POINT_DEPTH);

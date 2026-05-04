@@ -15,10 +15,10 @@ const TREE_ASSETS_BY_BIOME: Record<Biome, { single: string, singleCut: string, c
         clustersCut: "",
     },
     [Biome.PRAIRIE]: {
-        single: 'single_assets/tree_single_A',
-        singleCut: 'single_assets/tree_A_cut',
-        clusters: ['single_assets/trees_A_large', 'single_assets/trees_A_medium', 'single_assets/trees_A_small'],
-        clustersCut: 'single_assets/trees_A_cut',
+        single: 'single_assets/tree_single_B',
+        singleCut: 'single_assets/tree_B_cut',
+        clusters: ['single_assets/trees_B_large', 'single_assets/trees_B_medium', 'single_assets/trees_B_small'],
+        clustersCut: 'single_assets/trees_B_cut',
     },
     [Biome.TAIGA]: {
         single: 'single_assets/tree_single_A',
@@ -27,10 +27,10 @@ const TREE_ASSETS_BY_BIOME: Record<Biome, { single: string, singleCut: string, c
         clustersCut: 'single_assets/trees_A_cut',
     },
     [Biome.MOUNTAIN]: {
-        single: 'single_assets/tree_single_B',
-        singleCut: 'single_assets/tree_B_cut',
-        clusters: ['single_assets/trees_B_large', 'single_assets/trees_B_medium', 'single_assets/trees_B_small'],
-        clustersCut: 'single_assets/trees_B_cut',
+        single: 'single_assets/tree_single_A',
+        singleCut: 'single_assets/tree_A_cut',
+        clusters: ['single_assets/trees_A_large', 'single_assets/trees_A_medium', 'single_assets/trees_A_small'],
+        clustersCut: 'single_assets/trees_A_cut',
     }
 };
 
@@ -45,7 +45,10 @@ export function getTreeProps(tile: TileData, scaleY: number): PropData[] {
 
     // Arbres coupés
     if (amount <= 0) {
+
         const cutAsset = biomeAssets.clustersCut;
+        if (!cutAsset) return props;
+
         props.push({
             assetPath: PROPS_PATH + cutAsset + ".gltf",
             x: 0, z: 0,
@@ -62,6 +65,7 @@ export function getTreeProps(tile: TileData, scaleY: number): PropData[] {
 
         for (let c = 0; c < clusterCount; c++) {
             const clusters = biomeAssets.clusters;
+            if (clusters.length === 0) return props;
             const index = Math.floor(seededRandom(tile.q, tile.r, c * 100) * clusters.length);
             const angle = seededRandom(tile.q, tile.r, c * 200) * Math.PI * 2;
             const radius = c === 0 ? 0 : 0.3 + seededRandom(tile.q, tile.r, c * 300) * 0.3;
@@ -82,6 +86,7 @@ export function getTreeProps(tile: TileData, scaleY: number): PropData[] {
     const MIN_DIST = 0.3;
     for (let i = 0; i < amount; i++) {
         const single = biomeAssets.single;
+        if (!single) continue;
         let x = 0, z = 0, isValid = false;
 
         for (let attempt = 0; attempt < 20; attempt++) {

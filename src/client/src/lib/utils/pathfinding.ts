@@ -1,10 +1,11 @@
-import { HEX_DIRECTIONS, type TileData } from "$shared";
+import { DecoType, HEX_DIRECTIONS, type TileData } from "$shared";
 import { hexDistance } from "./hexUtils";
 
 
 function isBlocked(tile: TileData | undefined): boolean {
     if (!tile) return true;
     if (tile.type === 'WATER') return true;
+    if (tile.decoZone?.type === DecoType.DENSE) return true;
     return false;
 }
 

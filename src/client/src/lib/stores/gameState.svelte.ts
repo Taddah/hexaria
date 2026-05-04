@@ -29,6 +29,7 @@ interface GameState {
     entities: EntityDTO[];
     hexSize: number;
     time: TimeDTO;
+    mapLoaded: boolean;
 }
 
 export const gameState = $state<GameState>({
@@ -45,5 +46,6 @@ export const gameState = $state<GameState>({
         timeOfDay: 0.5,
         isDay: true,
         visionRadius: 3,
-    }
+    },
+    mapLoaded: false
 });

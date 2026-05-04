@@ -28,12 +28,14 @@ export function initializeSocket() {
 
     });
 
-    socket.on('full_map', (fullMap: TileData[]) => {
-        const mapRecord: Record<string, TileData> = {};
-        fullMap.forEach(tile => {
-            mapRecord[`${tile.q},${tile.r}`] = tile;
+    socket.on('map_chunk', ({ tiles, done }: { tiles: TileData[], done: boolean }) => {
+        tiles.forEach(tile => {
+            gameState.map[`${tile.q},${tile.r}`] = tile;
         });
-        gameState.map = mapRecord;
+
+        if (done) {
+            gameState.mapLoaded = true;
+        }
     });
 
     socket.on('map_update', (mapData: TileData[]) => {

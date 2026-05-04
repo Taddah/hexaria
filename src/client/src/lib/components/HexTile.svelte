@@ -92,11 +92,7 @@
 {/if}
 {#if sceneTop}
 	<T.Group position={[0, renderData.scaleY + 1, 0]} rotation={[0, renderData.rotation, 0]}>
-		<T
-			is={sceneTop}
-			scale={[renderData.scaleX, 1, 1]}
-			rotation={[0, 0, 0]}
-		/>
+		<T is={sceneTop} scale={[renderData.scaleX, 1, renderData.scaleZ]} rotation={[0, 0, 0]} />
 	</T.Group>
 
 	{#if isVisible}

@@ -8,7 +8,6 @@
 	import Players from './Players.svelte';
 
 	// Stores réactifs
-	const mapData = $derived(Object.values(gameState.map));
 	const localPlayer = $derived(gameState.localPlayer);
 	const pQ = $derived(localPlayer?.position.q ?? 0);
 	const pR = $derived(localPlayer?.position.r ?? 0);
@@ -27,9 +26,17 @@
 			state.raycaster.setFromCamera(state.pointer.current, $camera);
 		}
 	});
+
+	const visibleMapData = $derived(
+		Object.values(gameState.map).filter(
+			(tile) =>
+				Math.abs(tile.q - pQ) <= gameState.time.visionRadius &&
+				Math.abs(tile.r - pR) <= gameState.time.visionRadius
+		)
+	);
 </script>
 
-{#each mapData as tile (`${tile.q},${tile.r}`)}
+{#each visibleMapData as tile (`${tile.q},${tile.r}`)}
 	{@const isVisible = hexDistance(pQ, pR, tile.q, tile.r) <= gameState.time.visionRadius}
 	{@const isExplored = exploredSet.has(`${tile.q},${tile.r}`)}
 	{@const pos = hexToWorld(tile.q, tile.r)}
@@ -44,15 +51,13 @@
 				rotation={[0, Math.PI / 6, 0]}
 				onclick={() => {
 					gameState.selectedHex = getTile(tile.q, tile.r);
-					console.log('scaleX:', gameState.selectedHex?.riverScaleX === 1 ? 'Gauche' : 'Droite');
-
-					console.log('Before :', gameState.selectedHex?.riverRotation);
-
-					//Rotate one turn
-					if (gameState.selectedHex?.riverRotation) {
-						gameState.selectedHex.riverRotation += Math.PI / 6;
-						console.log('After :', gameState.selectedHex?.riverRotation);
-					}
+					console.log({
+						q: tile.q,
+						r: tile.r,
+						type: tile.type,
+						biome: tile.biome,
+						elevation: tile.elevation
+					});
 				}}
 			>
 				<T.CylinderGeometry args={[1.155, 1.155, 0.2, 6]} />
