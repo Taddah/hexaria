@@ -5,13 +5,13 @@ const TREE_ASSETS_BY_BIOME: Record<Biome, { single: string, singleCut: string, c
     [Biome.WATER]: {
         single: "",
         singleCut: "",
-        clusters: [""],
+        clusters: [],
         clustersCut: "",
     },
     [Biome.DESERT]: {
         single: "",
         singleCut: "",
-        clusters: [""],
+        clusters: [],
         clustersCut: "",
     },
     [Biome.PRAIRIE]: {

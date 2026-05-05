@@ -39,7 +39,6 @@ function bootstrap() {
 
     const harvestOccurred = runHarvestSystem(world, map);
     if (harvestOccurred || renewed.length > 0) {
-      console.log("harvest occured", harvestOccurred)
       network.broadcastMapUpdate();
     }
 
