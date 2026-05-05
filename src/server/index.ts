@@ -26,13 +26,13 @@ function bootstrap() {
   const serverStartTime = Date.now() - DAY_START_MS;
   //Main heartbeat
   let tickCount = 0;
-  setInterval(() => {
+  setInterval(async () => {
     tickCount++;
 
     runMovementSystem(world, map, (socketId, pos) => {
       network.emitTo(socketId, 'move_confirmed', pos);
     });
-    runEventSystem(world);
+    await runEventSystem(world, network);
     runBodySystem(world);
 
     const renewed = runResourceRenewalSystem(map);

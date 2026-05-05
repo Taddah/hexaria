@@ -51,6 +51,11 @@ export class NetworkSystem {
         this.syncPreviousMap();
     }
 
+    getSocketById(socketId: string): Socket | undefined {
+        return this.io.sockets.sockets.get(socketId);
+    }
+
+
     private syncPreviousMap() {
         this.previousMap = this.map.map(tile => ({
             ...tile,
@@ -89,7 +94,7 @@ export class NetworkSystem {
 
     private getMapDiff(currentMap: TileData[], previousMap: TileData[]): TileData[] {
         const diff: TileData[] = [];
-        
+
         // Optimisation O(N) : comparaison par index car l'ordre est garanti
         for (let i = 0; i < currentMap.length; i++) {
             const currentTile = currentMap[i];

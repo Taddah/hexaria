@@ -1,13 +1,32 @@
 // systems/eventSystem.ts
-import { IActionTag, IEventsHistory, EventComponent, IFatigue, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent, EventPolarity } from "$shared/components";
+import { IActionTag, IEventsHistory, EventComponent, IFatigue, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent, EventPolarity, IPlayer } from "$shared/components";
 import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
 import { World } from "../core/World";
 import { getThreshold, ThresholdKey } from "./FatigueSystem";
+import { NetworkSystem } from "./NetworkSystem";
+import { applyNarrative, EventContext, EventNarrative, LLMService } from "../services/LLMservice";
 
-const BASE_EVENT_CHANCE = 0.3;
+const BASE_EVENT_CHANCE = 1;
+const llmService = new LLMService();
 
-export function runEventSystem(world: World): void {
+export async function runEventSystem(world: World, network: NetworkSystem): Promise<void> {
+    const entitiesWithEvents = world.query(['EventComponent']);
+    for (const entity of entitiesWithEvents) {
+        const eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
+        if (!eventComponent) continue;
+
+        for (const gameEvent of eventComponent.events) {
+            if (gameEvent.status === 'RESOLVED') {
+                if (gameEvent.pendingEffects?.length) {
+                    applyEffects(world, entity, gameEvent.pendingEffects);
+                    gameEvent.pendingEffects = [];
+                }
+                gameEvent.status = 'SEEN';
+            }
+        }
+    }
+
     const entities = world.query(['ActionTag']);
 
     for (const entity of entities) {
@@ -27,25 +46,50 @@ export function runEventSystem(world: World): void {
 
         if (shouldTriggerEvent(history, action.type, threshold)) {
             const event = pickEvent(action.type);
+
             if (event && eventComponent) {
-                eventComponent.events.push({
-                    uuid: uuidv4(),
-                    event,
-                    status: "PENDING",
-                    appliedAt: Date.now()
-                });
+                const firstNode = event.nodes[0];
 
-                applyEffects(world, entity, event.effects);
+                if (firstNode) {
+                    const uuid = uuidv4();
 
-                world.addComponent(entity, 'EventHistory',
-                    history
-                        ? { history: [...history.history, action.type].slice(-20) }
-                        : { history: [action.type] }
-                );
+                    const ctx: EventContext = {
+                        actionType: action.type,
+                        fatigue: 'fatigué',
+                        recentActions: history?.history ?? [],
+                        polarity: event.polarity,
+                        baseTitle: event.title,
+                        baseDescription: firstNode.description,
+                    };
+
+                    world.removeComponent(entity, 'ActionTag');
+
+                    let narrative: EventNarrative | null = null;
+                    try {
+                        narrative = await llmService.enrichAllNodes(event, ctx);
+                    } catch (e) {
+                        console.warn('[LLM] Enrichment failed, using raw text', e);
+                    }
+
+                    eventComponent.events.push({
+                        uuid,
+                        event,
+                        status: "PENDING",
+                        currentNodeId: firstNode.id,
+                        pendingEffects: firstNode.effects ?? [],
+                        narrative
+                    });
+
+                    const player = world.getComponent<IPlayer>(entity, 'Player');
+                    if (player?.socketId) {
+                        network.emitTo(player.socketId, 'event:node', {
+                            eventUuid: uuid,
+                            node: applyNarrative(firstNode, narrative)
+                        });
+                    }
+                }
             }
         }
-
-        world.removeComponent(entity, 'ActionTag');
     }
 }
 
@@ -83,13 +127,10 @@ function applyBodyEffect(world: World, entity: number, part: BodyPart, delta: nu
         BodyPartState.LOST,
     ];
 
-    console.log("apply effect", body[part], body, part, delta)
-
     const current = states.indexOf(body[part]);
     const next = Math.min(Math.max(current + delta, 0), states.length - 1);
     const nextState = states[next] as BodyPartState;
 
-    console.log("next state", nextState)
     body[part] = nextState;
 }
 

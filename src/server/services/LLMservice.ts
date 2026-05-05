@@ -8,31 +8,40 @@ export interface EventContext {
     polarity: string;
     baseTitle: string;
     baseDescription: string;
-    choices?: { id: string; label: string; effects: any[] }[]; // ← AJOUTER
 }
 
-export interface LLMEventEnrichment {
+export interface EventNarrative {
+    nodes: {
+        [nodeId: string]: {
+            description: string;
+            choiceLabels?: { [choiceId: string]: string };
+        };
+    };
+}
+
+export interface EventDefinition {
+    id: string;
     title: string;
-    description: string;
-    choiceLabels?: { [choiceId: string]: string }; // ← AJOUTER
+    polarity: string;
+    nodes: EventNode[];
 }
 
-// ← AJOUTER
-export interface ResolutionContext {
-    eventTitle: string;
-    choiceLabel: string;
-    effects: { stat: string; value: number }[];
+export interface EventNode {
+    id: string;
+    description: string;
+    choices?: { id: string; label: string; outcomes: any[] }[];
+    effects?: any[];
 }
 
 export class LLMService {
     private groq: Groq;
 
     constructor() {
-        this.groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+        this.groq = new Groq({ apiKey: "process.env.GROQ_API_KEY" });
     }
 
-    async enrichEvent(context: EventContext): Promise<LLMEventEnrichment> {
-        const prompt = buildPrompt(context);
+    async enrichAllNodes(event: EventDefinition, ctx: EventContext): Promise<EventNarrative> {
+        const prompt = buildFullEventPrompt(event, ctx);
 
         const completion = await this.groq.chat.completions.create({
             model: "llama-3.3-70b-versatile",
@@ -40,64 +49,59 @@ export class LLMService {
             response_format: { type: "json_object" },
         });
 
-        const content = JSON.parse(completion?.choices?.[0]?.message?.content!);
-
-        return {
-            title: content.title ?? context.baseTitle,
-            description: content.description ?? context.baseDescription,
-            choiceLabels: content.choiceLabels ?? {}, // ← AJOUTER
-        };
-    }
-
-    // ← AJOUTER
-    async generateResolution(ctx: ResolutionContext): Promise<string> {
-        const effectsDesc = ctx.effects
-            .map(e => `${e.value > 0 ? '+' : ''}${e.value} ${e.stat}`)
-            .join(', ') || 'aucun effet';
-
-        const prompt = `
-Tu es le narrateur d'un jeu de survie médiéval sombre, style "Darkest Dungeon".
-L'événement : "${ctx.eventTitle}"
-Le joueur a choisi : "${ctx.choiceLabel}"
-Effets : ${effectsDesc}
-
-2 phrases max, ton sombre, mentionne naturellement les effets.
-JSON uniquement : { "resolutionText": "..." }
-`.trim();
-
-        const completion = await this.groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
-            messages: [{ role: "user", content: prompt }],
-            response_format: { type: "json_object" },
-        });
-
-        const content = JSON.parse(completion?.choices?.[0]?.message?.content!);
-        return content.resolutionText ?? '';
+        const content = JSON.parse(completion.choices[0]!.message.content!);
+        return content as EventNarrative;
     }
 }
 
-function buildPrompt(ctx: EventContext): string {
-    const choicesBlock = ctx.choices?.length
-        ? `\nChoix disponibles :\n${ctx.choices.map(c => `- id: "${c.id}", label: "${c.label}"`).join('\n')}`
-        : '';
+export function applyNarrative(node: EventNode, narrative: EventNarrative | null) {
+    if (!narrative) return node;
+    const enriched = narrative.nodes[node.id];
+    if (!enriched) return node;
 
-    const choicesJson = ctx.choices?.length
-        ? `, "choiceLabels": { ${ctx.choices.map(c => `"${c.id}": "..."`).join(', ')} }`
-        : '';
+    return {
+        ...node,
+        description: enriched.description ?? node.description,
+        choices: node.choices?.map(c => ({
+            ...c,
+            label: enriched.choiceLabels?.[c.id] ?? c.label
+        }))
+    };
+}
+
+function buildFullEventPrompt(event: EventDefinition, ctx: EventContext): string {
+    const nodesBlock = event.nodes.map(node => {
+        const choicesBlock = node.choices?.map(c => `  - id: "${c.id}", label: "${c.label}"`).join('\n') ?? '';
+        return `Node "${node.id}":
+  Description brute: "${node.description}"${choicesBlock ? `\n  Choix:\n${choicesBlock}` : ''}`;
+    }).join('\n\n');
+
+    const expectedJson: EventNarrative = {
+        nodes: Object.fromEntries(event.nodes.map(n => [
+            n.id,
+            {
+                description: "...",
+                ...(n.choices?.length ? {
+                    choiceLabels: Object.fromEntries(n.choices.map(c => [c.id, "..."]))
+                } : {})
+            }
+        ]))
+    };
 
     return `
 Tu es le narrateur d'un jeu de survie médiéval sombre, style "Darkest Dungeon".
-Ton style : phrases courtes, images concrètes, tension palpable. Jamais cliché.
+Phrases courtes, images concrètes, tension palpable. Jamais cliché. En français.
 
-Événement de base : "${ctx.baseTitle}"
-Description : "${ctx.baseDescription}"
-Action : ${ctx.actionType}
+Événement : "${event.title}"
 Tonalité : ${ctx.polarity}
+Action déclenchante : ${ctx.actionType}
 Fatigue du joueur : ${ctx.fatigue}
-Actions récentes : ${ctx.recentActions.slice(-3).join(', ')}
-${choicesBlock}
+Actions récentes : ${ctx.recentActions.slice(-3).map(r => r.toString()).join(', ')}
 
-Réécris en français dans ce style sombre et immersif.
-JSON uniquement : { "title": "...", "description": "..."${choicesJson} }
+Nodes à enrichir :
+${nodesBlock}
+
+Retourne UNIQUEMENT ce JSON (même structure, tous les nodes) :
+${JSON.stringify(expectedJson, null, 2)}
 `.trim();
 }

@@ -1,9 +1,8 @@
 // shared/types/events.ts
 import { Resource } from "$shared/types";
+import { EventNarrative } from "src/server/services/LLMservice";
 import { ActionType } from "../actions/actionTag";
 import { BodyPart } from "../player/body";
-
-// ─── Effect Types ─────────────────────────────────────────────────────────────
 
 export enum EffectType {
     RESOURCE = 'RESOURCE',
@@ -13,32 +12,26 @@ export enum EffectType {
     EQUIPMENT = 'EQUIPMENT',
 }
 
-// ─── Effects ──────────────────────────────────────────────────────────────────
-
 export interface ResourceEffect {
     type: EffectType.RESOURCE;
     stat: Resource;
     value: number;
 }
-
 export interface BodyEffect {
     type: EffectType.BODY;
     stat: BodyPart;
-    value: number;   // delta : +1 aggravation, -1 amélioration
+    value: number;
 }
-
 export interface StatEffect {
     type: EffectType.STAT;
     stat: string;
     value: number;
 }
-
 export interface SkillEffect {
     type: EffectType.SKILL;
     stat: string;
     value: number;
 }
-
 export interface EquipmentEffect {
     type: EffectType.EQUIPMENT;
     stat: string;
@@ -52,28 +45,51 @@ export type EventEffect =
     | SkillEffect
     | EquipmentEffect;
 
+// ─── Nodes / Choices / Outcomes (NOUVEAU) ────────────────────────────────────
+
+export interface EventOutcome {
+    weight: number;
+    nextNode: string;     // id du node suivant, "end" si terminal
+    effects: EventEffect[];
+}
+
+export interface EventChoice {
+    id: string;
+    label: string;
+    outcomes: EventOutcome[];
+}
+
+export interface EventNode {
+    id: string;
+    description: string;
+    choices: EventChoice[]; // [] = node terminal
+    effects?: EventEffect[];
+}
+
 // ─── Event Definition ─────────────────────────────────────────────────────────
 
 export interface GameEvent {
     id: string;
     title: string;
-    description: string;
     probability: number;
     triggers: ActionType[];
     polarity: EventPolarity;
-    effects: EventEffect[];
+    nodes: EventNode[];         // remplace description + effects
 }
 
 // ─── Event Instance ───────────────────────────────────────────────────────────
 
-export type EventStatus = "PENDING" | "SEEN";
-export type EventPolarity = 'positive' | 'negative' | 'neutral'
+
+export type EventStatus = "PENDING" | "RESOLVED" | "SEEN" | "PENDING_CONFIRM" | "ACTIVE";  // +RESOLVED
+export type EventPolarity = 'positive' | 'negative' | 'neutral';
 
 export interface Event {
     uuid: string;
     event: GameEvent;
     status: EventStatus;
-    appliedAt: number;
+    currentNodeId: string;
+    pendingEffects: EventEffect[];
+    narrative: EventNarrative | null
 }
 
 export interface EventComponent {

@@ -151,16 +151,6 @@ export class MapGenerator {
       // Re-snap terracing
       tile.elevation = Math.floor(tile.elevation * 10) / 10;
     }
-
-    for (const tile of tiles) {
-      if (tile.elevation <= WATER_THRESHOLD) continue;
-      const key = `${tile.q},${tile.r}`;
-      const dist = distanceFromWater.get(key) ?? 999;
-
-      if (dist === 1 && tile.elevation > WATER_THRESHOLD) {
-        console.log(`Tile dist=1 trop haute: ${tile.q},${tile.r} elev=${tile.elevation}`);
-      }
-    }
   }
 
   private determineBiome(q: number, r: number, elevation: number): Biome {

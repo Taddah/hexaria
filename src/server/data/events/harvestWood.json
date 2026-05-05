@@ -1,197 +1,120 @@
 [
     {
-        "id": "falling_tree",
-        "title": "The tree falls badly",
-        "description": "A tree falls on you and crushes your leg",
+        "id": "wolf_attack",
+        "title": "Attaque de loup",
+        "probability": 100,
         "triggers": [
             "CHOP_WOOD"
         ],
-        "probability": 1,
-        "effects": [
+        "polarity": "negative",
+        "nodes": [
             {
-                "type": "BODY",
-                "stat": "legLeft",
-                "value": 1
-            }
-        ],
-        "polarity": "negative"
-    },
-    {
-        "id": "rich_vein_of_wood",
-        "title": "A magnificent tree",
-        "description": "This tree is exceptionally large, you harvest twice as much wood",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 8,
-        "effects": [
-            {
-                "type": "RESOURCE",
-                "stat": "wood",
-                "value": 3
-            }
-        ],
-        "polarity": "positive"
-    },
-    {
-        "id": "splinter_in_hand",
-        "title": "Splinter",
-        "description": "A large splinter pierces your hand, your arm is weakened",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 5,
-        "effects": [
-            {
-                "type": "BODY",
-                "stat": "armRight",
-                "value": 1
-            }
-        ],
-        "polarity": "negative"
-    },
-    {
-        "id": "beehive_disturbed",
-        "title": "Disturbed beehive",
-        "description": "A beehive hidden in the tree falls on you, the bees sting your face",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 2,
-        "effects": [
-            {
-                "type": "BODY",
-                "stat": "head",
-                "value": 1
+                "id": "root",
+                "description": "Un loup surgit des fourrés et vous charge. Que faites-vous ?",
+                "choices": [
+                    {
+                        "id": "fight",
+                        "label": "Combattre",
+                        "outcomes": [
+                            {
+                                "weight": 60,
+                                "nextNode": "fight_win",
+                                "effects": []
+                            },
+                            {
+                                "weight": 40,
+                                "nextNode": "fight_lose",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "flee",
+                        "label": "Fuir",
+                        "outcomes": [
+                            {
+                                "weight": 10,
+                                "nextNode": "flee_success",
+                                "effects": []
+                            },
+                            {
+                                "weight": 90,
+                                "nextNode": "fight_lose",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
             },
             {
-                "type": "STAT",
-                "stat": "endurance",
-                "value": -2
-            }
-        ],
-        "polarity": "negative"
-    },
-    {
-        "id": "bird_nest_found",
-        "title": "Bird nest",
-        "description": "You find a bird nest with eggs in it, a welcome snack",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 4,
-        "effects": [
-            {
-                "type": "STAT",
-                "stat": "hunger",
-                "value": 10
-            }
-        ],
-        "polarity": "positive"
-    },
-    {
-        "id": "axe_slips",
-        "title": "The axe slips",
-        "description": "Your axe slips and cuts your leg, you bleed",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 3,
-        "effects": [
-            {
-                "type": "BODY",
-                "stat": "legRight",
-                "value": 1
+                "id": "fight_win",
+                "description": "Vous repoussez le loup. Il repart en boitant.",
+                "choices": [
+                    {
+                        "id": "loot",
+                        "label": "Récupérer la fourrure",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "end",
+                                "effects": [
+                                    {
+                                        "type": "RESOURCE",
+                                        "stat": "fur",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "leave",
+                        "label": "Partir sans s'attarder",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "end",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
             },
             {
-                "type": "STAT",
-                "stat": "endurance",
-                "value": -1
-            }
-        ],
-        "polarity": "negative"
-    },
-    {
-        "id": "hollow_tree",
-        "title": "Hollow tree",
-        "description": "The tree is hollow and rotten, you waste your time and energy",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 6,
-        "effects": [
-            {
-                "type": "RESOURCE",
-                "stat": "wood",
-                "value": -2
+                "id": "fight_lose",
+                "description": "Le loup vous mord avant de s'enfuir. Vous soignez vos plaies.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "armLeft",
+                        "value": 1
+                    },
+                    {
+                        "type": "RESOURCE",
+                        "stat": "food",
+                        "value": -2
+                    }
+                ]
             },
             {
-                "type": "STAT",
-                "stat": "fatigue",
-                "value": -5
-            }
-        ],
-        "polarity": "negative"
-    },
-    {
-        "id": "ancient_tree",
-        "title": "Ancient tree",
-        "description": "You stumble upon an ancient tree, its wood is denser and more valuable",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 2,
-        "effects": [
-            {
-                "type": "RESOURCE",
-                "stat": "wood",
-                "value": 5
+                "id": "flee_success",
+                "description": "Vous semez le loup après une longue course. Épuisé mais indemne.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stamina",
+                        "value": -1
+                    }
+                ]
             },
             {
-                "type": "SKILL",
-                "stat": "woodcutting",
-                "value": 1
+                "id": "end",
+                "description": "Vous reprenez votre chemin.",
+                "choices": [],
+                "effects": []
             }
-        ],
-        "polarity": "positive"
-    },
-    {
-        "id": "snake_in_bark",
-        "title": "Snake in the bark",
-        "description": "A snake was hiding under the bark and bites your hand",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 2,
-        "effects": [
-            {
-                "type": "BODY",
-                "stat": "armLeft",
-                "value": 1
-            },
-            {
-                "type": "STAT",
-                "stat": "endurance",
-                "value": -3
-            }
-        ],
-        "polarity": "negative"
-    },
-    {
-        "id": "perfect_rhythm",
-        "title": "Perfect rhythm",
-        "description": "You find a perfect chopping rhythm, your technique improves",
-        "triggers": [
-            "CHOP_WOOD"
-        ],
-        "probability": 5,
-        "effects": [
-            {
-                "type": "SKILL",
-                "stat": "woodcutting",
-                "value": 1
-            }
-        ],
-        "polarity": "positive"
+        ]
     }
 ]

@@ -1,16 +1,28 @@
-<!-- EventModal.svelte -->
 <script lang="ts">
 	import { getSocket } from '$lib/services/socket';
-	import { gameState } from '$lib/stores/gameState.svelte';
-	import { EffectType, type EventEffect, type Event } from '$shared';
+	import { EffectType, type EventEffect, type EventNode } from '$shared';
 
 	const socket = getSocket();
 
-	let pendingEvents = $derived(
-		gameState.localPlayer?.gameEvents?.events?.filter((e) => e.status === 'PENDING') ?? []
-	);
+	let currentEventUuid = $state<string | null>(null);
+	let currentNode = $state<EventNode | null>(null);
 
-	let current: Event | undefined = $derived(pendingEvents[0]);
+	socket.on('event:node', ({ eventUuid, node }: { eventUuid: string; node: EventNode }) => {
+		currentEventUuid = eventUuid;
+		currentNode = node;
+	});
+
+	socket.on('event:end', ({ eventUuid }: { eventUuid: string }) => {
+		if (currentEventUuid === eventUuid) {
+			currentNode = null;
+			currentEventUuid = null;
+		}
+	});
+
+	function choose(choiceId: string) {
+		if (!currentEventUuid) return;
+		socket.emit('event:choice', { eventUuid: currentEventUuid, choiceId });
+	}
 
 	function formatEffect(effect: EventEffect): string {
 		switch (effect.type) {
@@ -22,27 +34,18 @@
 				return `${effect.stat} : ${effect.value}`;
 		}
 	}
-
-	function acknowledge() {
-		if (!current) return;
-		socket.emit('event_response', current.uuid);
-	}
 </script>
 
-{#if current}
+{#if currentNode}
 	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
 		<div class="mx-4 w-full max-w-lg min-w-80 rounded border border-neutral-600 bg-neutral-900 p-8">
-			<h2 class="mb-4 text-xl font-semibold text-yellow-300">
-				{current.event.title}
-			</h2>
-
 			<p class="mb-6 leading-relaxed text-neutral-300">
-				{current.event.description}
+				{currentNode.description}
 			</p>
 
-			{#if current.event.effects.length > 0}
+			{#if currentNode.effects?.length}
 				<ul class="mb-6 space-y-1">
-					{#each current.event.effects as effect}
+					{#each currentNode.effects as effect}
 						<li class="text-sm {effect.value < 0 ? 'text-green-400' : 'text-red-400'}">
 							{formatEffect(effect)}
 						</li>
@@ -50,12 +53,25 @@
 				</ul>
 			{/if}
 
-			<button
-				onclick={acknowledge}
-				class="w-full cursor-pointer rounded bg-neutral-700 py-3 text-white transition-colors hover:bg-neutral-600"
-			>
-				Confirmer
-			</button>
+			<div class="flex flex-col gap-2">
+				{#if currentNode.choices.length === 0}
+					<button
+						onclick={() => choose('__confirm__')}
+						class="w-full cursor-pointer rounded bg-neutral-700 py-3 text-white transition-colors hover:bg-neutral-600"
+					>
+						Continuer
+					</button>
+				{:else}
+					{#each currentNode.choices as choice}
+						<button
+							onclick={() => choose(choice.id)}
+							class="w-full cursor-pointer rounded bg-neutral-700 py-3 text-white transition-colors hover:bg-neutral-600"
+						>
+							{choice.label}
+						</button>
+					{/each}
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
