@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { gameState } from '$lib/stores/gameState.svelte';
 	import { getPlayerTile } from '$lib/utils/playerUtils';
-	import PanelBg from '$lib/components/ui/PanelBg.svelte';
+	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
 	import { Resource, type Biome } from '$shared';
 
 	const localPlayer = $derived(gameState.localPlayer);

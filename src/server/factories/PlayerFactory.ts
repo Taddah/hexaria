@@ -1,4 +1,4 @@
-import { IPlayer, IPosition, IIdentity, IInventory } from "$shared/components";
+import { IPlayer, IPosition, IIdentity, IInventory, ISkills } from "$shared/components";
 import { BodyPart, BodyPartState, IBody } from "$shared/components/player/body";
 import { IFatigue } from "$shared/components/player/fatigue";
 import { Resource } from "$shared/types";
@@ -31,6 +31,8 @@ export class PlayerFactory {
             [BodyPart.LEG_RIGHT]: BodyPartState.INTACT,
             [BodyPart.TORSO]: BodyPartState.INTACT,
         });
+
+        params.world.addComponent<ISkills>(player, "skills", {});
 
         return player;
 

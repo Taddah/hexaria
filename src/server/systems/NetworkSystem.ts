@@ -15,7 +15,7 @@ export class NetworkSystem {
     private eventHandler: EventHandler;
     private characterHandler: CharacterHandler;
 
-    private previousWorldState = {};
+    private previousWorldState: string = "";
     private previousMap: TileData[] = [];
 
     constructor(port: number, private world: World, private map: TileData[]) {
@@ -46,6 +46,16 @@ export class NetworkSystem {
                 }
             });
         });
+
+        // Initialisation de la carte précédente pour éviter un broadcast complet au premier changement
+        this.syncPreviousMap();
+    }
+
+    private syncPreviousMap() {
+        this.previousMap = this.map.map(tile => ({
+            ...tile,
+            ...(tile.resource ? { resource: { ...tile.resource } } : {})
+        }));
     }
 
     emitTo(socketId: string, event: string, data: unknown) {
@@ -70,10 +80,7 @@ export class NetworkSystem {
             this.io.emit('tile_update', diff);
         }
 
-        this.previousMap = this.map.map(tile => ({
-            ...tile,
-            ...(tile.resource ? { resource: { ...tile.resource } } : {})
-        }));
+        this.syncPreviousMap();
     }
 
     broadcastTimeUpdate(time: TimeState) {
@@ -82,9 +89,13 @@ export class NetworkSystem {
 
     private getMapDiff(currentMap: TileData[], previousMap: TileData[]): TileData[] {
         const diff: TileData[] = [];
+        
+        // Optimisation O(N) : comparaison par index car l'ordre est garanti
+        for (let i = 0; i < currentMap.length; i++) {
+            const currentTile = currentMap[i];
+            const previousTile = previousMap[i];
 
-        for (const currentTile of currentMap) {
-            const previousTile = previousMap.find(t => t.q === currentTile.q && t.r === currentTile.r);
+            if (!currentTile) continue;
 
             if (!previousTile || JSON.stringify(previousTile) !== JSON.stringify(currentTile)) {
                 diff.push(currentTile);

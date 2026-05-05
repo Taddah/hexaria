@@ -38,7 +38,10 @@ function bootstrap() {
     const renewed = runResourceRenewalSystem(map);
 
     const harvestOccurred = runHarvestSystem(world, map);
-    if (harvestOccurred || renewed.length > 0) network.broadcastMapUpdate();
+    if (harvestOccurred || renewed.length > 0) {
+      console.log("harvest occured", harvestOccurred)
+      network.broadcastMapUpdate();
+    }
 
     if (tickCount % 10 === 0) {
       const timeState = getTimeState(serverStartTime);

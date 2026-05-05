@@ -4,7 +4,7 @@
 	import { getSocket } from '$lib/services/socket';
 	import { requestMove } from '$lib/services/movementService';
 	import { requestHarvest } from '$lib/services/harvestService';
-	import PanelBg from '$lib/components/ui/PanelBg.svelte';
+	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
 	import { DecoType, Resource } from '$shared';
 
 	interface Action {

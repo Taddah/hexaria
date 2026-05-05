@@ -1,7 +1,7 @@
 <!-- Sidebar.svelte -->
 <script lang="ts">
-	import PanelBg from './PanelBg.svelte';
-	import BodyPanel from '$lib/components/ui/BodyPanel.svelte';
+	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
+	import CharacterPanel from '$lib/components/ui/panels/character/CharacterPanel.svelte';
 
 	interface SidebarItem {
 		emoji: string;
@@ -23,7 +23,6 @@
 	function togglePanel(panel?: string) {
 		if (!panel) return;
 
-		console.log('activePanel', activePanel);
 		activePanel = activePanel === panel ? null : panel;
 	}
 </script>
@@ -59,5 +58,5 @@
 </div>
 
 {#if activePanel === 'body'}
-	<BodyPanel onclose={() => (activePanel = null)} />
+	<CharacterPanel onclose={() => (activePanel = null)} />
 {/if}

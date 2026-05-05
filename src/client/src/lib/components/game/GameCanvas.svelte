@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Canvas, T } from '@threlte/core';
-	import HexMap from './HexMap.svelte';
 	import type { OrthographicCamera } from 'three';
 	import { browser } from '$app/environment';
 	import { gameState } from '$lib/stores/gameState.svelte';
 	import { hexToWorld } from '$lib/utils/hexUtils';
-	import SceneLighting from './SceneLighting.svelte';
+	import SceneLighting from '$lib/components/game/SceneLighting.svelte';
+	import HexMap from '$lib/components/game/HexMap.svelte';
 
 	let camRef: OrthographicCamera | undefined = $state();
 

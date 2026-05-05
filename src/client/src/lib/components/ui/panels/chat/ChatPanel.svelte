@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { eventsStore } from '$lib/services/eventService';
-	import PanelBg from './PanelBg.svelte';
+	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
 
 	let container: HTMLDivElement | undefined = $state();
 	let isMinimized = $state(false);

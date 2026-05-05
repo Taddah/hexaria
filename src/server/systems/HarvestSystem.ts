@@ -1,6 +1,7 @@
 import { World } from '../core/World';
 import { IHarvestIntent, IInventory, IPosition, TileData, Resource, ActionType } from '$shared';
 import { addFatigue } from './FatigueSystem';
+import { gainXp } from './SkillSystem';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
@@ -30,7 +31,9 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         harvested = true;
         world.addComponent(entity, 'ActionTag', { type: getActionType(resource.type), timestamp: Date.now() });
         addFatigue(world, entity, 2);
+        gainXp(world, entity, getSkillName(resource.type));
     }
+
 
     return harvested;
 }
@@ -42,5 +45,14 @@ function getActionType(resourceType: Resource): ActionType {
         case Resource.STONE: return ActionType.MINE_STONE;
         case Resource.SILVER: return ActionType.MINE_SILVER;
         default: return ActionType.CHOP_WOOD;
+    }
+}
+
+function getSkillName(resourceType: Resource): string {
+    switch (resourceType) {
+        case Resource.WOOD: return "woodcutting";
+        case Resource.STONE: return "mining";
+        case Resource.SILVER: return "mining";
+        default: return "woodcutting";
     }
 }

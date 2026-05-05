@@ -1,4 +1,4 @@
-import { IPlayer, IPosition, IIdentity, IInventory, EventComponent, IBodyModifiers, IBody, IFatigue } from "$shared/components";
+import { IPlayer, IPosition, IIdentity, IInventory, EventComponent, IBodyModifiers, IBody, IFatigue, ISkills } from "$shared/components";
 import { World } from "../core/World";
 
 export function findEntityBySocket(world: World, socketId: string): number | undefined {
@@ -19,9 +19,10 @@ export function getWorldState(world: World): object[] {
         const inventory = world.getComponent<IInventory>(entity, 'Inventory');
         const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
         const gameEvents = world.getComponent<EventComponent>(entity, 'EventComponent');
+        const skills = world.getComponent<ISkills>(entity, "skills");
 
         if (pos && identity) {
-            worldState.push({ id: entity, position: pos, body, bodyModifiers, identity, inventory, fatigue, gameEvents });
+            worldState.push({ id: entity, position: pos, body, bodyModifiers, identity, inventory, fatigue, gameEvents, skills });
         }
     }
 

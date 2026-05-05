@@ -2,6 +2,7 @@ import { World } from '../core/World';
 import { TileData } from '$shared/types';
 import { IMovementIntent, IPosition, MOVEMENT_DURATION_MS, IPlayer, ActionType } from '$shared';
 import { addFatigue } from './FatigueSystem';
+import { gainXp } from './SkillSystem';
 
 
 
@@ -40,5 +41,6 @@ export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed
 
         world.addComponent(entity, 'ActionTag', { type: ActionType.TRAVEL, timestamp: Date.now() });
         addFatigue(world, entity, 1);
+        gainXp(world, entity, "athletics");
     }
 }

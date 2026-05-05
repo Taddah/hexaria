@@ -1,13 +1,13 @@
 <script lang="ts">
-	import GameCanvas from '$lib/components/GameCanvas.svelte';
+	import GameCanvas from '$lib/components/game/GameCanvas.svelte';
 	import { getSocket } from '$lib/services/socket';
 	import { gameState } from '$lib/stores/gameState.svelte';
 	import Sidebar from '$lib/components/ui/Sidebar.svelte';
-	import ActionPanel from '$lib/components/ui/ActionPanel.svelte';
+	import ActionPanel from '$lib/components/ui/panels/actions/ActionPanel.svelte';
 	import { processGameEvents } from '$lib/services/eventService';
-	import PlayerInfo from '$lib/components/ui/PlayerInfo.svelte';
-	import HexInfoBar from '$lib/components/ui/HexInfoBar.svelte';
-	import ChatPanel from '$lib/components/ui/ChatPanel.svelte';
+	import PlayerInfo from '$lib/components/ui/panels/PlayerInfo.svelte';
+	import HexInfoBar from '$lib/components/ui/panels/hexInfo/HexInfoBar.svelte';
+	import ChatPanel from '$lib/components/ui/panels/chat/ChatPanel.svelte';
 	import { goto } from '$app/navigation';
 	import EventModal from '$lib/components/ui/EventModal.svelte';
 	import TopBar from '$lib/components/ui/TopBar.svelte';
