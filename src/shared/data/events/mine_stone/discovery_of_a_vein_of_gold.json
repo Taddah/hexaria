@@ -1,0 +1,115 @@
+[
+    {
+        "id": "discovery_of_a_vein_of_gold",
+        "title": "Découverte d'un filon d'or",
+        "probability": 1,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "positive",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Votre pic fait sauter un bloc. Derrière : des veines dorées courent dans la roche sur plusieurs mètres. De l'or. Du vrai. Votre cœur s'emballe.",
+                "choices": [
+                    {
+                        "id": "keep_secret",
+                        "label": "Garder le secret et exploiter seul",
+                        "outcomes": [
+                            {
+                                "weight": 60,
+                                "nextNode": "secret_kept",
+                                "effects": []
+                            },
+                            {
+                                "weight": 40,
+                                "nextNode": "secret_leaked",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "share",
+                        "label": "En parler au village",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "shared",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "extract_now",
+                        "label": "Extraire le plus possible immédiatement",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "extracted",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "secret_kept",
+                "description": "Vous exploitez discrètement le filon sur plusieurs semaines. Votre vie vient de changer.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "gold",
+                        "value": 30
+                    }
+                ]
+            },
+            {
+                "id": "secret_leaked",
+                "description": "Le bruit court. D'autres mineurs se pointent. Vous n'avez que le temps d'extraire votre part avant que le filon soit disputé.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "gold",
+                        "value": 10
+                    }
+                ]
+            },
+            {
+                "id": "shared",
+                "description": "Le village s'anime. Une mine est organisée. Vous en êtes le découvreur — on s'en souviendra.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "gold",
+                        "value": 15
+                    }
+                ]
+            },
+            {
+                "id": "extracted",
+                "description": "Vous repartez les poches lourdes, les bras douloureux. Une belle récolte, mais vous avez laissé beaucoup derrière vous.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "gold",
+                        "value": 12
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "armLeft",
+                        "value": -2
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "armRight",
+                        "value": -2
+                    }
+                ]
+            }
+        ]
+    }
+]

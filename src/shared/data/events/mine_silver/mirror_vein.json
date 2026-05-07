@@ -1,0 +1,76 @@
+[
+  {
+    "id": "mirror_vein",
+    "title": "La veine miroir",
+    "probability": 4,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "La paroi d'argent poli vous renvoie votre propre reflet, déformé, vieilli. Vous ne pouvez pas vous en détacher.",
+        "choices": [
+          {
+            "id": "stare",
+            "label": "Fixer le reflet longuement",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "revelation",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "unsettled",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "break",
+            "label": "Briser la paroi à coups de pic",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "broken",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "revelation",
+        "description": "Vous voyez votre vie défiler dans ce reflet. Quelque chose se clarifie en vous.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "unsettled",
+        "description": "Vous vous détournez, mal à l'aise. Le reflet ne ressemblait pas vraiment à vous.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "broken",
+        "description": "Les éclats d'argent volent. Le reflet disparaît. Vous récupérez quelques morceaux.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 2
+          }
+        ]
+      }
+    ]
+  }
+]

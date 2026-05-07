@@ -1,0 +1,137 @@
+[
+  {
+    "id": "interrupted_sleep",
+    "title": "Sommeil interrompu",
+    "probability": 15,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un craquement vous arrache au sommeil. Quelque chose — ou quelqu'un — rôde dehors.",
+        "choices": [
+          {
+            "id": "investigate",
+            "label": "Sortir voir ce que c'est",
+            "outcomes": [
+              {
+                "weight": 40,
+                "nextNode": "animal",
+                "effects": []
+              },
+              {
+                "weight": 35,
+                "nextNode": "thief_caught",
+                "effects": []
+              },
+              {
+                "weight": 25,
+                "nextNode": "attacked",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "hide",
+            "label": "Rester caché et attendre",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "passed_by",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "robbed",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "shout",
+            "label": "Crier pour faire fuir l'intrus",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "scared_off",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "attacked",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "animal",
+        "description": "Un renard fouillait vos affaires. Il détale en vous voyant. Rien de grave, mais votre nuit est gâchée.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "restQuality",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "thief_caught",
+        "description": "Un homme en guenilles s'enfuit à toutes jambes. Il a laissé tomber ce qu'il avait pris.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "attacked",
+        "description": "Une silhouette vous saute dessus. La lutte est brève mais violente avant qu'elle ne fuie.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -3
+          },
+          {
+            "type": "STAT",
+            "stat": "restQuality",
+            "value": -3
+          }
+        ]
+      },
+      {
+        "id": "passed_by",
+        "description": "Le bruit s'éloigne. Sans doute un animal ou un passant. Vous vous rendormez difficilement.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "restQuality",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "robbed",
+        "description": "Au matin, il manque des provisions. Vous avez dormi pendant qu'on vous volait.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": -3
+          }
+        ]
+      },
+      {
+        "id": "scared_off",
+        "description": "Un cri dans la nuit, puis le silence. Quelle qu'ait été la menace, elle est partie.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

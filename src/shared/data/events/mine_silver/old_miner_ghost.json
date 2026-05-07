@@ -1,0 +1,104 @@
+[
+  {
+    "id": "old_miner_ghost",
+    "title": "Le fantôme du vieux mineur",
+    "probability": 2,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Votre torche vacille. Une silhouette translucide se tient devant vous. Un vieil homme en habits de mineur, le regard triste. Il ouvre la bouche sans un son.",
+        "choices": [
+          {
+            "id": "speak",
+            "label": "Lui parler",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "guidance",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "vanishes",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "follow",
+            "label": "Le suivre",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "hidden_vein",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "lost",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "flee",
+            "label": "Fuir en courant",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "vanishes",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "guidance",
+        "description": "Il pointe une direction du doigt, puis disparaît. Vous trouvez une galerie inconnue, marquée d'un vieux nom gravé dans la roche.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 5
+          }
+        ]
+      },
+      {
+        "id": "hidden_vein",
+        "description": "Il vous mène jusqu'à une veine cachée, jamais exploitée. Puis il s'évanouit en souriant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id": "lost",
+        "description": "Il disparaît et vous laisse dans une galerie inconnue. Il faut une heure pour retrouver votre chemin.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "vanishes",
+        "description": "Il s'évanouit sans laisser de trace. Vous restez seul dans le silence.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

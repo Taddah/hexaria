@@ -1,0 +1,65 @@
+[
+  {
+    "id": "pure_silver_nugget",
+    "title": "Pépite d'argent pur",
+    "probability": 6,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Votre pic dégage une pépite d'argent pur, presque parfaite. Elle tient dans votre paume et brille comme la lune.",
+        "choices": [
+          {
+            "id": "sell",
+            "label": "La vendre au marché",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "sold",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "keep",
+            "label": "La garder comme talisman",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "kept",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sold",
+        "description": "L'orfèvre du village vous en donne un bon prix. Belle journée.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id": "kept",
+        "description": "Vous la glissez dans votre poche. Il y a quelque chose de réconfortant à sentir son poids.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  }
+]

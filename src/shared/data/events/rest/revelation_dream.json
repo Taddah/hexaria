@@ -1,0 +1,115 @@
+[
+  {
+    "id": "revelation_dream",
+    "title": "Le rêve prophétique",
+    "probability": 3,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Le rêve était trop net pour n'être qu'un rêve. Un lieu précis, un visage, une saison. Vous avez vu quelque chose qui n'a pas encore eu lieu — vous en êtes certain.",
+        "choices": [
+          {
+            "id": "write_down",
+            "label": "Tout noter avant d'oublier",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "noted",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "seek_interpretation",
+            "label": "Chercher quelqu'un pour interpréter le rêve",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "interpreted",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "misinterpreted",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "dismiss",
+            "label": "Ce n'est qu'un rêve — l'écarter",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "dismissed",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "noted",
+        "description": "Vous griffonnez chaque détail. Le lieu, les couleurs, les mots entendus. Quelque chose vous dit que vous en aurez besoin.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "FLAG",
+            "stat": "prophecy_noted",
+            "value": 1
+          },
+          {
+            "type": "STAT",
+            "stat": "perception",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "interpreted",
+        "description": "Une femme aux yeux clairs écoute chaque mot. Elle hoche la tête lentement. 'Préparez-vous. Ce que vous avez vu viendra.' Elle ne prend pas d'argent.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "FLAG",
+            "stat": "prophecy_known",
+            "value": 1
+          },
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "misinterpreted",
+        "description": "L'interprète vous donne une lecture rassurante — trop rassurante. Vous repartez soulagé, mais peut-être dans la mauvaise direction.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "FLAG",
+            "stat": "prophecy_misread",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "dismissed",
+        "description": "Vous chassez les images. La journée commence. Mais le visage que vous avez vu dans ce rêve — vous le croiserez un jour.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "FLAG",
+            "stat": "prophecy_ignored",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  }
+]

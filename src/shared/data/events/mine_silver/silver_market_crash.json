@@ -1,0 +1,92 @@
+[
+  {
+    "id": "silver_market_crash",
+    "title": "Effondrement du prix de l'argent",
+    "probability": 5,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "De retour au village après une bonne récolte, on vous annonce que le prix de l'argent s'est effondré. Un marchand a inondé le marché. Votre stock ne vaut plus grand chose.",
+        "choices": [
+          {
+            "id": "sell_now",
+            "label": "Vendre quand même maintenant",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "sold_cheap",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "wait",
+            "label": "Attendre que les prix remontent",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "prices_up",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "prices_stay",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sold_cheap",
+        "description": "Vous bradez votre argent. C'est mieux que rien.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": -3
+          },
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "prices_up",
+        "description": "Quelques semaines plus tard, les prix se redressent. Votre patience est récompensée.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 8
+          }
+        ]
+      },
+      {
+        "id": "prices_stay",
+        "description": "Les prix ne remontent pas. Vous finissez par vendre à perte.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": -2
+          },
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  }
+]

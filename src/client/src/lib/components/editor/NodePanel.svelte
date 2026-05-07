@@ -6,6 +6,7 @@
 		label: string;
 		description?: string;
 		effects: EventEffect[];
+		isSignificant: boolean;
 	};
 
 	let {
@@ -29,6 +30,15 @@
 			value={data.description ?? ''}
 			oninput={(e) => onchange({ description: e.currentTarget.value })}
 		></textarea>
+	</div>
+	<div class="flex flex-wrap gap-0.5">
+		<label class="text-xs text-gray-500">Important</label>
+		<input
+			type="checkbox"
+			class="rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-white"
+			checked={data.isSignificant}
+			onchange={(e) => onchange({ isSignificant: e.currentTarget.checked })}
+		/>
 	</div>
 	<EffectsEditor effects={data.effects ?? []} onchange={(effects) => onchange({ effects })} />
 	<button

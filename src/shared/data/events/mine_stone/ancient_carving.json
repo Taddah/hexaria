@@ -1,0 +1,59 @@
+[
+    {
+        "id": "ancient_carving",
+        "title": "Gravures anciennes",
+        "probability": 4,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "neutral",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Derrière la roche abattue, une paroi couverte de gravures. Elles semblent très anciennes. Que faire ?",
+                "choices": [
+                    {
+                        "id": "study",
+                        "label": "Prendre le temps de les observer",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "studied",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "destroy",
+                        "label": "Continuer à miner, peu importe",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "destroyed",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "studied",
+                "description": "Les symboles vous restent en tête. Vous ne savez pas ce qu'ils signifient, mais quelque chose a changé en vous.",
+                "choices": [],
+                "effects": []
+            },
+            {
+                "id": "destroyed",
+                "description": "Les gravures disparaissent sous vos coups. Quelque chose d'irremplaçable vient de s'effacer.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stone",
+                        "value": 2
+                    }
+                ]
+            }
+        ]
+    }
+]

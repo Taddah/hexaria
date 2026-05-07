@@ -1,0 +1,90 @@
+[
+  {
+    "id": "pickaxe_spark_explosion",
+    "title": "Étincelle fatale",
+    "probability": 6,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Votre pic frappe la roche et crée une étincelle. Une poche de gaz s'embrase. Une déflagration vous projette en arrière.",
+        "choices": [
+          {
+            "id": "roll",
+            "label": "Rouler pour étouffer les flammes",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "minor_burns",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "severe_burns",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "panic",
+            "label": "Paniquer",
+            "outcomes": [
+              {
+                "weight": 30,
+                "nextNode": "minor_burns",
+                "effects": []
+              },
+              {
+                "weight": 70,
+                "nextNode": "severe_burns",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "minor_burns",
+        "description": "Quelques brûlures aux mains et aux avant-bras. Douloureux, mais gérable.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armLeft",
+            "value": -2
+          },
+          {
+            "type": "BODY",
+            "stat": "armRight",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "severe_burns",
+        "description": "Votre visage et vos mains sont sévèrement brûlés. Vous hurlez de douleur.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "head",
+            "value": -4
+          },
+          {
+            "type": "BODY",
+            "stat": "armLeft",
+            "value": -4
+          },
+          {
+            "type": "BODY",
+            "stat": "armRight",
+            "value": -4
+          }
+        ]
+      }
+    ]
+  }
+]

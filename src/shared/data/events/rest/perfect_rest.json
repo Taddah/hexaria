@@ -1,0 +1,75 @@
+[
+  {
+    "id": "perfect_rest",
+    "title": "Nuit parfaite",
+    "probability": 18,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "La nuit est douce, silencieuse. Vous dormez d'un sommeil sans rêve, profond et réparateur. Au matin, vous vous sentez neuf.",
+        "choices": [
+          {
+            "id": "enjoy_morning",
+            "label": "Prendre le temps de savourer ce matin",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "refreshed",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "start_early",
+            "label": "Profiter de cette énergie pour commencer tôt",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "energized",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "refreshed",
+        "description": "Vous prenez un repas tranquille, regardez le ciel se lever. Une rare sensation de paix.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "stamina",
+            "value": 3
+          },
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "energized",
+        "description": "Vous êtes sur pied avant le soleil. Cette journée sera productive.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "stamina",
+            "value": 5
+          },
+          {
+            "type": "STAT",
+            "stat": "workSpeed",
+            "value": 1
+          }
+        ]
+      }
+    ]
+  }
+]

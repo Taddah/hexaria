@@ -1,0 +1,86 @@
+[
+    {
+        "id": "vein_collapse",
+        "title": "Effondrement de la veine",
+        "probability": 8,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "negative",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "La paroi craque. Des blocs de pierre s'effondrent autour de vous. Vous avez une seconde pour réagir.",
+                "choices": [
+                    {
+                        "id": "dive",
+                        "label": "Plonger en avant",
+                        "outcomes": [
+                            {
+                                "weight": 65,
+                                "nextNode": "escaped",
+                                "effects": []
+                            },
+                            {
+                                "weight": 35,
+                                "nextNode": "buried",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "shield_head",
+                        "label": "Protéger sa tête avec les bras",
+                        "outcomes": [
+                            {
+                                "weight": 50,
+                                "nextNode": "arm_hit",
+                                "effects": []
+                            },
+                            {
+                                "weight": 50,
+                                "nextNode": "buried",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "escaped",
+                "description": "Vous roulez hors de la zone. La poussière retombe lentement. Vous êtes indemne.",
+                "choices": [],
+                "effects": []
+            },
+            {
+                "id": "arm_hit",
+                "description": "Un bloc vous écrase l'avant-bras. Douloureux, mais vous êtes vivant.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "armLeft",
+                        "value": -3
+                    }
+                ]
+            },
+            {
+                "id": "buried",
+                "description": "Vous êtes partiellement enseveli. Après de longues minutes d'effort, vous vous dégagez, épuisé et blessé.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "torso",
+                        "value": -4
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "legLeft",
+                        "value": -2
+                    }
+                ]
+            }
+        ]
+    }
+]

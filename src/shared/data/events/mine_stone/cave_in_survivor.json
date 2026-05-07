@@ -1,0 +1,113 @@
+[
+    {
+        "id": "cave_in_survivor",
+        "title": "Enseveli vivant",
+        "probability": 2,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "negative",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Un effondrement massif. Vous vous retrouvez dans l'obscurité totale, prisonnier sous des tonnes de roche. L'air commence à se raréfier.",
+                "choices": [
+                    {
+                        "id": "dig_out",
+                        "label": "Creuser frénétiquement",
+                        "outcomes": [
+                            {
+                                "weight": 50,
+                                "nextNode": "dug_out",
+                                "effects": []
+                            },
+                            {
+                                "weight": 50,
+                                "nextNode": "exhausted",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "stay_calm",
+                        "label": "Rester calme et chercher une issue",
+                        "outcomes": [
+                            {
+                                "weight": 70,
+                                "nextNode": "dug_out",
+                                "effects": []
+                            },
+                            {
+                                "weight": 30,
+                                "nextNode": "exhausted",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "cry_help",
+                        "label": "Crier pour appeler de l'aide",
+                        "outcomes": [
+                            {
+                                "weight": 40,
+                                "nextNode": "rescued",
+                                "effects": []
+                            },
+                            {
+                                "weight": 60,
+                                "nextNode": "exhausted",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "dug_out",
+                "description": "Après des heures d'effort, vous percez un passage. Vous sortez à la lumière, tremblant, couvert de poussière. Vous n'oublierez jamais ça.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "armLeft",
+                        "value": -4
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "armRight",
+                        "value": -4
+                    }
+                ]
+            },
+            {
+                "id": "rescued",
+                "description": "Des voix au-dessus. On vous dégage. La lumière vous aveugle. Vous pleurez sans vous en rendre compte.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "torso",
+                        "value": -2
+                    }
+                ]
+            },
+            {
+                "id": "exhausted",
+                "description": "Vous vous évanoussez. Quand vous rouvrez les yeux, vous êtes dehors. Quelqu'un vous a sorti de là. Vous ne savez pas qui.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "torso",
+                        "value": -6
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "legLeft",
+                        "value": -3
+                    }
+                ]
+            }
+        ]
+    }
+]

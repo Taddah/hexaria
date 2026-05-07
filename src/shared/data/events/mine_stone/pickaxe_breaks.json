@@ -1,0 +1,70 @@
+[
+    {
+        "id": "pickaxe_breaks",
+        "title": "Pic brisé",
+        "probability": 12,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "negative",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Votre pic heurte une roche d'une dureté inhabituelle. Un craquement. La tête du pic s'est brisée net.",
+                "choices": [
+                    {
+                        "id": "improvise",
+                        "label": "Continuer avec ce qui reste",
+                        "outcomes": [
+                            {
+                                "weight": 40,
+                                "nextNode": "managed",
+                                "effects": []
+                            },
+                            {
+                                "weight": 60,
+                                "nextNode": "gave_up",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "stop",
+                        "label": "Arrêter la session",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "gave_up",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "managed",
+                "description": "Avec le manche seul, vous parvenez à dégager quelques pierres. C'est laborieux.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stone",
+                        "value": 1
+                    }
+                ]
+            },
+            {
+                "id": "gave_up",
+                "description": "Impossible de continuer correctement. Il faudra réparer l'outil avant de reprendre.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stone",
+                        "value": -1
+                    }
+                ]
+            }
+        ]
+    }
+]

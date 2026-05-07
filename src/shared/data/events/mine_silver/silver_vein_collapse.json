@@ -1,0 +1,86 @@
+[
+  {
+    "id": "silver_vein_collapse",
+    "title": "Effondrement de la veine d'argent",
+    "probability": 8,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "La paroi autour de la veine d'argent craque sinistrement. Des blocs se détachent.",
+        "choices": [
+          {
+            "id": "dive_forward",
+            "label": "Plonger en avant",
+            "outcomes": [
+              {
+                "weight": 65,
+                "nextNode": "escaped",
+                "effects": []
+              },
+              {
+                "weight": 35,
+                "nextNode": "buried",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "shield_head",
+            "label": "Protéger sa tête avec les bras",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "arm_hit",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "buried",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "escaped",
+        "description": "Vous roulez hors de la zone d'impact. La poussière d'argent retombe lentement sur vos épaules.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "arm_hit",
+        "description": "Un bloc vous écrase l'avant-bras. Vous vous en sortez avec une vive douleur.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armLeft",
+            "value": -3
+          }
+        ]
+      },
+      {
+        "id": "buried",
+        "description": "Partiellement enseveli, vous vous dégagez après de longs efforts. Le corps meurtri.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -4
+          },
+          {
+            "type": "BODY",
+            "stat": "legLeft",
+            "value": -2
+          }
+        ]
+      }
+    ]
+  }
+]

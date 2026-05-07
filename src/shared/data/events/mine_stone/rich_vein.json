@@ -1,0 +1,87 @@
+[
+    {
+        "id": "rich_vein",
+        "title": "Veine exceptionnelle",
+        "probability": 8,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "positive",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Votre pic s'enfonce dans une roche étrangement friable. Derrière : une veine de minerai d'une qualité rare.",
+                "choices": [
+                    {
+                        "id": "mine_all",
+                        "label": "Tout extraire, prendre son temps",
+                        "outcomes": [
+                            {
+                                "weight": 70,
+                                "nextNode": "haul_big",
+                                "effects": []
+                            },
+                            {
+                                "weight": 30,
+                                "nextNode": "haul_big_tired",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mine_quick",
+                        "label": "Extraire l'essentiel rapidement",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "haul_small",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "haul_big",
+                "description": "Vous ressortez chargé comme une mule. Belle journée.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stone",
+                        "value": 8
+                    }
+                ]
+            },
+            {
+                "id": "haul_big_tired",
+                "description": "Vous avez tout pris, mais votre dos vous rappelle que vous n'êtes pas invincible.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stone",
+                        "value": 8
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "torso",
+                        "value": -1
+                    }
+                ]
+            },
+            {
+                "id": "haul_small",
+                "description": "Vous prenez le principal et laissez le reste. Léger et satisfait.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "stone",
+                        "value": 4
+                    }
+                ]
+            }
+        ]
+    }
+]

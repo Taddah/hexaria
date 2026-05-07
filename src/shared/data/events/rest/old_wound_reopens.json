@@ -1,0 +1,99 @@
+[
+  {
+    "id": "old_wound_reopens",
+    "title": "Une vieille blessure se réveille",
+    "probability": 8,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Vous vous réveillez avec une douleur familière. Une ancienne cicatrice saigne légèrement, rouverte pendant la nuit.",
+        "choices": [
+          {
+            "id": "self_treat",
+            "label": "La soigner soi-même",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "patched",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "infected",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "seek_help",
+            "label": "Chercher quelqu'un pour la soigner",
+            "outcomes": [
+              {
+                "weight": 80,
+                "nextNode": "healed_properly",
+                "effects": []
+              },
+              {
+                "weight": 20,
+                "nextNode": "no_help",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "patched",
+        "description": "Vous nettoyez et bandez la plaie sommairement. Ça tiendra pour aujourd'hui.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "general",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "infected",
+        "description": "Mal soignée, la plaie s'infecte en quelques heures. La douleur est difficile à ignorer.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "general",
+            "value": -4
+          }
+        ]
+      },
+      {
+        "id": "healed_properly",
+        "description": "Un guérisseur recoud proprement. Douloureux, mais bien fait. La cicatrice tiendra.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "no_help",
+        "description": "Personne de disponible. Vous gérez seul, tant bien que mal.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "general",
+            "value": -2
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,120 @@
+[
+  {
+    "id": "cursed_silver",
+    "title": "L'argent maudit",
+    "probability": 3,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "En extrayant un bloc, vous trouvez des pièces d'argent anciennes emmurées dans la roche. Elles sont gravées de symboles que vous ne reconnaissez pas. Une sensation étrange vous envahit.",
+        "choices": [
+          {
+            "id": "take_all",
+            "label": "Tout prendre",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "cursed",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "rich",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "leave",
+            "label": "Laisser les pièces en place",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "spared",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "take_one",
+            "label": "Prendre une seule pièce",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "cursed_light",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "rich",
+                "effects": []
+              }
+            ]
+          }
+        ],
+        "effects": [],
+        "isSignificant": false
+      },
+      {
+        "id": "cursed",
+        "description": "Dès le soir, les cauchemars commencent. Votre santé décline sans raison apparente. Vous ne faites pas le lien, pas tout de suite.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -6
+          },
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 8
+          }
+        ],
+        "isSignificant": true
+      },
+      {
+        "id": "cursed_light",
+        "description": "Une seule pièce, mais elle suffit. Des murmures la nuit. Un malaise permanent.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -3
+          },
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 2
+          }
+        ],
+        "isSignificant": false
+      },
+      {
+        "id": "rich",
+        "description": "Rien ne se passe. Les pièces sont anciennes et valent une fortune. Vous aviez peut-être tort de vous inquiéter.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 15
+          }
+        ],
+        "isSignificant": false
+      },
+      {
+        "id": "spared",
+        "description": "Vous rebouchez la cavité. En partant, vous entendez presque un soupir de soulagement derrière vous.",
+        "choices": [],
+        "effects": [],
+        "isSignificant": false
+      }
+    ]
+  }
+]

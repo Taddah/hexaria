@@ -1,0 +1,75 @@
+[
+    {
+        "id": "rare_gem",
+        "title": "Pierre précieuse",
+        "probability": 6,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "positive",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Votre pic heurte quelque chose d'inhabituel. Dans la roche, un éclat de gemme brille faiblement.",
+                "choices": [
+                    {
+                        "id": "extract_careful",
+                        "label": "L'extraire délicatement",
+                        "outcomes": [
+                            {
+                                "weight": 70,
+                                "nextNode": "gem_intact",
+                                "effects": []
+                            },
+                            {
+                                "weight": 30,
+                                "nextNode": "gem_broken",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "extract_fast",
+                        "label": "L'arracher à la hâte",
+                        "outcomes": [
+                            {
+                                "weight": 30,
+                                "nextNode": "gem_intact",
+                                "effects": []
+                            },
+                            {
+                                "weight": 70,
+                                "nextNode": "gem_broken",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "gem_intact",
+                "description": "La gemme sort entière, parfaite. Elle vaudra cher au marché.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "gold",
+                        "value": 8
+                    }
+                ]
+            },
+            {
+                "id": "gem_broken",
+                "description": "La gemme se fracture. Les éclats gardent une petite valeur.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "gold",
+                        "value": 2
+                    }
+                ]
+            }
+        ]
+    }
+]

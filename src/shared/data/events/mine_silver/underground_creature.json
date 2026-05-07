@@ -1,0 +1,91 @@
+[
+  {
+    "id": "underground_creature",
+    "title": "Créature souterraine",
+    "probability": 5,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Quelque chose bouge dans l'obscurité au fond de la galerie. Des yeux brillent. Ce n'est pas un rat.",
+        "choices": [
+          {
+            "id": "attack",
+            "label": "Attaquer avec le pic",
+            "outcomes": [
+              {
+                "weight": 55,
+                "nextNode": "drove_off",
+                "effects": []
+              },
+              {
+                "weight": 45,
+                "nextNode": "bitten",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "back_away",
+            "label": "Reculer lentement",
+            "outcomes": [
+              {
+                "weight": 75,
+                "nextNode": "escaped",
+                "effects": []
+              },
+              {
+                "weight": 25,
+                "nextNode": "bitten",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "throw_torch",
+            "label": "Lancer sa torche vers elle",
+            "outcomes": [
+              {
+                "weight": 80,
+                "nextNode": "drove_off",
+                "effects": []
+              },
+              {
+                "weight": 20,
+                "nextNode": "escaped",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "drove_off",
+        "description": "La créature pousse un cri strident et disparaît dans les profondeurs. Vous ne savez toujours pas ce que c'était.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "escaped",
+        "description": "Vous battez en retraite sans encombre. Le bruit cesse derrière vous.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "bitten",
+        "description": "Quelque chose vous mord la jambe avant de fuir. La plaie est étrange, presque noire.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "legRight",
+            "value": -4
+          }
+        ]
+      }
+    ]
+  }
+]

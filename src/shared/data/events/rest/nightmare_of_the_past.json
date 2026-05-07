@@ -1,0 +1,164 @@
+[
+  {
+    "id": "nightmare_of_the_past",
+    "title": "Le cauchemar du passé",
+    "probability": 5,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Il revient encore. Ce visage, cette nuit-là, l'odeur de la fumée. Vous vous réveillez en sursaut, haletant, les draps trempés. Cela fait des années que ce cauchemar vous poursuit.",
+        "choices": [
+          {
+            "id": "confront",
+            "label": "Décider d'affronter ce passé une fois pour toutes",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "confronted_success",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "confronted_hard",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "drown_it",
+            "label": "Noyer ça dans le travail et l'oubli",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "buried_deep",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "spiraled",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "confide",
+            "label": "Se confier à quelqu'un de proche",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "confided",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "alone_with_it",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "confronted_success",
+        "description": "Vous retournez là où tout a commencé. Ce n'est pas facile. Mais quelque chose se dépose en vous. Le cauchemar, cette nuit-là, ne reviendra pas.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": 5
+          },
+          {
+            "type": "STAT",
+            "stat": "traumaLevel",
+            "value": -3
+          }
+        ]
+      },
+      {
+        "id": "confronted_hard",
+        "description": "Vous avez essayé. Mais rouvrir ces plaies était trop tôt. Vous rentrez plus brisé qu'avant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": -4
+          },
+          {
+            "type": "STAT",
+            "stat": "traumaLevel",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "buried_deep",
+        "description": "Vous vous jetez dans le travail. Les jours passent. Le cauchemar se fait plus rare — pour l'instant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "traumaLevel",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "spiraled",
+        "description": "L'oubli ne vient pas. Vous dormez mal pendant plusieurs nuits. Le passé ne lâche pas.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": -3
+          },
+          {
+            "type": "STAT",
+            "stat": "traumaLevel",
+            "value": 2
+          },
+          {
+            "type": "STAT",
+            "stat": "stamina",
+            "value": -3
+          }
+        ]
+      },
+      {
+        "id": "confided",
+        "description": "Les mots sont sortis lentement. L'autre a écouté sans juger. Vous ne vous sentez plus tout à fait seul avec ça.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": 3
+          },
+          {
+            "type": "STAT",
+            "stat": "traumaLevel",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "alone_with_it",
+        "description": "Vous avez essayé de parler. Les mots ne sont pas venus. Vous êtes rentré chez vous en silence.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "morale",
+            "value": -2
+          }
+        ]
+      }
+    ]
+  }
+]

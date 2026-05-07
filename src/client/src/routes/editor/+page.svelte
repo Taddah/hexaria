@@ -19,6 +19,7 @@
 		label: string;
 		description?: string;
 		effects: EventEffect[];
+		isSignificant: boolean;
 	};
 
 	type TreeNode =
@@ -46,7 +47,13 @@
 			triggers: [],
 			polarity: 'neutral',
 			nodes: [
-				{ id: 'start', description: 'Description du node de départ', effects: [], choices: [] }
+				{
+					id: 'start',
+					description: 'Description du node de départ',
+					effects: [],
+					choices: [],
+					isSignificant: false
+				}
 			]
 		};
 	}
@@ -55,8 +62,7 @@
 		const root: TreeNode[] = [];
 
 		for (const [path, mod] of Object.entries(modules)) {
-			// ex: /src/lib/shared/data/events/forest/wolf_attack.json
-			const after = path.split('data/events/')[1]; // forest/wolf_attack.json
+			const after = path.split('data/events/')[1];
 			const parts = after.split('/');
 			const eventsFromFile = (mod as { default: unknown }).default as GameEvent[];
 
@@ -221,7 +227,8 @@
 				id: node.id,
 				description: data.description ?? '',
 				choices,
-				effects: (data.effects ?? []) as EventEffect[]
+				effects: (data.effects ?? []) as EventEffect[],
+				isSignificant: Boolean(data.isSignificant)
 			});
 		}
 		return { ...event, nodes: eventNodes };

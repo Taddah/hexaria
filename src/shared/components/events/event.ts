@@ -64,6 +64,7 @@ export interface EventNode {
     description: string;
     choices: EventChoice[]; // [] = node terminal
     effects?: EventEffect[];
+    isSignificant: boolean;
 }
 
 // ─── Event Definition ─────────────────────────────────────────────────────────

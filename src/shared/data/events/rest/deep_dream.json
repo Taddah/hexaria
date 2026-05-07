@@ -1,0 +1,110 @@
+[
+  {
+    "id": "deep_dream",
+    "title": "Rêve profond",
+    "probability": 12,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Vous sombrez dans un sommeil lourd. Des images étranges défilent — des visages, des lieux que vous ne reconnaissez pas. Vous vous réveillez à l'aube, le cœur battant.",
+        "choices": [
+          {
+            "id": "analyze",
+            "label": "Tenter de comprendre ce rêve",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "insight",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "confused",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "L'ignorer et reprendre sa journée",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "ignored",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "tell_someone",
+            "label": "En parler à quelqu'un au village",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "wise_advice",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "mocked",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "insight",
+        "description": "En y réfléchissant, une intuition étrange vous envahit. Vous vous sentez plus attentif, comme si votre esprit avait travaillé pendant votre sommeil.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "perception",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "confused",
+        "description": "Plus vous y pensez, plus vous êtes troublé. La journée commence dans un brouillard mental.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "focus",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "ignored",
+        "description": "Vous chassez les images de votre esprit. La journée commence normalement.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "wise_advice",
+        "description": "Une vieille femme du village hoche la tête en vous écoutant. Elle vous donne une herbe apaisante pour la nuit suivante.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "herb",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "mocked",
+        "description": "Votre interlocuteur rit. 'C'est juste un rêve.' Vous regrettez d'en avoir parlé.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

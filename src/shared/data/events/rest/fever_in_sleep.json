@@ -1,0 +1,126 @@
+[
+  {
+    "id": "fever_in_sleep",
+    "title": "Fièvre nocturne",
+    "probability": 10,
+    "triggers": [
+      "REST"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Vous vous réveillez en sueur, le corps brûlant. Une fièvre s'est déclarée pendant la nuit. Chaque mouvement est un effort.",
+        "choices": [
+          {
+            "id": "push_through",
+            "label": "Ignorer et continuer sa journée",
+            "outcomes": [
+              {
+                "weight": 40,
+                "nextNode": "recovered_alone",
+                "effects": []
+              },
+              {
+                "weight": 60,
+                "nextNode": "worsened",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "find_remedy",
+            "label": "Chercher un remède ou une plante",
+            "outcomes": [
+              {
+                "weight": 65,
+                "nextNode": "remedy_found",
+                "effects": []
+              },
+              {
+                "weight": 35,
+                "nextNode": "remedy_failed",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "stay_in_bed",
+            "label": "Rester alité une journée de plus",
+            "outcomes": [
+              {
+                "weight": 80,
+                "nextNode": "rested_well",
+                "effects": []
+              },
+              {
+                "weight": 20,
+                "nextNode": "worsened",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "recovered_alone",
+        "description": "Vous transpirez la fièvre en travaillant. À midi, elle est tombée. Vous êtes épuisé mais debout.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "STAT",
+            "stat": "stamina",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "worsened",
+        "description": "La fièvre monte. Vous vous effondrez en milieu de journée et perdez une journée entière, alité et délirant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "general",
+            "value": -4
+          },
+          {
+            "type": "STAT",
+            "stat": "stamina",
+            "value": -4
+          }
+        ]
+      },
+      {
+        "id": "remedy_found",
+        "description": "Une tisane d'écorce de saule et quelques heures de repos. La fièvre recule avant midi.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "herb",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "remedy_failed",
+        "description": "La plante que vous avez trouvée n'a rien changé. La fièvre persiste toute la journée.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "general",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "rested_well",
+        "description": "Une journée perdue, mais au réveil du lendemain, la fièvre est partie. Votre corps a eu ce dont il avait besoin.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

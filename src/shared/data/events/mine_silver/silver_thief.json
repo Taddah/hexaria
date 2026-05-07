@@ -1,0 +1,98 @@
+[
+  {
+    "id": "silver_thief",
+    "title": "Voleur de minerai",
+    "probability": 9,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "En sortant de la mine, vous surprenez un homme en train de fouiller votre sac. Il vous regarde, prêt à fuir.",
+        "choices": [
+          {
+            "id": "chase",
+            "label": "Le poursuivre",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "caught",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "fled",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "threaten",
+            "label": "Le menacer verbalement",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "dropped",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "fled",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "let_go",
+            "label": "Le laisser partir",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "fled",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "caught",
+        "description": "Vous le rattrapez et récupérez votre argent. Il repart en boitant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "dropped",
+        "description": "Il lâche le minerai et détale. Vous récupérez la majeure partie.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "fled",
+        "description": "Il disparaît avec une partie de votre récolte.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "silver",
+            "value": -2
+          }
+        ]
+      }
+    ]
+  }
+]

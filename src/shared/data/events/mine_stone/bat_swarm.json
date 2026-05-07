@@ -1,0 +1,86 @@
+[
+    {
+        "id": "bat_swarm",
+        "title": "Nuée de chauves-souris",
+        "probability": 10,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "negative",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Vos coups de pic réveillent une colonie de chauves-souris. Des centaines d'entre elles fondent sur vous dans un chaos d'ailes et de cris.",
+                "choices": [
+                    {
+                        "id": "cover_face",
+                        "label": "Protéger son visage et attendre",
+                        "outcomes": [
+                            {
+                                "weight": 70,
+                                "nextNode": "passed",
+                                "effects": []
+                            },
+                            {
+                                "weight": 30,
+                                "nextNode": "scratched",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "run",
+                        "label": "Courir hors de la grotte",
+                        "outcomes": [
+                            {
+                                "weight": 80,
+                                "nextNode": "passed",
+                                "effects": []
+                            },
+                            {
+                                "weight": 20,
+                                "nextNode": "tripped",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "passed",
+                "description": "La nuée passe. Le calme revient aussi vite qu'elle est arrivée.",
+                "choices": [],
+                "effects": []
+            },
+            {
+                "id": "scratched",
+                "description": "Plusieurs griffures au visage et aux mains. Rien de grave, mais ça saigne.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "head",
+                        "value": -1
+                    },
+                    {
+                        "type": "BODY",
+                        "stat": "armRight",
+                        "value": -1
+                    }
+                ]
+            },
+            {
+                "id": "tripped",
+                "description": "Vous trébuchez en fuyant et vous cognez la tête contre la paroi.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "head",
+                        "value": -3
+                    }
+                ]
+            }
+        ]
+    }
+]

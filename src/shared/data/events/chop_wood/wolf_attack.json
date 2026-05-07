@@ -1,109 +1,80 @@
 [
-    {
-        "id": "wolf_attack",
-        "title": "Attaque de loup",
-        "probability": 100,
-        "triggers": [
-            "CHOP_WOOD"
+  {
+    "id": "wolf_attack",
+    "title": "Attaque de loup",
+    "probability": 100,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un loup surgit des fourrés et vous charge. Que faites-vous ?",
+        "choices": [
+          {
+            "id": "fight",
+            "label": "Combattre",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "fight_win",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "fight_lose",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "flee",
+            "label": "Fuir",
+            "outcomes": [
+              {
+                "weight": 10,
+                "nextNode": "flee_success",
+                "effects": []
+              },
+              {
+                "weight": 90,
+                "nextNode": "fight_lose",
+                "effects": []
+              }
+            ]
+          }
         ],
-        "polarity": "negative",
-        "nodes": [
-            {
-                "id": "root",
-                "description": "Un loup surgit des fourrés et vous charge. Que faites-vous ?",
-                "choices": [
-                    {
-                        "id": "fight",
-                        "label": "Combattre",
-                        "outcomes": [
-                            {
-                                "weight": 60,
-                                "nextNode": "fight_win",
-                                "effects": []
-                            },
-                            {
-                                "weight": 40,
-                                "nextNode": "fight_lose",
-                                "effects": []
-                            }
-                        ]
-                    },
-                    {
-                        "id": "flee",
-                        "label": "Fuir",
-                        "outcomes": [
-                            {
-                                "weight": 10,
-                                "nextNode": "flee_success",
-                                "effects": []
-                            },
-                            {
-                                "weight": 90,
-                                "nextNode": "fight_lose",
-                                "effects": []
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "id": "fight_win",
-                "description": "Vous repoussez le loup. Il repart en boitant.",
-                "choices": [
-                    {
-                        "id": "loot",
-                        "label": "Récupérer le rondin de bois",
-                        "outcomes": [
-                            {
-                                "weight": 100,
-                                "nextNode": "end",
-                                "effects": [
-                                    {
-                                        "type": "RESOURCE",
-                                        "stat": "wood",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "id": "leave",
-                        "label": "Partir sans s'attarder",
-                        "outcomes": [
-                            {
-                                "weight": 100,
-                                "nextNode": "end",
-                                "effects": []
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "id": "fight_lose",
-                "description": "Le loup vous mord avant de s'enfuir. Vous soignez vos plaies.",
-                "choices": [],
-                "effects": [
-                    {
-                        "type": "BODY",
-                        "stat": "armLeft",
-                        "value": 1
-                    }
-                ]
-            },
-            {
-                "id": "flee_success",
-                "description": "Vous semez le loup après une longue course. Épuisé mais indemne.",
-                "choices": [],
-                "effects": []
-            },
-            {
-                "id": "end",
-                "description": "Vous reprenez votre chemin.",
-                "choices": [],
-                "effects": []
-            }
-        ]
-    }
+        "effects": [],
+        "isSignificant": false
+      },
+      {
+        "id": "fight_lose",
+        "description": "Le loup vous mord avant de s'enfuir. Vous soignez vos plaies.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armLeft",
+            "value": 1
+          }
+        ],
+        "isSignificant": false
+      },
+      {
+        "id": "flee_success",
+        "description": "Vous semez le loup après une longue course. Épuisé mais indemne.",
+        "choices": [],
+        "effects": [],
+        "isSignificant": false
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez votre chemin.",
+        "choices": [],
+        "effects": [],
+        "isSignificant": false
+      }
+    ]
+  }
 ]

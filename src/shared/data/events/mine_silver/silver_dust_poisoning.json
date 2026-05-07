@@ -1,0 +1,69 @@
+[
+  {
+    "id": "silver_dust_poisoning",
+    "title": "Intoxication à la poussière d'argent",
+    "probability": 10,
+    "triggers": [
+      "MINE_SILVER"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Après une longue session de minage, vous toussez sans pouvoir vous arrêter. La poussière d'argent s'est incrustée dans vos poumons.",
+        "choices": [
+          {
+            "id": "rest",
+            "label": "S'arrêter et se reposer",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "recovered",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "worsened",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "continue",
+            "label": "Continuer à miner malgré tout",
+            "outcomes": [
+              {
+                "weight": 20,
+                "nextNode": "recovered",
+                "effects": []
+              },
+              {
+                "weight": 80,
+                "nextNode": "worsened",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "recovered",
+        "description": "Après quelques heures de repos et d'air frais, la toux se calme. Vous respirez de nouveau normalement.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "worsened",
+        "description": "La toux empire. Vous crachez du sang. Il faudra du temps pour récupérer.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -5
+          }
+        ]
+      }
+    ]
+  }
+]

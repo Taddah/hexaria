@@ -1,0 +1,65 @@
+[
+    {
+        "id": "underground_spring",
+        "title": "Source souterraine",
+        "probability": 5,
+        "triggers": [
+            "MINE_STONE"
+        ],
+        "polarity": "positive",
+        "nodes": [
+            {
+                "id": "root",
+                "description": "Un filet d'eau claire jaillit de la roche fendue. Une source souterraine, pure et froide.",
+                "choices": [
+                    {
+                        "id": "drink",
+                        "label": "Boire et se désaltérer",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "refreshed",
+                                "effects": []
+                            }
+                        ]
+                    },
+                    {
+                        "id": "fill_canteen",
+                        "label": "Remplir sa gourde",
+                        "outcomes": [
+                            {
+                                "weight": 100,
+                                "nextNode": "stocked",
+                                "effects": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "refreshed",
+                "description": "L'eau est glacée et délicieuse. Vous vous sentez revigorer.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "BODY",
+                        "stat": "torso",
+                        "value": 2
+                    }
+                ]
+            },
+            {
+                "id": "stocked",
+                "description": "Gourde pleine. Une bonne réserve pour la suite.",
+                "choices": [],
+                "effects": [
+                    {
+                        "type": "RESOURCE",
+                        "stat": "water",
+                        "value": 3
+                    }
+                ]
+            }
+        ]
+    }
+]
