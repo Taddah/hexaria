@@ -1,0 +1,127 @@
+[
+  {
+    "id": "stranger_in_woods",
+    "title": "Étranger dans la forêt",
+    "probability": 15,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un homme en haillons s'approche de vous. Il a l'air épuisé et affamé.",
+        "choices": [
+          {
+            "id": "help",
+            "label": "Lui offrir de la nourriture",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "help_reward",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "food",
+                    "value": -1
+                  }
+                ]
+              },
+              {
+                "weight": 30,
+                "nextNode": "help_nothing",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "food",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "L'ignorer et continuer",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "ignore_end",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "threaten",
+            "label": "Le menacer de partir",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "ignore_end",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "fight_stranger",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "help_reward",
+        "description": "Reconnaissant, l'homme vous indique un coin de forêt riche en bois sec.",
+        "choices": [
+          {
+            "id": "go",
+            "label": "Suivre ses indications",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "wood",
+                    "value": 3
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "help_nothing",
+        "description": "L'homme vous remercie et disparaît dans les bois. Vous ne tirez rien de plus de cette rencontre.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "ignore_end",
+        "description": "L'étranger repart en marmonnant.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "fight_stranger",
+        "description": "L'homme panique et vous attaque avec un couteau rouillé avant de fuir.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armLeft",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez votre travail.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

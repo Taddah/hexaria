@@ -1,0 +1,97 @@
+[
+  {
+    "id": "abandoned_cart",
+    "title": "Chariot abandonné",
+    "probability": 12,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un chariot renversé au milieu du chemin. Une roue cassée, personne en vue.",
+        "choices": [
+          {
+            "id": "search",
+            "label": "Fouiller le chariot",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "search_good",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "search_empty",
+                "effects": []
+              },
+              {
+                "weight": 20,
+                "nextNode": "ambush",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "Contourner et continuer",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "search_good",
+        "description": "Sous une bâche, des vivres oubliés et quelques outils.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 3
+          },
+          {
+            "type": "RESOURCE",
+            "stat": "wood",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "search_empty",
+        "description": "Déjà pillé. Il ne reste que de la paille et de la boue.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "ambush",
+        "description": "Des bandits surgissent ! Ils vous dépouillent avant que vous puissiez réagir.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": -2
+          },
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez la route.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

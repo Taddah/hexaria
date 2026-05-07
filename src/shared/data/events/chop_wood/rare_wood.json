@@ -1,0 +1,64 @@
+[
+  {
+    "id": "rare_wood",
+    "title": "Bois rare",
+    "probability": 10,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "En abattant un arbre, vous remarquez que son bois est d'une couleur inhabituelle, dense et précieux.",
+        "choices": [
+          {
+            "id": "take_all",
+            "label": "Tout emporter",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "rareWood",
+                    "value": 3
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "take_some",
+            "label": "Prendre ce que vous pouvez porter",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "rareWood",
+                    "value": 1
+                  },
+                  {
+                    "type": "RESOURCE",
+                    "stat": "wood",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous repartez avec votre butin.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

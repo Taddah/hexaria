@@ -1,0 +1,76 @@
+[
+  {
+    "id": "trap_found",
+    "title": "Piège découvert",
+    "probability": 18,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "En avançant dans les sous-bois, vous repérez juste à temps un piège à ours posé au sol.",
+        "choices": [
+          {
+            "id": "disarm",
+            "label": "Désamorcer le piège",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "disarm_success",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "disarm_fail",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "mark",
+            "label": "Le contourner et marquer l'endroit",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "disarm_success",
+        "description": "Vous désamorcez le piège avec précaution. Vous récupérez le métal.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "metal",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "disarm_fail",
+        "description": "Le piège se referme sur vos doigts. Douleur intense. Vous vous libérez non sans mal.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armRight",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez votre chemin prudemment.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

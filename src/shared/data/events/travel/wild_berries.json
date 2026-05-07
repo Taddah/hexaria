@@ -1,0 +1,110 @@
+[
+  {
+    "id": "wild_berries",
+    "title": "Baies sauvages",
+    "probability": 30,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un buisson couvert de baies colorées borde le chemin. Comestibles ou non ?",
+        "choices": [
+          {
+            "id": "eat",
+            "label": "En manger directement",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "eat_good",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "eat_bad",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "collect",
+            "label": "En ramasser pour plus tard",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "collect_good",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "collect_bad",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "Laisser tomber",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "eat_good",
+        "description": "Délicieuses et nourrissantes. Vous vous sentez ragaillardi.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "eat_bad",
+        "description": "Amères et toxiques. Votre estomac se tord de douleur.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "collect_good",
+        "description": "Vous remplissez une poche de baies comestibles.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "collect_bad",
+        "description": "Vous réalisez trop tard qu'elles sont vénéneuses et les jetez.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "end",
+        "description": "Vous continuez votre chemin.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

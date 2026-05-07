@@ -1,0 +1,92 @@
+[
+  {
+    "id": "sudden_storm",
+    "title": "Orage soudain",
+    "probability": 22,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Le ciel s'assombrit brutalement. Un orage violent éclate. Les arbres craquent autour de vous.",
+        "choices": [
+          {
+            "id": "shelter_tree",
+            "label": "S'abriter sous un grand arbre",
+            "outcomes": [
+              {
+                "weight": 30,
+                "nextNode": "lightning",
+                "effects": []
+              },
+              {
+                "weight": 70,
+                "nextNode": "shelter_safe",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "shelter_hollow",
+            "label": "Chercher un creux dans le sol",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "shelter_safe",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "keep_going",
+            "label": "Continuer à travailler",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "wet_end",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "lightning",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lightning",
+        "description": "La foudre frappe l'arbre voisin. Le souffle vous projette au sol. Vous avez la chance d'être en vie.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -3
+          }
+        ]
+      },
+      {
+        "id": "shelter_safe",
+        "description": "L'orage passe. Vous en sortez trempé mais indemne.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "wet_end",
+        "description": "Vous rentrez trempé jusqu'aux os. Le bois récolté est inutilisable.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "wood",
+            "value": -1
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "id": "merchant_encounter",
+    "title": "Marchand itinérant",
+    "probability": 15,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un marchand jovial avec une mule chargée vous salue. Il propose de troquer.",
+        "choices": [
+          {
+            "id": "trade_food",
+            "label": "Échanger de la nourriture contre de l'or",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "trade_food_done",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "food",
+                    "value": -2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "trade_wood",
+            "label": "Échanger du bois contre de la nourriture",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "trade_wood_done",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "wood",
+                    "value": -2
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "pass",
+            "label": "Décliner poliment",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "trade_food_done",
+        "description": "Marché conclu. Il repart en sifflotant, vous un peu plus riche.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "id": "trade_wood_done",
+        "description": "Il charge le bois sur sa mule et vous tend un panier de vivres.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous vous saluez et reprenez chacun votre chemin.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

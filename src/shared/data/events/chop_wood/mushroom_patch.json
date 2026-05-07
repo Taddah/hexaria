@@ -1,0 +1,82 @@
+[
+  {
+    "id": "mushroom_patch",
+    "title": "Coin à champignons",
+    "probability": 25,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "En dégageant un arbre mort, vous découvrez un tapis de champignons sous l'écorce.",
+        "choices": [
+          {
+            "id": "collect",
+            "label": "Ramasser les champignons",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "collect_safe",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "collect_sick",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "Continuer à couper du bois",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "wood",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "collect_safe",
+        "description": "De bons champignons comestibles. Vous en remplissez votre sac.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "collect_sick",
+        "description": "Certains champignons étaient vénéneux. Vous vous sentez mal quelques heures.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez votre travail.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,91 @@
+[
+  {
+    "id": "snake_path",
+    "title": "Serpent sur le chemin",
+    "probability": 18,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un grand serpent est enroulé sur le sentier et siffle en vous voyant approcher.",
+        "choices": [
+          {
+            "id": "step_back",
+            "label": "Reculer lentement",
+            "outcomes": [
+              {
+                "weight": 80,
+                "nextNode": "safe",
+                "effects": []
+              },
+              {
+                "weight": 20,
+                "nextNode": "bitten",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "detour",
+            "label": "Contourner par les buissons",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "safe",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "chase",
+            "label": "Le chasser avec un bâton",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "chased_away",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "bitten",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "safe",
+        "description": "Le serpent finit par s'éloigner. Vous soufflez.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "bitten",
+        "description": "Il frappe trop vite. Le venin commence à faire effet.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "legRight",
+            "value": -2
+          },
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "chased_away",
+        "description": "Vous frappez le sol autour de lui. Il dégage en ondulant.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

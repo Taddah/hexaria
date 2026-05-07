@@ -1,0 +1,76 @@
+[
+  {
+    "id": "nest_disturbance",
+    "title": "Nid perturbé",
+    "probability": 15,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un arbre abattu révèle un nid de rapace avec deux œufs intacts.",
+        "choices": [
+          {
+            "id": "take_eggs",
+            "label": "Prendre les œufs",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "eggs_safe",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "bird_attack",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "leave",
+            "label": "Laisser le nid tranquille",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "eggs_safe",
+        "description": "Vous empochez les œufs sans encombre.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "bird_attack",
+        "description": "Le rapace plonge sur vous avant que vous ayez pu réagir. Les serres laissent des marques.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "head",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous continuez votre travail.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

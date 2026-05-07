@@ -1,0 +1,98 @@
+[
+  {
+    "id": "hidden_cache",
+    "title": "Cachette dissimulée",
+    "probability": 10,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Votre pied heurte quelque chose sous les feuilles. Une vieille caisse à moitié enterrée.",
+        "choices": [
+          {
+            "id": "open",
+            "label": "L'ouvrir",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "loot_good",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "loot_poor",
+                "effects": []
+              },
+              {
+                "weight": 10,
+                "nextNode": "trap",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "Ignorer et continuer",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "loot_good",
+        "description": "La caisse contient des provisions et quelques pièces. Une belle trouvaille.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 2
+          },
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "id": "loot_poor",
+        "description": "Quelques baies séchées et un bout de corde. Décevant mais utile.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "trap",
+        "description": "Un piège à mâchoires se referme sur votre main. Vous l'arrachez en jurant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armRight",
+            "value": -2
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez la route.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

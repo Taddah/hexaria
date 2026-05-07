@@ -5,7 +5,7 @@ export class EventRegistry {
     private static events: Map<string, any> = new Map();
 
     static loadAll() {
-        const directoryPath = path.join(__dirname, '../data/events');
+        const directoryPath = path.join(__dirname, '../../shared/data/events');
         const files = fs.readdirSync(directoryPath);
 
 

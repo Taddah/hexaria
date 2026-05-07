@@ -1,0 +1,104 @@
+[
+  {
+    "id": "stranger_on_road",
+    "title": "Étranger sur la route",
+    "probability": 20,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un homme encapuchonné vous barre le chemin. Il tend la main sans un mot.",
+        "choices": [
+          {
+            "id": "give_food",
+            "label": "Lui donner de la nourriture",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "grateful",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "food",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "refuse",
+            "label": "Refuser et passer votre chemin",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "end",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "cursed",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "talk",
+            "label": "Lui parler",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "info",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "grateful",
+        "description": "L'homme s'incline et glisse une pièce dans votre main avant de disparaître.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "cursed",
+        "description": "L'étranger vous lance un regard noir. Vous vous sentez soudain mal à l'aise.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "info",
+        "description": "Il murmure qu'un danger rôde plus loin sur la route. Vous restez sur vos gardes.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "end",
+        "description": "Vous continuez votre route.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

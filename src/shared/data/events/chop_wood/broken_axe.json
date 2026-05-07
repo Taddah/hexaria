@@ -1,0 +1,76 @@
+[
+  {
+    "id": "broken_axe",
+    "title": "Hache brisée",
+    "probability": 20,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Le manche de votre hache se fend à mi-chemin dans un tronc. Que faire ?",
+        "choices": [
+          {
+            "id": "improvise",
+            "label": "Improviser un manche avec une branche",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "improvise_success",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "improvise_fail",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "give_up",
+            "label": "Rentrer réparer l'outil",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "wood",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "improvise_success",
+        "description": "La branche tient. Vous terminez votre travail avec un outil de fortune.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "wood",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "id": "improvise_fail",
+        "description": "La branche cède. Vous rentrez bredouille.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "end",
+        "description": "Vous rentrez au camp.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

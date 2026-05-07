@@ -1,0 +1,86 @@
+[
+  {
+    "id": "hidden_beehive",
+    "title": "Ruche cachée",
+    "probability": 20,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Votre hache entaille un tronc creux. Un essaim d'abeilles en surgit.",
+        "choices": [
+          {
+            "id": "run",
+            "label": "Fuir en courant",
+            "outcomes": [
+              {
+                "weight": 80,
+                "nextNode": "run_success",
+                "effects": []
+              },
+              {
+                "weight": 20,
+                "nextNode": "stung",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "collect_honey",
+            "label": "Tenter de récupérer le miel",
+            "outcomes": [
+              {
+                "weight": 40,
+                "nextNode": "honey_success",
+                "effects": []
+              },
+              {
+                "weight": 60,
+                "nextNode": "stung",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "run_success",
+        "description": "Vous vous éloignez rapidement. Les abeilles abandonnent la poursuite.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "stung",
+        "description": "Vous récoltez une série de piqûres douloureuses.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "honey_success",
+        "description": "Vous récupérez un rayon de miel au prix de quelques piqûres.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "honey",
+            "value": 1
+          },
+          {
+            "type": "BODY",
+            "stat": "armRight",
+            "value": -1
+          }
+        ]
+      }
+    ]
+  }
+]

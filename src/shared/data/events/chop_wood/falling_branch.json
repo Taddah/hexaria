@@ -1,0 +1,109 @@
+[
+  {
+    "id": "falling_branch",
+    "title": "Branche qui tombe",
+    "probability": 30,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "En abattant un arbre, une grosse branche se détache et tombe dans votre direction. Réaction ?",
+        "choices": [
+          {
+            "id": "dodge",
+            "label": "Esquiver",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "dodge_success",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "dodge_fail",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "shield",
+            "label": "Se protéger avec les bras",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "shield_result",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dodge_success",
+        "description": "Vous bondissez de côté. La branche s'écrase à quelques centimètres. Rien de cassé.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "dodge_fail",
+        "description": "Pas assez rapide. La branche vous heurte la jambe. Douloureux.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "legLeft",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "shield_result",
+        "description": "La branche frappe vos avant-bras. Vous avez mal mais l'arbre est tombé.",
+        "choices": [
+          {
+            "id": "collect",
+            "label": "Ramasser le bois malgré tout",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "wood",
+                    "value": 2
+                  },
+                  {
+                    "type": "BODY",
+                    "stat": "armLeft",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "rest",
+            "label": "Se reposer et partir",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "end",
+        "description": "Vous reprenez votre route.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

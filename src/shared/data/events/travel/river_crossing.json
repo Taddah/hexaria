@@ -1,0 +1,115 @@
+[
+  {
+    "id": "river_crossing",
+    "title": "Traversée de rivière",
+    "probability": 25,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Une rivière au courant rapide barre votre chemin. Le pont de bois semble branlant.",
+        "choices": [
+          {
+            "id": "cross_bridge",
+            "label": "Traverser le pont",
+            "outcomes": [
+              {
+                "weight": 70,
+                "nextNode": "bridge_ok",
+                "effects": []
+              },
+              {
+                "weight": 30,
+                "nextNode": "bridge_fail",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "wade",
+            "label": "Traverser à gué",
+            "outcomes": [
+              {
+                "weight": 50,
+                "nextNode": "wade_ok",
+                "effects": []
+              },
+              {
+                "weight": 50,
+                "nextNode": "wade_fail",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "detour",
+            "label": "Faire un détour",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "detour_end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "bridge_ok",
+        "description": "Le pont tient bon malgré ses craquements. Vous passez sain et sauf.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "bridge_fail",
+        "description": "Une planche cède. Vous tombez dans l'eau froide et perdez une partie de vos affaires.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": -1
+          },
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "wade_ok",
+        "description": "L'eau arrive aux genoux. Vous traversez en gardant l'équilibre.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "wade_fail",
+        "description": "Le courant vous emporte quelques mètres. Vous vous raccrochez à une branche, épuisé.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "legLeft",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "detour_end",
+        "description": "Le détour vous coûte du temps et de l'énergie, mais vous traversez sans encombre.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": -1
+          }
+        ]
+      }
+    ]
+  }
+]

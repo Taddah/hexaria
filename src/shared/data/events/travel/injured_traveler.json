@@ -1,0 +1,88 @@
+[
+  {
+    "id": "injured_traveler",
+    "title": "Voyageur blessé",
+    "probability": 15,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "neutral",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un voyageur est assis contre un arbre, la jambe ensanglantée. Il vous supplie de l'aider.",
+        "choices": [
+          {
+            "id": "help",
+            "label": "Soigner sa blessure",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "helped",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "bandage",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "give_food",
+            "label": "Lui donner de la nourriture",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "fed",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "food",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "ignore",
+            "label": "Ignorer et passer",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "helped",
+        "description": "Reconnaissant, il vous remet une vieille carte avec des annotations. Précieux.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "id": "fed",
+        "description": "Il mange avidement et vous remercie chaleureusement.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "end",
+        "description": "Vous continuez sans vous retourner.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,81 @@
+[
+  {
+    "id": "dense_fog",
+    "title": "Brouillard épais",
+    "probability": 20,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un brouillard dense s'abat soudainement. Vous ne voyez plus à deux mètres.",
+        "choices": [
+          {
+            "id": "press_on",
+            "label": "Continuer à avancer",
+            "outcomes": [
+              {
+                "weight": 40,
+                "nextNode": "lost",
+                "effects": []
+              },
+              {
+                "weight": 60,
+                "nextNode": "through",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "wait",
+            "label": "Attendre que le brouillard se lève",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "waited",
+                "effects": [
+                  {
+                    "type": "RESOURCE",
+                    "stat": "food",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lost",
+        "description": "Vous tournez en rond pendant des heures avant de retrouver votre chemin. Épuisant.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "food",
+            "value": -2
+          },
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      },
+      {
+        "id": "through",
+        "description": "Par chance, vous maintenez la bonne direction. Le brouillard se dissipe progressivement.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "waited",
+        "description": "Une heure plus tard, le soleil perce. Vous reprenez la route reposé.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]

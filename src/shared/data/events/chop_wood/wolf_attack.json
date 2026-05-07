@@ -52,7 +52,7 @@
                 "choices": [
                     {
                         "id": "loot",
-                        "label": "Récupérer la fourrure",
+                        "label": "Récupérer le rondin de bois",
                         "outcomes": [
                             {
                                 "weight": 100,
@@ -60,7 +60,7 @@
                                 "effects": [
                                     {
                                         "type": "RESOURCE",
-                                        "stat": "fur",
+                                        "stat": "wood",
                                         "value": 1
                                     }
                                 ]
@@ -89,11 +89,6 @@
                         "type": "BODY",
                         "stat": "armLeft",
                         "value": 1
-                    },
-                    {
-                        "type": "RESOURCE",
-                        "stat": "food",
-                        "value": -2
                     }
                 ]
             },
@@ -101,13 +96,7 @@
                 "id": "flee_success",
                 "description": "Vous semez le loup après une longue course. Épuisé mais indemne.",
                 "choices": [],
-                "effects": [
-                    {
-                        "type": "RESOURCE",
-                        "stat": "stamina",
-                        "value": -1
-                    }
-                ]
+                "effects": []
             },
             {
                 "id": "end",

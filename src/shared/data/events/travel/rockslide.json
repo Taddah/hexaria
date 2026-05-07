@@ -1,0 +1,85 @@
+[
+  {
+    "id": "rockslide",
+    "title": "Éboulement",
+    "probability": 10,
+    "triggers": [
+      "MOVE"
+    ],
+    "polarity": "negative",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un grondement sourd. Des pierres dévalent la pente vers vous !",
+        "choices": [
+          {
+            "id": "run_left",
+            "label": "Plonger sur la gauche",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "escaped",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "hit",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "run_right",
+            "label": "Plonger sur la droite",
+            "outcomes": [
+              {
+                "weight": 60,
+                "nextNode": "escaped",
+                "effects": []
+              },
+              {
+                "weight": 40,
+                "nextNode": "hit",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "freeze",
+            "label": "Rester paralysé",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "hit",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "escaped",
+        "description": "Vous roulez sur le côté. Les pierres vous frôlent dans un fracas assourdissant.",
+        "choices": [],
+        "effects": []
+      },
+      {
+        "id": "hit",
+        "description": "Une pierre vous percute l'épaule. Vous vous relevez difficilement.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "BODY",
+            "stat": "armLeft",
+            "value": -2
+          },
+          {
+            "type": "BODY",
+            "stat": "torso",
+            "value": -1
+          }
+        ]
+      }
+    ]
+  }
+]

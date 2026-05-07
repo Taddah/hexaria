@@ -1,0 +1,59 @@
+[
+  {
+    "id": "lost_traveler",
+    "title": "Voyageur perdu",
+    "probability": 10,
+    "triggers": [
+      "CHOP_WOOD"
+    ],
+    "polarity": "positive",
+    "nodes": [
+      {
+        "id": "root",
+        "description": "Un marchand égaré vous trouve par hasard. Il cherche désespérément le chemin du village.",
+        "choices": [
+          {
+            "id": "guide",
+            "label": "Le guider jusqu'au village",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "guide_reward",
+                "effects": []
+              }
+            ]
+          },
+          {
+            "id": "directions",
+            "label": "Lui indiquer le chemin seulement",
+            "outcomes": [
+              {
+                "weight": 100,
+                "nextNode": "directions_end",
+                "effects": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "guide_reward",
+        "description": "Le marchand vous récompense généreusement pour votre aide.",
+        "choices": [],
+        "effects": [
+          {
+            "type": "RESOURCE",
+            "stat": "gold",
+            "value": 5
+          }
+        ]
+      },
+      {
+        "id": "directions_end",
+        "description": "Le marchand vous remercie et s'en va dans la direction indiquée.",
+        "choices": [],
+        "effects": []
+      }
+    ]
+  }
+]
