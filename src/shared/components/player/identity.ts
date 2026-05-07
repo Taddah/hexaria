@@ -1,5 +1,5 @@
 export interface IIdentity {
-    name: string;
+    firstName: string;
+    lastName: string;
     currentAge: number;
 }
-

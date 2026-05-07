@@ -4,21 +4,45 @@ import { IFatigue } from "$shared/components/player/fatigue";
 import { Resource } from "$shared/types";
 import { World } from "../core/World";
 
+interface CreatePlayerParams {
+    socketId: string;
+    userId: string;
+    world: World;
+    firstName: string;
+    lastName: string;
+    age: number;
+    startPosition: { q: number; r: number };
+}
+
+interface CreateFromComponentsParams {
+    socketId: string;
+    userId: string;
+    world: World;
+    components: Record<string, unknown>;
+}
+
 export class PlayerFactory {
-    constructor() { }
-    static create(params: {
-        socketId: string;
-        world: World;
-        name: string;
-        age: number;
-        startPosition: { q: number, r: number };
-    }) {
+    static create(params: CreatePlayerParams) {
         const player = params.world.createEntity();
 
-        params.world.addComponent<IPlayer>(player, 'Player', { socketId: params.socketId });
-        params.world.addComponent<IPosition>(player, 'Position', { q: params.startPosition.q, r: params.startPosition.r });
-        params.world.addComponent<IIdentity>(player, 'Identity', { name: params.name, currentAge: params.age });
-        params.world.addComponent<IInventory>(player, 'Inventory', { [Resource.WOOD]: 0, [Resource.STONE]: 0, [Resource.SILVER]: 0 });
+        params.world.addComponent<IPlayer>(player, 'Player', {
+            socketId: params.socketId,
+            userId: params.userId
+        });
+        params.world.addComponent<IPosition>(player, 'Position', {
+            q: params.startPosition.q,
+            r: params.startPosition.r
+        });
+        params.world.addComponent<IIdentity>(player, 'Identity', {
+            firstName: params.firstName,
+            lastName: params.lastName,
+            currentAge: params.age
+        });
+        params.world.addComponent<IInventory>(player, 'Inventory', {
+            [Resource.WOOD]: 0,
+            [Resource.STONE]: 0,
+            [Resource.SILVER]: 0
+        });
         params.world.addComponent<IFatigue>(player, 'Fatigue', { fatigue: 0 });
 
         params.world.addComponent<IBody>(player, 'Body', {
@@ -35,6 +59,21 @@ export class PlayerFactory {
         params.world.addComponent<ISkills>(player, "skills", {});
 
         return player;
+    }
 
+    static createFromComponents(params: CreateFromComponentsParams) {
+        const player = params.world.createEntity();
+
+        params.world.addComponent<IPlayer>(player, 'Player', {
+            socketId: params.socketId,
+            userId: params.userId
+        });
+
+        for (const [name, data] of Object.entries(params.components)) {
+            if (name === 'Player') continue;
+            params.world.addComponent(player, name, data);
+        }
+
+        return player;
     }
 }

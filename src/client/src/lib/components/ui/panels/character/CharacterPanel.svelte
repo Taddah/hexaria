@@ -15,7 +15,7 @@
 	const localPlayer = $derived(gameState.localPlayer);
 
 	const character = $derived({
-		name: localPlayer?.identity.name || '',
+		name: `${localPlayer?.identity.firstName ?? ''} ${localPlayer?.identity.lastName ?? ''}`.trim(),
 		hunger: 0,
 		thirst: 0,
 		fatigue: localPlayer?.fatigue?.fatigue ?? 0

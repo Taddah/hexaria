@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
-import { EventComponent, EventEffect, IInventory, Event } from "$shared/components";
-import { findEntityBySocket } from "./utils";
+import { EventComponent } from "$shared/components";
+import { findEntityByUserId } from "./utils";
 import { EventResolutionService } from "../services/EventResolutionService";
 import { applyNarrative } from "../services/LLMservice";
 
@@ -15,7 +15,7 @@ export class EventHandler {
         // ─── Ancien "vu" → remplacé par gestion des choix ────────────────────
 
         socket.on('event:choice', ({ eventUuid, choiceId }: { eventUuid: string; choiceId: string }) => {
-            const entityId = findEntityBySocket(this.world, socket.id);
+            const entityId = findEntityByUserId(this.world, socket.data.userId);
             if (entityId === undefined) return;
 
             const component = this.world.getComponent<EventComponent>(entityId, 'EventComponent');
@@ -53,7 +53,7 @@ export class EventHandler {
         });
 
         socket.on('event:poll', () => {
-            const entityId = findEntityBySocket(this.world, socket.id);
+            const entityId = findEntityByUserId(this.world, socket.data.userId);
             if (entityId === undefined) return;
 
             const component = this.world.getComponent<EventComponent>(entityId, 'EventComponent');

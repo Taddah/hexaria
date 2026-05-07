@@ -6,7 +6,7 @@ import { gainXp } from './SkillSystem';
 
 
 
-export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed: (socketId: string, pos: { q: number, r: number }) => void): void {
+export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed: (userId: string, pos: { q: number, r: number }) => void): void {
     const entities = world.query(['Position', 'MovementIntent']);
     for (const entity of entities) {
         const pos = world.getComponent<IPosition>(entity, 'Position');
@@ -35,8 +35,8 @@ export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed
         world.removeComponent(entity, 'MovementIntent');
 
         const player = world.getComponent<IPlayer>(entity, 'Player');
-        if (player?.socketId) {
-            onMoveConfirmed(player.socketId, { q: pos.q, r: pos.r });
+        if (player?.userId) {
+            onMoveConfirmed(player.userId, { q: pos.q, r: pos.r });
         }
 
         world.addComponent(entity, 'ActionTag', { type: ActionType.TRAVEL, timestamp: Date.now() });

@@ -81,8 +81,8 @@ export async function runEventSystem(world: World, network: NetworkSystem): Prom
                     });
 
                     const player = world.getComponent<IPlayer>(entity, 'Player');
-                    if (player?.socketId) {
-                        network.emitTo(player.socketId, 'event:node', {
+                    if (player?.userId) {
+                        network.emitToUser(player.userId, 'event:node', {
                             eventUuid: uuid,
                             node: applyNarrative(firstNode, narrative)
                         });

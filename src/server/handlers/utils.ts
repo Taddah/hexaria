@@ -7,6 +7,12 @@ export function findEntityBySocket(world: World, socketId: string): number | und
     );
 }
 
+export function findEntityByUserId(world: World, userId: string): number | undefined {
+    return Array.from(world.query(['Player'])).find(
+        id => world.getComponent<IPlayer>(id, 'Player')?.userId === userId
+    );
+}
+
 export function getWorldState(world: World): object[] {
     const entities = world.query(['Position', 'Identity']);
     const worldState: object[] = [];
@@ -27,4 +33,17 @@ export function getWorldState(world: World): object[] {
     }
 
     return worldState;
+}
+
+const PERSISTED_COMPONENTS = ['Position', 'Identity', 'Inventory', 'Fatigue', 'Body', 'BodyModifiers', 'skills', 'EventComponent'];
+
+export function serializePlayerComponents(world: World, entityId: number): Record<string, unknown> {
+    const components: Record<string, unknown> = {};
+    for (const name of PERSISTED_COMPONENTS) {
+        const data = world.getComponent(entityId, name);
+        if (data !== undefined) {
+            components[name] = data;
+        }
+    }
+    return components;
 }

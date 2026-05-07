@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
 import { IPosition, IHarvestIntent } from "$shared/components";
-import { findEntityBySocket } from "./utils";
+import { findEntityByUserId } from "./utils";
 import { TileData } from "$shared/types";
 
 export class HarvestHandler {
@@ -9,7 +9,7 @@ export class HarvestHandler {
 
     register(socket: Socket) {
         socket.on('request_harvest', () => {
-            const entityId = findEntityBySocket(this.world, socket.id);
+            const entityId = findEntityByUserId(this.world, socket.data.userId);
             if (entityId === undefined) return;
 
 

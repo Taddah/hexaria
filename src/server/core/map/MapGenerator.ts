@@ -6,17 +6,25 @@ import { ResourceGenerator } from './resourceGenerator';
 import { DecorationGenerator } from './decorationGenerator';
 import { RiverGenerator } from './riverGenerator';
 
-const SEED = "hexaria";
 const WATER_THRESHOLD = 0.3;
 
 export class MapGenerator {
-  private noise2D = createNoise2D(seedrandom(`${SEED}_elevation`));
-  private biomeNoise2D = createNoise2D(seedrandom(`${SEED}_biome`));
+  private noise2D;
+  private biomeNoise2D;
 
-  private resourceGenerator = new ResourceGenerator(SEED);
-  private decorationGenerator = new DecorationGenerator(SEED);
+  private resourceGenerator;
+  private decorationGenerator;
   private coastGenerator = new CoastGenerator();
-  private riverGenerator = new RiverGenerator(SEED);
+  private riverGenerator;
+
+  constructor(private seed: string = "hexaria") {
+    this.noise2D = createNoise2D(seedrandom(`${seed}_elevation`));
+    this.biomeNoise2D = createNoise2D(seedrandom(`${seed}_biome`));
+    this.resourceGenerator = new ResourceGenerator(seed);
+    this.decorationGenerator = new DecorationGenerator(seed);
+    this.riverGenerator = new RiverGenerator(seed);
+  }
+
 
   generateMap(width: number, height: number): TileData[] {
     let tiles: TileData[] = [];

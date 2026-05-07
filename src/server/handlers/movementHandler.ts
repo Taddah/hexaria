@@ -2,14 +2,14 @@ import { Socket } from "socket.io";
 import { World } from "../core/World";
 import { IPosition, IMovementIntent } from "$shared/components";
 import { TileData } from "$shared/types";
-import { findEntityBySocket } from "./utils";
+import { findEntityByUserId } from "./utils";
 
 export class MovementHandler {
     constructor(private world: World, private map: TileData[]) { }
 
     register(socket: Socket) {
         socket.on('request_move', (target: { q: number; r: number }) => {
-            const entityId = findEntityBySocket(this.world, socket.id);
+            const entityId = findEntityByUserId(this.world, socket.data.userId);
             if (entityId === undefined) return;
 
             const existingIntent = this.world.getComponent<IMovementIntent>(entityId, 'MovementIntent');

@@ -37,7 +37,7 @@ export class LLMService {
     private groq: Groq;
 
     constructor() {
-        this.groq = new Groq({ apiKey: "process.env.GROQ_API_KEY" });
+        this.groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     }
 
     async enrichAllNodes(event: EventDefinition, ctx: EventContext): Promise<EventNarrative> {

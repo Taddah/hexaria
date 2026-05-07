@@ -2,6 +2,7 @@
 	import GameCanvas from '$lib/components/game/GameCanvas.svelte';
 	import { getSocket } from '$lib/services/socket';
 	import { gameState } from '$lib/stores/gameState.svelte';
+	import { authState } from '$lib/stores/authState.svelte';
 	import Sidebar from '$lib/components/ui/Sidebar.svelte';
 	import ActionPanel from '$lib/components/ui/panels/actions/ActionPanel.svelte';
 	import { processGameEvents } from '$lib/services/eventService';
@@ -11,9 +12,17 @@
 	import { goto } from '$app/navigation';
 	import EventModal from '$lib/components/ui/EventModal.svelte';
 	import TopBar from '$lib/components/ui/TopBar.svelte';
+	import ConnectionOverlay from '$lib/components/ui/ConnectionOverlay.svelte';
+	import { browser } from '$app/environment';
 
 	const localPlayer = $derived(gameState.localPlayer);
-	const socket = getSocket();
+
+	let socket: any;
+	try {
+		socket = getSocket();
+	} catch (e) {
+		if (browser) goto('/');
+	}
 
 	$effect(() => {
 		if (localPlayer) processGameEvents(socket);
@@ -47,6 +56,8 @@
 		<ChatPanel />
 
 		<EventModal />
+
+		<ConnectionOverlay />
 	{:else}
 		<!-- Loading -->
 		<div class="flex h-full items-center justify-center">

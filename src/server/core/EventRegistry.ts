@@ -6,22 +6,27 @@ export class EventRegistry {
 
     static loadAll() {
         const directoryPath = path.join(__dirname, '../../shared/data/events');
-        const files = fs.readdirSync(directoryPath);
 
-
-        for (const file of files) {
-            if (file.endsWith('.json')) {
-                const content = fs.readFileSync(path.join(directoryPath, file), 'utf-8');
-                const data = JSON.parse(content);
-
-
-                data.forEach((event: any) => {
-                    this.events.set(event.id, event);
-                });
+        const loadDir = (dirPath: string) => {
+            const files = fs.readdirSync(dirPath);
+            for (const file of files) {
+                const fullPath = path.join(dirPath, file);
+                if (fs.statSync(fullPath).isDirectory()) {
+                    loadDir(fullPath);
+                } else if (file.endsWith('.json')) {
+                    const content = fs.readFileSync(fullPath, 'utf-8');
+                    const data = JSON.parse(content);
+                    data.forEach((event: any) => {
+                        this.events.set(event.id, event);
+                    });
+                }
             }
-        }
+        };
+
+        loadDir(directoryPath);
         console.log(`[EVENT] ${this.events.size} événements chargés en mémoire.`);
     }
+
 
     static getAll() {
         return Array.from(this.events.values());
