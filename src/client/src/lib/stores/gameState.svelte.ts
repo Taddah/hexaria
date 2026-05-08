@@ -28,6 +28,7 @@ export interface TimeDTO {
 	timeOfDay: number;
 	isDay: boolean;
 	visionRadius: number;
+	year: number;
 }
 
 interface GameState {
@@ -59,7 +60,8 @@ export const gameState = $state<GameState>({
 	time: {
 		timeOfDay: 0.5,
 		isDay: true,
-		visionRadius: 3
+		visionRadius: 3,
+		year: 1
 	},
 	mapLoaded: false,
 	connected: false,

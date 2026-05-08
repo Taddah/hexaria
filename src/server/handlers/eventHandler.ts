@@ -56,7 +56,7 @@ export class EventHandler {
                             eventNarrative: narrative,
                             isSignificant: appliedEffects.length > 0,
                             timestamp: Date.now(),
-                            hadEvent: true
+                            hadEvent: true,
                         };
 
                         const historyComponent = this.world.getComponent<IEventsHistory>(entityId, 'IEventsHistory');

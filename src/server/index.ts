@@ -10,7 +10,7 @@ import { runHarvestSystem } from './systems/HarvestSystem';
 import { EventRegistry } from './core/EventRegistry';
 import { runEventSystem } from './systems/EventSystem';
 import { runResourceRenewalSystem } from './systems/ResourceRenewalSystem';
-import { getTimeState } from './systems/TimeSystem';
+import { getCurrentYear, getTimeState, incrementYear, initYear } from './systems/TimeSystem';
 import { runBodySystem } from './systems/BodySystem';
 import { SaveSystem } from './systems/SaveSystem';
 import { WorldPersistenceService } from './services/WorldPersistenceService';
@@ -31,6 +31,7 @@ async function bootstrap() {
 
   const world = new World();
   const mapGen = new MapGenerator(worldMeta.seed);
+  initYear(typeof worldMeta.gameTime?.year === 'number' ? worldMeta.gameTime.year : 1);
 
   EventRegistry.loadAll();
 
@@ -56,7 +57,8 @@ async function bootstrap() {
       return {
         timeOfDay: timeState.timeOfDay,
         isDay: timeState.isDay,
-        visionRadius: timeState.visionRadius
+        visionRadius: timeState.visionRadius,
+        year: timeState.year
       };
     },
     worldMeta.seed
@@ -109,7 +111,10 @@ async function bootstrap() {
 
   const AGING_INTERVAL = 12 * 60 * 60 * 1000;
   setInterval(() => {
+    incrementYear();
     runAgingSystem(world);
+
+    worldMeta.gameTime.year = getCurrentYear();
   }, AGING_INTERVAL);
 }
 

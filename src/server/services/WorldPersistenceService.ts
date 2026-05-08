@@ -24,6 +24,7 @@ export class WorldPersistenceService {
         return {
             seed: data.seed as string,
             gameTime: (data.game_time as Record<string, unknown>) ?? {}
+
         };
     }
 

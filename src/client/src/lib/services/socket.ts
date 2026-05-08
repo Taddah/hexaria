@@ -87,8 +87,6 @@ export function initializeSocket(): Socket {
 		gameState.eventsHistory = [data, ...gameState.eventsHistory];
 	});
 
-
-
 	socket.on('world_update', (entities) => {
 		gameState.entities = entities;
 		const fresh = gameState.entities.find((e) => e.id === gameState.localPlayer?.id) ?? null;
