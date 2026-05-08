@@ -7,7 +7,9 @@ import type {
 	IBody,
 	IBodyModifiers,
 	IFatigue,
-	ISkills
+	ISkills,
+	IEventsHistory,
+	EventHistory
 } from '$shared';
 
 export interface EntityDTO {
@@ -41,6 +43,7 @@ interface GameState {
 	time: TimeDTO;
 	mapLoaded: boolean;
 	connected: boolean;
+	eventsHistory: EventHistory[];
 }
 
 export const gameState = $state<GameState>({
@@ -59,5 +62,6 @@ export const gameState = $state<GameState>({
 		visionRadius: 3
 	},
 	mapLoaded: false,
-	connected: false
+	connected: false,
+	eventsHistory: []
 });

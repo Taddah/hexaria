@@ -7,7 +7,7 @@ export class EventResolutionService {
 
     // ─── Résolution d'un choix ────────────────────────────────────────────────
 
-    resolveChoice(event: Event, choiceId: string): { nextNode: EventNode; effects: EventEffect[] } {
+    resolveChoice(event: Event, choiceId: string): { nextNode: EventNode; effects: EventEffect[]; choiceLabel: string; } {
         const currentNode = this.getNode(event, event.currentNodeId);
         const choice = currentNode.choices.find(c => c.id === choiceId);
 
@@ -16,7 +16,7 @@ export class EventResolutionService {
         const outcome = this.rollOutcome(choice);
         const nextNode = this.getNode(event, outcome.nextNode);
 
-        return { nextNode, effects: [...(outcome.effects ?? []), ...(nextNode.effects ?? [])] };
+        return { nextNode, effects: [...(outcome.effects ?? []), ...(nextNode.effects ?? [])], choiceLabel: choice.label };
 
     }
 

@@ -2,6 +2,7 @@
 <script lang="ts">
 	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
 	import CharacterPanel from '$lib/components/ui/panels/character/CharacterPanel.svelte';
+	import HistoryPanel from './panels/HistoryPanel.svelte';
 
 	interface SidebarItem {
 		emoji: string;
@@ -11,10 +12,10 @@
 
 	const items: SidebarItem[] = [
 		{ emoji: '👤', label: 'Status' },
-		{ emoji: '🫀', label: 'Corps', panel: 'body' },
+		{ emoji: '🫀', label: 'Personnage', panel: 'body' },
 		{ emoji: '🗺️', label: 'Carte' },
 		{ emoji: '📜', label: 'Diplomatie' },
-		{ emoji: '🏴', label: 'Quêtes' },
+		{ emoji: '🏴', label: 'Evènements', panel: 'events' },
 		{ emoji: '✉️', label: 'Messagerie' }
 	];
 
@@ -59,4 +60,8 @@
 
 {#if activePanel === 'body'}
 	<CharacterPanel onclose={() => (activePanel = null)} />
+{/if}
+
+{#if activePanel === 'events'}
+	<HistoryPanel onclose={() => (activePanel = null)} />
 {/if}

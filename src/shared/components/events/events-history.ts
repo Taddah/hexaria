@@ -6,7 +6,9 @@ export interface IEventsHistory {
 
 export interface EventHistory {
     eventNarrative: string | null;
-    action: ActionType;
+    isSignificant: boolean;
+    action: ActionType[];
     hadEvent: boolean;
     timestamp: number;
+    eventName: string;
 }

@@ -1,12 +1,14 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
-import { EventComponent } from "$shared/components";
+import { ActionType, EventComponent, EventHistory } from "$shared/components";
 import { findEntityByUserId } from "./utils";
 import { EventResolutionService } from "../services/EventResolutionService";
-import { applyNarrative } from "../services/LLMservice";
+import { applyNarrative, LLMService } from "../services/LLMservice";
+import { IEventsHistory } from "$shared/components";
 
 export class EventHandler {
     private resolutionService = new EventResolutionService();
+    private llmService = LLMService.getInstance();
 
     constructor(private world: World) { }
 
@@ -29,17 +31,57 @@ export class EventHandler {
                 if (choiceId === '__confirm__') {
                     targetEvent.status = 'RESOLVED';
                     socket.emit('event:end', { eventUuid });
+
+                    // Collecter les données avant nettoyage
+                    const visitedPath = [...targetEvent.visitedPath];
+                    const appliedEffects = [...targetEvent.pendingEffects];
+                    const eventName = targetEvent.event.title;
+                    const action = targetEvent.event.triggers;
+
+                    component.events = component.events.filter(e => e.uuid !== eventUuid);
+
+
+                    // Background — non bloquant
+                    (async () => {
+                        const narrative = await this.llmService.generateEventSummary({
+                            eventName,
+                            action,
+                            visitedPath,
+                            appliedEffects,
+                        });
+
+                        const historyEntry: EventHistory = {
+                            eventName,
+                            action,
+                            eventNarrative: narrative,
+                            isSignificant: appliedEffects.length > 0,
+                            timestamp: Date.now(),
+                            hadEvent: true
+                        };
+
+                        const historyComponent = this.world.getComponent<IEventsHistory>(entityId, 'IEventsHistory');
+                        historyComponent?.history.push(historyEntry);
+
+                        socket.emit('event:history_updated', historyEntry);
+
+                    })();
                     return;
                 }
 
-                const { nextNode, effects } = this.resolutionService.resolveChoice(targetEvent, choiceId);
+                const { nextNode, effects, choiceLabel } = this.resolutionService.resolveChoice(targetEvent, choiceId);
+
+                targetEvent.visitedPath.push({
+                    nodeId: targetEvent.currentNodeId,  // ancien node
+                    choiceId,
+                    choiceLabel,
+                });
 
                 targetEvent.currentNodeId = nextNode.id;
 
                 const enrichedNode = applyNarrative(nextNode, targetEvent.narrative ?? null);
 
                 if (enrichedNode.choices?.length === 0) {
-                    targetEvent.pendingEffects = effects;
+                    targetEvent.pendingEffects.push(...effects);
                     targetEvent.status = 'PENDING_CONFIRM';
                     socket.emit('event:node', { eventUuid, node: enrichedNode });
                     return;

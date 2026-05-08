@@ -67,6 +67,12 @@ export interface EventNode {
     isSignificant: boolean;
 }
 
+export interface VisitedStep {
+    nodeId: string;
+    choiceId: string;
+    choiceLabel: string;
+}
+
 // ─── Event Definition ─────────────────────────────────────────────────────────
 
 export interface GameEvent {
@@ -90,7 +96,8 @@ export interface Event {
     status: EventStatus;
     currentNodeId: string;
     pendingEffects: EventEffect[];
-    narrative: EventNarrative | null
+    narrative: EventNarrative | null;
+    visitedPath: VisitedStep[];
 }
 
 export interface EventComponent {

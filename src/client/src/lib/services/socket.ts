@@ -1,5 +1,5 @@
 import { io, type Socket } from 'socket.io-client';
-import type { TileData, TimeState } from '$shared';
+import type { EventHistory, IEventsHistory, TileData, TimeState } from '$shared';
 import { gameState } from '$lib/stores/gameState.svelte';
 import { goto } from '$app/navigation';
 import { isMoving, onMoveConfirmed } from './movementService';
@@ -81,6 +81,13 @@ export function initializeSocket(): Socket {
 		gameState.map = newMap;
 		gameState.updatedTiles = updatedTiles;
 	});
+
+	socket.on('event:history_updated', (data: EventHistory) => {
+		console.log("[SOCKET] Event history updated", data);
+		gameState.eventsHistory = [data, ...gameState.eventsHistory];
+	});
+
+
 
 	socket.on('world_update', (entities) => {
 		gameState.entities = entities;

@@ -1,4 +1,4 @@
-import { EventHistory } from "$shared/components";
+import { ActionType, EventHistory } from "$shared/components";
 import Groq from "groq-sdk";
 
 export interface EventContext {
@@ -33,11 +33,26 @@ export interface EventNode {
     effects?: any[];
 }
 
+export interface SummaryContext {
+    eventName: string;
+    action: ActionType[];
+    visitedPath: { nodeId: string; choiceId?: string; choiceLabel?: string }[];
+    appliedEffects: any[];
+}
+
 export class LLMService {
+    private static instance: LLMService;
     private groq: Groq;
 
-    constructor() {
+    private constructor() {
         this.groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    }
+
+    static getInstance(): LLMService {
+        if (!LLMService.instance) {
+            LLMService.instance = new LLMService();
+        }
+        return LLMService.instance;
     }
 
     async enrichAllNodes(event: EventDefinition, ctx: EventContext): Promise<EventNarrative> {
@@ -52,6 +67,44 @@ export class LLMService {
         const content = JSON.parse(completion.choices[0]!.message.content!);
         return content as EventNarrative;
     }
+
+    async generateEventSummary(ctx: SummaryContext): Promise<string> {
+        const prompt = buildSummaryPrompt(ctx);
+
+        const completion = await this.groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+        });
+
+        return completion.choices[0]!.message.content!.trim();
+    }
+}
+
+function buildSummaryPrompt(ctx: SummaryContext): string {
+    const pathBlock = ctx.visitedPath
+        .map(p => `- Node "${p.nodeId}"${p.choiceLabel ? ` → choix : "${p.choiceLabel}"` : ''}`)
+        .join('\n');
+
+    const effectsBlock = ctx.appliedEffects.length > 0
+        ? ctx.appliedEffects.map(e => `- ${JSON.stringify(e)}`).join('\n')
+        : '- Aucun effet notable';
+
+    return `
+Tu es le narrateur d'un jeu de survie médiéval sombre, style "Darkest Dungeon".
+Écris 2 à 4 phrases style journal de bord, à la première personne, résumant ce qui vient de se passer.
+Phrases courtes, images concrètes, tension palpable. Jamais cliché. En français.
+
+Événement : "${ctx.eventName}"
+Action déclenchante : ${ctx.action}
+
+Chemin parcouru :
+${pathBlock}
+
+Effets subis :
+${effectsBlock}
+
+Retourne uniquement le texte narratif, sans JSON, sans guillemets.
+`.trim();
 }
 
 export function applyNarrative(node: EventNode, narrative: EventNarrative | null) {

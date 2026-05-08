@@ -49,6 +49,13 @@
         "isSignificant": false
       },
       {
+        "id": "fight_win",
+        "description": "Vous réussissez à repousser le loup.",
+        "choices": [],
+        "effects": [],
+        "isSignificant": false
+      },
+      {
         "id": "fight_lose",
         "description": "Le loup vous mord avant de s'enfuir. Vous soignez vos plaies.",
         "choices": [],

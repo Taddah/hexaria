@@ -8,7 +8,7 @@ import { NetworkSystem } from "./NetworkSystem";
 import { applyNarrative, EventContext, EventNarrative, LLMService } from "../services/LLMservice";
 
 const BASE_EVENT_CHANCE = 1;
-const llmService = new LLMService();
+const llmService = LLMService.getInstance();
 
 export async function runEventSystem(world: World, network: NetworkSystem): Promise<void> {
     const entitiesWithEvents = world.query(['EventComponent']);
@@ -77,7 +77,8 @@ export async function runEventSystem(world: World, network: NetworkSystem): Prom
                         status: "PENDING",
                         currentNodeId: firstNode.id,
                         pendingEffects: firstNode.effects ?? [],
-                        narrative
+                        narrative,
+                        visitedPath: []
                     });
 
                     const player = world.getComponent<IPlayer>(entity, 'Player');
@@ -138,11 +139,11 @@ function applyBodyEffect(world: World, entity: number, part: BodyPart, delta: nu
 
 function shouldTriggerEvent(
     history: IEventsHistory | undefined,
-    actionType: string,
+    actionType: ActionType,
     threshold: ThresholdKey
 ): boolean {
     const recentSameActions = history
-        ? history.history.slice(-5).filter(a => a.action === actionType).length
+        ? history.history.slice(-5).filter(a => a.action.includes(actionType)).length
         : 0;
 
     const fatigueBonus = { RESTED: 0, TIRED: 0.1, EXHAUSTED: 0.2, DONE: 0.35 };
