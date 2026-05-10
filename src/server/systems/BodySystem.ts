@@ -1,6 +1,6 @@
 // systems/BodySystem.ts
 import { World } from '../core/World';
-import { BodyPartState, VISION_RADIUS_DAY, DEBUG_MODE, BodyComponent, BODY_COMPONENT, BODY_MODIFIERS_COMPONENT, BodyModifiersComponent } from '$shared';
+import { BodyPartState, VISION_RADIUS_DAY, DEBUG_MODE, BodyComponent, BODY_COMPONENT, BODY_MODIFIERS_COMPONENT, BodyModifiersComponent, DEATH_INTENT_COMPONENT, DeathIntentComponent } from '$shared';
 
 function stateIndex(state: BodyPartState): number {
     return ['intact', 'injured', 'handicapped', 'lost'].indexOf(state);
@@ -47,6 +47,12 @@ export function runBodySystem(world: World): void {
         if (!body) continue;
 
         if (body.torso === 'lost' || body.head === 'lost') {
+            if (!world.getComponent(entity, DEATH_INTENT_COMPONENT)) {
+                world.addComponent<DeathIntentComponent>(entity, DEATH_INTENT_COMPONENT, {
+                    deadline: null,
+                    cause: 'INJURY'
+                });
+            }
             continue;
         }
 

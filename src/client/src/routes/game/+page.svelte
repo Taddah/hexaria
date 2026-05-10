@@ -13,6 +13,7 @@
 	import EventModal from '$lib/components/ui/EventModal.svelte';
 	import TopBar from '$lib/components/ui/TopBar.svelte';
 	import ConnectionOverlay from '$lib/components/ui/ConnectionOverlay.svelte';
+	import DeathPanel from '$lib/components/ui/panels/DeathPanel.svelte';
 	import { browser } from '$app/environment';
 
 	const localPlayer = $derived(gameState.localPlayer);
@@ -58,6 +59,7 @@
 		<EventModal />
 
 		<ConnectionOverlay />
+		<DeathPanel />
 	{:else}
 		<!-- Loading -->
 		<div class="flex h-full items-center justify-center">

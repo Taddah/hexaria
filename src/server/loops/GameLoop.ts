@@ -1,6 +1,7 @@
 import { TileData } from "$shared/types";
 import { World } from "../core/World";
 import { runBodySystem } from "../systems/BodySystem";
+import { runDeathSystem } from "../systems/DeathSystem";
 import { runEventSystem } from "../systems/EventSystem";
 import { runHarvestSystem } from "../systems/HarvestSystem";
 import { runMovementSystem } from "../systems/MovementSystem";
@@ -36,6 +37,7 @@ export class GameLoop {
         });
         await runEventSystem(this.world, this.network);
         runBodySystem(this.world);
+        await runDeathSystem(this.world, this.network);
 
         const renewed = runResourceRenewalSystem(this.map);
 

@@ -37,8 +37,6 @@ export class EventHandler {
                     const eventName = targetEvent.event.title;
                     const action = targetEvent.event.triggers;
 
-                    component.events = component.events.filter(e => e.uuid !== eventUuid);
-
                     const worldEntity = this.world.getFirst(['WorldComponent']);
                     let currentYear = 0;
                     if (worldEntity !== undefined) {

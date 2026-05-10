@@ -78,6 +78,29 @@ export class LLMService {
 
         return completion.choices[0]!.message.content!.trim();
     }
+
+    async generateLifeSummary(characterName: string, age: number, significantEvents: EventHistory[]): Promise<string> {
+        const eventsList = significantEvents.length > 0
+            ? significantEvents.map(e => `- ${e.eventName}: ${e.eventNarrative}`).join('\n')
+            : "Une vie paisible et sans histoire, fauchée par le destin.";
+
+        const prompt = `
+Tu es le conteur d'un monde fantastique sombre et impitoyable appelé Hexaria.
+Rédige l'épitaphe ou la nécrologie (environ 3/4 phrases) de ${characterName}, mort(e) à l'âge de ${age} ans.
+Voici les événements marquants de sa vie :
+${eventsList}
+
+Rends hommage à cette vie (ou souligne sa futilité face à la rudesse du monde). Le ton doit être solennel, poétique et sombre.
+Retourne uniquement le texte, sans guillemets, sans titre.
+        `.trim();
+
+        const completion = await this.groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+        });
+
+        return completion.choices[0]!.message.content!.trim();
+    }
 }
 
 function buildSummaryPrompt(ctx: SummaryContext): string {

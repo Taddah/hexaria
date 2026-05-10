@@ -10,5 +10,4 @@ export * from './events/events-history';
 export * from './player/body';
 export * from './player/fatigue';
 export * from './player/skill';
-
-
+export * from './player/death';

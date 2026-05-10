@@ -12,6 +12,9 @@ export enum EffectType {
     STAT = 'STAT',
     SKILL = 'SKILL',
     EQUIPMENT = 'EQUIPMENT',
+    DEATH_IMMEDIATE = 'DEATH_IMMEDIATE',
+    DEATH_DELAYED = 'DEATH_DELAYED',
+    REMOVE_DEATH_INTENT = 'REMOVE_DEATH_INTENT',
 }
 
 export interface ResourceEffect {
@@ -40,12 +43,30 @@ export interface EquipmentEffect {
     value: number;
 }
 
+export interface DeathImmediateEffect {
+    type: EffectType.DEATH_IMMEDIATE;
+    eventName: string;
+}
+
+export interface DeathDelayedEffect {
+    type: EffectType.DEATH_DELAYED;
+    eventName: string;
+    delayMs: number;
+}
+
+export interface RemoveDeathIntentEffect {
+    type: EffectType.REMOVE_DEATH_INTENT;
+}
+
 export type EventEffect =
     | ResourceEffect
     | BodyEffect
     | StatEffect
     | SkillEffect
-    | EquipmentEffect;
+    | EquipmentEffect
+    | DeathImmediateEffect
+    | DeathDelayedEffect
+    | RemoveDeathIntentEffect;
 
 // ─── Nodes / Choices / Outcomes (NOUVEAU) ────────────────────────────────────
 

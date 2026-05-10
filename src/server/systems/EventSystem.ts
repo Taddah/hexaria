@@ -1,5 +1,5 @@
 // systems/eventSystem.ts
-import { EventComponent, EventEffect, EffectType, BodyPart, BodyPartState, ActionType, GameEvent, EventPolarity, ActionTagComponent, ACTION_TAG_COMPONENT, EVENTS_HISTORY_COMPONENT, EventsHistoryComponent, FatigueComponent, FATIGUE_COMPONENT, PlayerComponent, BODY_COMPONENT, BodyComponent, INVENTORY_COMPONENT, InventoryComponent, PLAYER_COMPONENT, EVENT_COMPONENT } from "$shared/components";
+import { EventComponent, EventEffect, EffectType, BodyPart, BodyPartState, ActionType, GameEvent, EventPolarity, ActionTagComponent, ACTION_TAG_COMPONENT, EVENTS_HISTORY_COMPONENT, EventsHistoryComponent, FatigueComponent, FATIGUE_COMPONENT, PlayerComponent, BODY_COMPONENT, BodyComponent, INVENTORY_COMPONENT, InventoryComponent, PLAYER_COMPONENT, EVENT_COMPONENT, DeathIntentComponent, DEATH_INTENT_COMPONENT } from "$shared/components";
 import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
 import { World } from "../core/World";
@@ -104,6 +104,27 @@ function applyEffects(world: World, entity: number, effects: EventEffect[]): voi
                 break;
             case EffectType.BODY:
                 applyBodyEffect(world, entity, effect.stat, effect.value);
+                break;
+            case EffectType.DEATH_IMMEDIATE:
+                if (!world.getComponent(entity, DEATH_INTENT_COMPONENT)) {
+                    world.addComponent<DeathIntentComponent>(entity, DEATH_INTENT_COMPONENT, {
+                        deadline: null,
+                        cause: 'EVENT',
+                        eventName: effect.eventName
+                    });
+                }
+                break;
+            case EffectType.DEATH_DELAYED:
+                if (!world.getComponent(entity, DEATH_INTENT_COMPONENT)) {
+                    world.addComponent<DeathIntentComponent>(entity, DEATH_INTENT_COMPONENT, {
+                        deadline: Date.now() + effect.delayMs,
+                        cause: 'EVENT',
+                        eventName: effect.eventName
+                    });
+                }
+                break;
+            case EffectType.REMOVE_DEATH_INTENT:
+                world.removeComponent(entity, DEATH_INTENT_COMPONENT);
                 break;
         }
     }

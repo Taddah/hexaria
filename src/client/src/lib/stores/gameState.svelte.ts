@@ -66,3 +66,24 @@ export const gameState = $state<GameState>({
 	connected: false,
 	eventsHistory: []
 });
+
+export function resetGameState() {
+	gameState.selectedHex = null;
+	gameState.localPlayer = null;
+	gameState.exploredTiles = [];
+	gameState.path = [];
+	gameState.playerAnimPosition = null;
+	gameState.map = {};
+	gameState.updatedTiles = [];
+	gameState.entities = [];
+	gameState.hexSize = 75;
+	gameState.time = {
+		timeOfDay: 0.5,
+		isDay: true,
+		visionRadius: 3,
+		year: 1
+	};
+	gameState.mapLoaded = false;
+	gameState.connected = false;
+	gameState.eventsHistory = [];
+}

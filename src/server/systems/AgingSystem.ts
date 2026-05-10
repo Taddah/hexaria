@@ -1,5 +1,5 @@
 import { World } from '../core/World';
-import { IdentityComponent, IDENTITY_COMPONENT, FatigueComponent, FATIGUE_COMPONENT } from '$shared';
+import { IdentityComponent, IDENTITY_COMPONENT, FatigueComponent, FATIGUE_COMPONENT, DeathIntentComponent, DEATH_INTENT_COMPONENT } from '$shared';
 
 export function runAgingSystem(world: World): void {
     const entities = world.query([IDENTITY_COMPONENT]);
@@ -36,5 +36,10 @@ function getDeathChance(age: number): number {
 
 
 function handleDeath(world: World, identity: IdentityComponent, entity: number): void {
-    world.deleteEntity(entity);
+    if (!world.getComponent(entity, DEATH_INTENT_COMPONENT)) {
+        world.addComponent<DeathIntentComponent>(entity, DEATH_INTENT_COMPONENT, {
+            deadline: null,
+            cause: 'AGE'
+        });
+    }
 }

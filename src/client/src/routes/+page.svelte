@@ -3,6 +3,7 @@
 	import { initializeSocket, getSocket, isSocketInitialized } from '$lib/services/socket';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import LegacyMenu from '$lib/components/ui/panels/LegacyMenu.svelte';
 
 	let firstName = $state('');
 	let lastName = $state('');
@@ -11,6 +12,7 @@
 	let hasCharacter = $state(false);
 	let existingFirstName = $state('');
 	let existingLastName = $state('');
+	let showLegacyMenu = $state(false);
 
 	onMount(() => {
 		if (!authState.session) {
@@ -163,5 +165,21 @@
 		{#if error && !loading && hasCharacter}
 			<p class="m-0 text-center text-xs text-[var(--color-hp)]" role="alert">{error}</p>
 		{/if}
+
+		<div class="mt-4 flex justify-center border-t border-[var(--color-gold-dark)] pt-6">
+			<button
+				type="button"
+				class="cursor-pointer border-none bg-transparent p-0 font-serif text-sm tracking-wider text-[var(--color-text-muted)] uppercase transition-colors hover:text-[var(--color-gold)]"
+				onclick={() => {
+					showLegacyMenu = true;
+				}}
+			>
+				Ouvrir le livre des morts
+			</button>
+		</div>
 	</div>
+
+	{#if showLegacyMenu}
+		<LegacyMenu onClose={() => (showLegacyMenu = false)} />
+	{/if}
 </main>

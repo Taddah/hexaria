@@ -5,6 +5,7 @@ import { PlayerFactory } from "../factories/PlayerFactory";
 import { getWorldState, serializePlayerComponents } from "./utils";
 import { TileData, TileType } from "$shared/types";
 import { PlayerPersistenceService } from "../services/PlayerPersistenceService";
+import { supabase } from "../services/supabaseServer";
 
 export class CharacterHandler {
     private persistence = new PlayerPersistenceService();
@@ -47,7 +48,7 @@ export class CharacterHandler {
                     world: this.world,
                     firstName: data.firstName,
                     lastName: data.lastName,
-                    age: 0,
+                    age: 15,
                     startPosition
                 });
 
@@ -82,6 +83,23 @@ export class CharacterHandler {
             } catch (err) {
                 console.error('[CharacterHandler] join_game error:', err);
                 socket.emit('character_error', 'Erreur lors du chargement de la partie.');
+            }
+        });
+
+        socket.on('get_legacy', async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('deceased_characters')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .order('died_at', { ascending: false });
+
+                if (error) throw error;
+
+                socket.emit('legacy_data', data);
+            } catch (err) {
+                console.error('[CharacterHandler] get_legacy error:', err);
+                socket.emit('legacy_error', 'Erreur lors de la récupération du livre des morts.');
             }
         });
     }

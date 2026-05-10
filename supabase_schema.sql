@@ -32,3 +32,24 @@ CREATE TABLE world_entities (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX idx_world_entities_pos ON world_entities (q, r);
+
+CREATE TABLE deceased_characters (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id        UUID NOT NULL,
+  character_name TEXT NOT NULL,
+  age_at_death   INT NOT NULL,
+  cause          TEXT NOT NULL,
+  event_name     TEXT,
+  life_summary   TEXT NOT NULL,
+  events_history JSONB NOT NULL DEFAULT '[]',
+  died_at        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE deceased_characters ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can only read their own deceased characters"
+  ON deceased_characters
+  FOR SELECT
+  USING (auth.uid() = user_id);
+
+
