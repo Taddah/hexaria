@@ -1,10 +1,9 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
-import { ActionType, EventComponent, EventHistory } from "$shared/components";
+import { EVENT_COMPONENT, EventComponent, EventHistory, EVENTS_HISTORY_COMPONENT, EventsHistoryComponent } from "$shared/components";
 import { findEntityByUserId } from "./utils";
 import { EventResolutionService } from "../services/EventResolutionService";
 import { applyNarrative, LLMService } from "../services/LLMservice";
-import { IEventsHistory } from "$shared/components";
 
 export class EventHandler {
     private resolutionService = new EventResolutionService();
@@ -20,7 +19,7 @@ export class EventHandler {
             const entityId = findEntityByUserId(this.world, socket.data.userId);
             if (entityId === undefined) return;
 
-            const component = this.world.getComponent<EventComponent>(entityId, 'EventComponent');
+            const component = this.world.getComponent<EventComponent>(entityId, EVENT_COMPONENT);
             if (!component || component.events.length === 0) return;
 
             const targetEvent = component.events.find(e => e.uuid === eventUuid);
@@ -40,6 +39,14 @@ export class EventHandler {
 
                     component.events = component.events.filter(e => e.uuid !== eventUuid);
 
+                    const worldEntity = this.world.getFirst(['WorldComponent']);
+                    let currentYear = 0;
+                    if (worldEntity !== undefined) {
+                        const worldComp = this.world.getComponent<any>(worldEntity, 'WorldComponent');
+                        if (worldComp) {
+                            currentYear = worldComp.year;
+                        }
+                    }
 
                     // Background — non bloquant
                     (async () => {
@@ -56,10 +63,11 @@ export class EventHandler {
                             eventNarrative: narrative,
                             isSignificant: appliedEffects.length > 0,
                             timestamp: Date.now(),
+                            year: currentYear,
                             hadEvent: true,
                         };
 
-                        const historyComponent = this.world.getComponent<IEventsHistory>(entityId, 'IEventsHistory');
+                        const historyComponent = this.world.getComponent<EventsHistoryComponent>(entityId, EVENTS_HISTORY_COMPONENT);
                         historyComponent?.history.push(historyEntry);
 
                         socket.emit('event:history_updated', historyEntry);

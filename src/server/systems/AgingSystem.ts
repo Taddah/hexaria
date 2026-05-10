@@ -1,11 +1,11 @@
 import { World } from '../core/World';
-import { IFatigue, IIdentity } from '$shared';
+import { IdentityComponent, IDENTITY_COMPONENT, FatigueComponent, FATIGUE_COMPONENT } from '$shared';
 
 export function runAgingSystem(world: World): void {
-    const entities = world.query(['Identity']);
+    const entities = world.query([IDENTITY_COMPONENT]);
 
     for (const entity of entities) {
-        const identity = world.getComponent<IIdentity>(entity, 'Identity');
+        const identity = world.getComponent<IdentityComponent>(entity, IDENTITY_COMPONENT);
         if (!identity) continue;
 
         identity.currentAge += 1;
@@ -17,7 +17,7 @@ export function runAgingSystem(world: World): void {
 }
 
 function shouldDieOfAge(age: number, world: World, entity: number): boolean {
-    const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
+    const fatigue = world.getComponent<FatigueComponent>(entity, FATIGUE_COMPONENT);
     const fatigueMult = fatigue ? 1 + (fatigue.fatigue / 100) * 0.5 : 1;
 
     const baseChance = getDeathChance(age);
@@ -35,6 +35,6 @@ function getDeathChance(age: number): number {
 }
 
 
-function handleDeath(world: World, identity: IIdentity, entity: number): void {
+function handleDeath(world: World, identity: IdentityComponent, entity: number): void {
     world.deleteEntity(entity);
 }

@@ -4,6 +4,8 @@ import { EventNarrative } from "src/server/services/LLMservice";
 import { ActionType } from "../actions/actionTag";
 import { BodyPart } from "../player/body";
 
+export const EVENT_COMPONENT = 'EventComponent';
+
 export enum EffectType {
     RESOURCE = 'RESOURCE',
     BODY = 'BODY',

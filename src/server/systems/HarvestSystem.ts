@@ -1,18 +1,18 @@
 import { World } from '../core/World';
-import { IHarvestIntent, IInventory, IPosition, TileData, Resource, ActionType } from '$shared';
+import { TileData, Resource, ActionType, HARVEST_INTENT_COMPONENT, HarvestIntentComponent, INVENTORY_COMPONENT, InventoryComponent, POSITION_COMPONENT, PositionComponent, ACTION_TAG_COMPONENT } from '$shared';
 import { addFatigue } from './FatigueSystem';
 import { gainXp } from './SkillSystem';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
-    const entities = world.query(['Position', 'Inventory', 'HarvestIntent']);
+    const entities = world.query([POSITION_COMPONENT, INVENTORY_COMPONENT, HARVEST_INTENT_COMPONENT]);
     let harvested = false;
 
     for (const entity of entities) {
-        const pos = world.getComponent<IPosition>(entity, 'Position');
-        const inventory = world.getComponent<IInventory>(entity, 'Inventory');
-        const intent = world.getComponent<IHarvestIntent>(entity, 'HarvestIntent');
+        const pos = world.getComponent<PositionComponent>(entity, POSITION_COMPONENT);
+        const inventory = world.getComponent<InventoryComponent>(entity, INVENTORY_COMPONENT);
+        const intent = world.getComponent<HarvestIntentComponent>(entity, HARVEST_INTENT_COMPONENT);
 
-        world.removeComponent(entity, 'HarvestIntent');
+        world.removeComponent(entity, HARVEST_INTENT_COMPONENT);
 
         if (!pos || !inventory || !intent) continue;
 
@@ -29,7 +29,7 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         inventory[resource.type] += amount;
 
         harvested = true;
-        world.addComponent(entity, 'ActionTag', { type: getActionType(resource.type), timestamp: Date.now() });
+        world.addComponent(entity, ACTION_TAG_COMPONENT, { type: getActionType(resource.type), timestamp: Date.now() });
         addFatigue(world, entity, 2);
         gainXp(world, entity, getSkillName(resource.type));
     }

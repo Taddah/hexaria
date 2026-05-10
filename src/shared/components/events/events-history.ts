@@ -1,6 +1,8 @@
 import { ActionType, Event } from "$shared/index";
 
-export interface IEventsHistory {
+export const EVENTS_HISTORY_COMPONENT = 'EventsHistoryComponent';
+
+export interface EventsHistoryComponent {
     history: EventHistory[];
 }
 
@@ -10,5 +12,6 @@ export interface EventHistory {
     action: ActionType[];
     hadEvent: boolean;
     timestamp: number;
+    year: number;
     eventName: string;
 }

@@ -93,6 +93,7 @@ function buildSummaryPrompt(ctx: SummaryContext): string {
 Tu es le narrateur d'un jeu de survie médiéval sombre, style "Darkest Dungeon".
 Écris 2 à 4 phrases style journal de bord, à la première personne, résumant ce qui vient de se passer.
 Phrases courtes, images concrètes, tension palpable. Jamais cliché. En français.
+IMPORTANT : Incorpore de manière narrative, explicite et dramatique les effets subis (blessures, pertes de ressources, gains) dans ton résumé.
 
 Événement : "${ctx.eventName}"
 Action déclenchante : ${ctx.action}
@@ -124,9 +125,14 @@ export function applyNarrative(node: EventNode, narrative: EventNarrative | null
 
 function buildFullEventPrompt(event: EventDefinition, ctx: EventContext): string {
     const nodesBlock = event.nodes.map(node => {
-        const choicesBlock = node.choices?.map(c => `  - id: "${c.id}", label: "${c.label}"`).join('\n') ?? '';
+        const nodeEffects = node.effects?.length ? `\n  Effets immédiats du node: ${JSON.stringify(node.effects)}` : '';
+        const choicesBlock = node.choices?.map(c => {
+            const allEffects = c.outcomes?.flatMap(o => o.effects || []) || [];
+            const effectsStr = allEffects.length ? ` (conséquences possibles: ${JSON.stringify(allEffects)})` : '';
+            return `  - id: "${c.id}", label: "${c.label}"${effectsStr}`;
+        }).join('\n') ?? '';
         return `Node "${node.id}":
-  Description brute: "${node.description}"${choicesBlock ? `\n  Choix:\n${choicesBlock}` : ''}`;
+  Description brute: "${node.description}"${nodeEffects}${choicesBlock ? `\n  Choix:\n${choicesBlock}` : ''}`;
     }).join('\n\n');
 
     const expectedJson: EventNarrative = {
@@ -144,6 +150,7 @@ function buildFullEventPrompt(event: EventDefinition, ctx: EventContext): string
     return `
 Tu es le narrateur d'un jeu de survie médiéval sombre, style "Darkest Dungeon".
 Phrases courtes, images concrètes, tension palpable. Jamais cliché. En français.
+IMPORTANT : Si des effets (blessures, gains, pertes de ressources) sont listés pour un node ou un choix, tu DOIS absolument les incorporer dans la description narrative du node pour que le joueur comprenne ce qui lui arrive physiquement et matériellement.
 
 Événement : "${event.title}"
 Tonalité : ${ctx.polarity}

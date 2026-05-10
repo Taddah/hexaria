@@ -2,7 +2,7 @@
   {
     "id": "broken_axe",
     "title": "Hache brisée",
-    "probability": 10,
+    "probability": 100,
     "triggers": [
       "CHOP_WOOD"
     ],

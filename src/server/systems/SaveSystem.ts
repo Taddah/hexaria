@@ -4,7 +4,7 @@ import { PlayerPersistenceService } from '../services/PlayerPersistenceService';
 import { WorldPersistenceService } from '../services/WorldPersistenceService';
 import { serializePlayerComponents } from '../handlers/utils';
 import { TileData } from '$shared/types';
-import { IPlayer } from '$shared/components';
+import { PLAYER_COMPONENT, PlayerComponent } from '$shared/components';
 
 const SAVE_INTERVAL_MS = 5 * 60 * 1000;
 
@@ -17,7 +17,7 @@ export class SaveSystem {
     constructor(
         private world: World,
         private registry: PlayerRegistry,
-        private getGameTime: () => Record<string, unknown>,
+        private getGameTime: () => { timeOfDay: number; year: number },
         private seed: string
     ) { }
 
@@ -50,7 +50,7 @@ export class SaveSystem {
             const entityId = this.registry.getEntityByUserId(userId);
             if (entityId === undefined) continue;
 
-            const player = this.world.getComponent<IPlayer>(entityId, 'Player');
+            const player = this.world.getComponent<PlayerComponent>(entityId, PLAYER_COMPONENT);
             if (!player) continue;
 
             const components = serializePlayerComponents(this.world, entityId);
@@ -60,7 +60,10 @@ export class SaveSystem {
         promises.push(
             this.worldPersistence.saveWorldMeta({
                 seed: this.seed,
-                gameTime: this.getGameTime()
+                gameTime: {
+                    timeOfDay: this.getGameTime().timeOfDay,
+                    year: this.getGameTime().year,
+                }
             })
         );
 

@@ -1,3 +1,16 @@
+export const BODY_COMPONENT = 'BodyComponent';
+export const BODY_MODIFIERS_COMPONENT = 'BodyModifiersComponent';
+
+export interface BodyComponent {
+    [BodyPart.HEAD]: BodyPartState;
+    [BodyPart.EYE_LEFT]: BodyPartState;
+    [BodyPart.EYE_RIGHT]: BodyPartState;
+    [BodyPart.ARM_LEFT]: BodyPartState;
+    [BodyPart.ARM_RIGHT]: BodyPartState;
+    [BodyPart.LEG_LEFT]: BodyPartState;
+    [BodyPart.LEG_RIGHT]: BodyPartState;
+    [BodyPart.TORSO]: BodyPartState;
+}
 
 export enum BodyPart {
     HEAD = 'head',
@@ -17,18 +30,9 @@ export enum BodyPartState {
     LOST = 'lost',
 }
 
-export interface IBody {
-    [BodyPart.HEAD]: BodyPartState;
-    [BodyPart.EYE_LEFT]: BodyPartState;
-    [BodyPart.EYE_RIGHT]: BodyPartState;
-    [BodyPart.ARM_LEFT]: BodyPartState;
-    [BodyPart.ARM_RIGHT]: BodyPartState;
-    [BodyPart.LEG_LEFT]: BodyPartState;
-    [BodyPart.LEG_RIGHT]: BodyPartState;
-    [BodyPart.TORSO]: BodyPartState;
-}
 
-export interface IBodyModifiers {
+
+export interface BodyModifiersComponent {
     movementMultiplier: number;  // 1.0 = normal, 2.0 = deux fois plus lent
     harvestMultiplier: number;   // 1.0 = normal, 0.0 = impossible
     visionRadius: number;        // nombre de tiles

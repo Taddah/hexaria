@@ -1,14 +1,14 @@
 // $server/systems/Skills.system.ts
 import { World } from "../core/World";
-import { ISkills } from "$shared/components";
+import { SKILLS_COMPONENT, SkillsComponent } from "$shared/components";
 import { getSkillGain } from "$shared/components";
 
 export function runSkillSystem(world: World): void {
-    const entities = world.query(["skills"]);
+    const entities = world.query([SKILLS_COMPONENT]);
     const now = Date.now();
 
     for (const entity of entities) {
-        const skills = world.getComponent<ISkills>(entity, "skills");
+        const skills = world.getComponent<SkillsComponent>(entity, SKILLS_COMPONENT);
         if (!skills) continue;
 
         for (const [_name, data] of Object.entries(skills)) {
@@ -22,7 +22,7 @@ export function runSkillSystem(world: World): void {
 }
 
 export function gainXp(world: World, entity: number, skillName: string): void {
-    const skills = world.getComponent<ISkills>(entity, "skills");
+    const skills = world.getComponent<SkillsComponent>(entity, SKILLS_COMPONENT);
     if (!skills) return;
 
     let data = skills[skillName];

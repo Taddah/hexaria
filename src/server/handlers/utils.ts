@@ -1,31 +1,31 @@
-import { IPlayer, IPosition, IIdentity, IInventory, EventComponent, IBodyModifiers, IBody, IFatigue, ISkills } from "$shared/components";
+import { BODY_COMPONENT, BODY_MODIFIERS_COMPONENT, BodyComponent, BodyModifiersComponent, EVENT_COMPONENT, EventComponent, FATIGUE_COMPONENT, FatigueComponent, IDENTITY_COMPONENT, IdentityComponent, INVENTORY_COMPONENT, InventoryComponent, PlayerComponent, PLAYER_COMPONENT, POSITION_COMPONENT, PositionComponent, SKILLS_COMPONENT, SkillsComponent } from "$shared/components";
 import { World } from "../core/World";
 
 export function findEntityBySocket(world: World, socketId: string): number | undefined {
-    return Array.from(world.query(['Player'])).find(
-        id => world.getComponent<IPlayer>(id, 'Player')?.socketId === socketId
+    return Array.from(world.query([PLAYER_COMPONENT])).find(
+        id => world.getComponent<PlayerComponent>(id, PLAYER_COMPONENT)?.socketId === socketId
     );
 }
 
 export function findEntityByUserId(world: World, userId: string): number | undefined {
-    return Array.from(world.query(['Player'])).find(
-        id => world.getComponent<IPlayer>(id, 'Player')?.userId === userId
+    return Array.from(world.query([PLAYER_COMPONENT])).find(
+        id => world.getComponent<PlayerComponent>(id, PLAYER_COMPONENT)?.userId === userId
     );
 }
 
 export function getWorldState(world: World): object[] {
-    const entities = world.query(['Position', 'Identity']);
+    const entities = world.query([POSITION_COMPONENT, IDENTITY_COMPONENT]);
     const worldState: object[] = [];
 
     for (const entity of entities) {
-        const pos = world.getComponent<IPosition>(entity, 'Position');
-        const body = world.getComponent<IBody>(entity, 'Body');
-        const bodyModifiers = world.getComponent<IBodyModifiers>(entity, 'BodyModifiers');
-        const identity = world.getComponent<IIdentity>(entity, 'Identity');
-        const inventory = world.getComponent<IInventory>(entity, 'Inventory');
-        const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
-        const gameEvents = world.getComponent<EventComponent>(entity, 'EventComponent');
-        const skills = world.getComponent<ISkills>(entity, "skills");
+        const pos = world.getComponent<PositionComponent>(entity, POSITION_COMPONENT);
+        const body = world.getComponent<BodyComponent>(entity, BODY_COMPONENT);
+        const bodyModifiers = world.getComponent<BodyModifiersComponent>(entity, BODY_MODIFIERS_COMPONENT);
+        const identity = world.getComponent<IdentityComponent>(entity, IDENTITY_COMPONENT);
+        const inventory = world.getComponent<InventoryComponent>(entity, INVENTORY_COMPONENT);
+        const fatigue = world.getComponent<FatigueComponent>(entity, FATIGUE_COMPONENT);
+        const gameEvents = world.getComponent<EventComponent>(entity, EVENT_COMPONENT);
+        const skills = world.getComponent<SkillsComponent>(entity, SKILLS_COMPONENT);
 
         if (pos && identity) {
             worldState.push({ id: entity, position: pos, body, bodyModifiers, identity, inventory, fatigue, gameEvents, skills });
@@ -35,7 +35,7 @@ export function getWorldState(world: World): object[] {
     return worldState;
 }
 
-const PERSISTED_COMPONENTS = ['Position', 'Identity', 'Inventory', 'Fatigue', 'Body', 'BodyModifiers', 'skills', 'EventComponent'];
+const PERSISTED_COMPONENTS = [POSITION_COMPONENT, IDENTITY_COMPONENT, INVENTORY_COMPONENT, FATIGUE_COMPONENT, BODY_COMPONENT, BODY_MODIFIERS_COMPONENT, SKILLS_COMPONENT, EVENT_COMPONENT];
 
 export function serializePlayerComponents(world: World, entityId: number): Record<string, unknown> {
     const components: Record<string, unknown> = {};

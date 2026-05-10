@@ -1,12 +1,14 @@
+export const SKILLS_COMPONENT = 'SkillsComponent';
 
-export interface ISkillData {
+export interface SkillData {
     xp: number;
     lastPracticed: number;
 }
 
-export interface ISkills {
-    [skillName: string]: ISkillData;
+export interface SkillsComponent {
+    [skillName: string]: SkillData;
 }
+
 
 
 export function getDegradation(xp: number): number {

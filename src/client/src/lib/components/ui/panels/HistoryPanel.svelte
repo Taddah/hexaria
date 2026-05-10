@@ -63,7 +63,7 @@
                         "
 					>
 						<!-- Ligne haute -->
-						<div class="flex items-center justify-between">
+						<div class="flex items-start justify-between">
 							<span
 								class="text-xs font-bold"
 								style="color: {entry.isSignificant
@@ -72,9 +72,16 @@
 							>
 								{entry.eventName}
 							</span>
-							<span class="text-xs" style="color: var(--color-text-muted);">
-								{formatTime(entry.timestamp)}
-							</span>
+							<div class="flex flex-col items-end">
+								{#if entry.year !== undefined}
+									<span class="text-xs" style="color: var(--color-gold-dark);">
+										An {entry.year}
+									</span>
+								{/if}
+								<span class="text-[10px] opacity-75" style="color: var(--color-text-muted);">
+									{formatTime(entry.timestamp)}
+								</span>
+							</div>
 						</div>
 
 						<!-- Actions -->

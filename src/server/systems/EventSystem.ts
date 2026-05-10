@@ -1,5 +1,5 @@
 // systems/eventSystem.ts
-import { IActionTag, IEventsHistory, EventComponent, IFatigue, EventEffect, EffectType, IInventory, BodyPart, IBody, BodyPartState, ActionType, GameEvent, EventPolarity, IPlayer } from "$shared/components";
+import { EventComponent, EventEffect, EffectType, BodyPart, BodyPartState, ActionType, GameEvent, EventPolarity, ActionTagComponent, ACTION_TAG_COMPONENT, EVENTS_HISTORY_COMPONENT, EventsHistoryComponent, FatigueComponent, FATIGUE_COMPONENT, PlayerComponent, BODY_COMPONENT, BodyComponent, INVENTORY_COMPONENT, InventoryComponent, PLAYER_COMPONENT, EVENT_COMPONENT } from "$shared/components";
 import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
 import { World } from "../core/World";
@@ -11,9 +11,9 @@ const BASE_EVENT_CHANCE = 1;
 const llmService = LLMService.getInstance();
 
 export async function runEventSystem(world: World, network: NetworkSystem): Promise<void> {
-    const entitiesWithEvents = world.query(['EventComponent']);
+    const entitiesWithEvents = world.query([EVENT_COMPONENT]);
     for (const entity of entitiesWithEvents) {
-        const eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
+        const eventComponent = world.getComponent<EventComponent>(entity, EVENT_COMPONENT);
         if (!eventComponent) continue;
 
         for (const gameEvent of eventComponent.events) {
@@ -27,21 +27,21 @@ export async function runEventSystem(world: World, network: NetworkSystem): Prom
         }
     }
 
-    const entities = world.query(['ActionTag']);
+    const entities = world.query([ACTION_TAG_COMPONENT]);
 
     for (const entity of entities) {
-        const action = world.getComponent<IActionTag>(entity, 'ActionTag');
-        const history = world.getComponent<IEventsHistory>(entity, 'EventHistory');
-        let eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
+        const action = world.getComponent<ActionTagComponent>(entity, ACTION_TAG_COMPONENT);
+        const history = world.getComponent<EventsHistoryComponent>(entity, EVENTS_HISTORY_COMPONENT);
+        let eventComponent = world.getComponent<EventComponent>(entity, EVENT_COMPONENT);
 
         if (!action) continue;
 
         if (!eventComponent) {
-            world.addComponent(entity, 'EventComponent', { events: [] });
-            eventComponent = world.getComponent<EventComponent>(entity, 'EventComponent');
+            world.addComponent(entity, EVENT_COMPONENT, { events: [] });
+            eventComponent = world.getComponent<EventComponent>(entity, EVENT_COMPONENT);
         }
 
-        const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
+        const fatigue = world.getComponent<FatigueComponent>(entity, FATIGUE_COMPONENT);
         const threshold = fatigue ? getThreshold(fatigue.fatigue) : 'RESTED';
 
         if (shouldTriggerEvent(history, action.type, threshold)) {
@@ -62,7 +62,7 @@ export async function runEventSystem(world: World, network: NetworkSystem): Prom
                         baseDescription: firstNode.description,
                     };
 
-                    world.removeComponent(entity, 'ActionTag');
+                    world.removeComponent(entity, ACTION_TAG_COMPONENT);
 
                     let narrative: EventNarrative | null = null;
                     try {
@@ -81,7 +81,7 @@ export async function runEventSystem(world: World, network: NetworkSystem): Prom
                         visitedPath: []
                     });
 
-                    const player = world.getComponent<IPlayer>(entity, 'Player');
+                    const player = world.getComponent<PlayerComponent>(entity, PLAYER_COMPONENT);
                     if (player?.userId) {
                         network.emitToUser(player.userId, 'event:node', {
                             eventUuid: uuid,
@@ -110,7 +110,7 @@ function applyEffects(world: World, entity: number, effects: EventEffect[]): voi
 }
 
 function applyResourceEffect(world: World, entity: number, stat: string, value: number): void {
-    const inventory = world.getComponent<IInventory>(entity, 'Inventory');
+    const inventory = world.getComponent<InventoryComponent>(entity, INVENTORY_COMPONENT);
     if (!inventory) return;
 
     const current = (inventory as any)[stat] ?? 0;
@@ -118,7 +118,7 @@ function applyResourceEffect(world: World, entity: number, stat: string, value: 
 }
 
 function applyBodyEffect(world: World, entity: number, part: BodyPart, delta: number): void {
-    const body = world.getComponent<IBody>(entity, 'Body');
+    const body = world.getComponent<BodyComponent>(entity, BODY_COMPONENT);
     if (!body) return;
 
     const states = [
@@ -138,7 +138,7 @@ function applyBodyEffect(world: World, entity: number, part: BodyPart, delta: nu
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function shouldTriggerEvent(
-    history: IEventsHistory | undefined,
+    history: EventsHistoryComponent | undefined,
     actionType: ActionType,
     threshold: ThresholdKey
 ): boolean {

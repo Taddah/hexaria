@@ -1,4 +1,4 @@
-import { IIdentity, IFatigue } from "$shared/components";
+import { FATIGUE_COMPONENT, FatigueComponent, IDENTITY_COMPONENT, IdentityComponent } from "$shared/components";
 import { World } from "../core/World";
 
 const THRESHOLDS = {
@@ -18,8 +18,8 @@ export function getThreshold(fatigue: number): ThresholdKey {
 }
 
 export function addFatigue(world: World, entity: number, baseAmount: number): void {
-    const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
-    const identity = world.getComponent<IIdentity>(entity, 'Identity');
+    const fatigue = world.getComponent<FatigueComponent>(entity, FATIGUE_COMPONENT);
+    const identity = world.getComponent<IdentityComponent>(entity, IDENTITY_COMPONENT);
     if (!fatigue) return;
 
     const age = identity?.currentAge ?? 25;
@@ -40,7 +40,7 @@ export function addFatigue(world: World, entity: number, baseAmount: number): vo
 
 
 export function reduceFatigue(world: World, entity: number, amount: number): void {
-    const fatigue = world.getComponent<IFatigue>(entity, 'Fatigue');
+    const fatigue = world.getComponent<FatigueComponent>(entity, FATIGUE_COMPONENT);
     if (!fatigue) return;
     fatigue.fatigue = Math.max(0, fatigue.fatigue - amount);
 }

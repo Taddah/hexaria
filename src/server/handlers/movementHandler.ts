@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { World } from "../core/World";
-import { IPosition, IMovementIntent } from "$shared/components";
+import { MovementIntentComponent, MOVEMENT_INTENT_COMPONENT, POSITION_COMPONENT, PositionComponent } from "$shared/components";
 import { TileData } from "$shared/types";
 import { findEntityByUserId } from "./utils";
 
@@ -12,16 +12,16 @@ export class MovementHandler {
             const entityId = findEntityByUserId(this.world, socket.data.userId);
             if (entityId === undefined) return;
 
-            const existingIntent = this.world.getComponent<IMovementIntent>(entityId, 'MovementIntent');
+            const existingIntent = this.world.getComponent<MovementIntentComponent>(entityId, MOVEMENT_INTENT_COMPONENT);
             if (existingIntent) return;
 
-            const pos = this.world.getComponent<IPosition>(entityId, 'Position');
+            const pos = this.world.getComponent<PositionComponent>(entityId, POSITION_COMPONENT);
             if (!pos) return;
 
             const tile = this.map.find(t => t.q === target.q && t.r === target.r);
             if (!tile || tile.type === 'WATER') return;
 
-            this.world.addComponent<IMovementIntent>(entityId, 'MovementIntent', {
+            this.world.addComponent<MovementIntentComponent>(entityId, MOVEMENT_INTENT_COMPONENT, {
                 targetQ: target.q,
                 targetR: target.r,
                 startedAt: Date.now()

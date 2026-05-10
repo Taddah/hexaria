@@ -6,7 +6,9 @@ export enum ActionType {
     REST = 'REST'
 }
 
-export interface IActionTag {
+export const ACTION_TAG_COMPONENT = 'ActionTagComponent';
+
+export interface ActionTagComponent {
     type: ActionType;
     timestamp: number;
 }

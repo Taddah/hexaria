@@ -1,27 +1,26 @@
 import type {
-	IPosition,
-	IIdentity,
-	IInventory,
 	EventComponent,
 	TileData,
-	IBody,
-	IBodyModifiers,
-	IFatigue,
-	ISkills,
-	IEventsHistory,
-	EventHistory
+	BodyModifiersComponent,
+	EventHistory,
+	PositionComponent,
+	IdentityComponent,
+	InventoryComponent,
+	BodyComponent,
+	FatigueComponent,
+	SkillsComponent
 } from '$shared';
 
 export interface EntityDTO {
 	id: number;
-	position: IPosition;
-	identity: IIdentity;
-	inventory?: IInventory;
+	position: PositionComponent;
+	identity: IdentityComponent;
+	inventory?: InventoryComponent;
 	gameEvents?: EventComponent;
-	body: IBody;
-	bodyModifiers: IBodyModifiers;
-	fatigue: IFatigue;
-	skills: ISkills;
+	body: BodyComponent;
+	bodyModifiers: BodyModifiersComponent;
+	fatigue: FatigueComponent;
+	skills: SkillsComponent;
 }
 
 export interface TimeDTO {

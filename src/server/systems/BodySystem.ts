@@ -1,12 +1,12 @@
 // systems/BodySystem.ts
 import { World } from '../core/World';
-import { IBody, IBodyModifiers, BodyPartState, VISION_RADIUS_DAY, DEBUG_MODE } from '$shared';
+import { BodyPartState, VISION_RADIUS_DAY, DEBUG_MODE, BodyComponent, BODY_COMPONENT, BODY_MODIFIERS_COMPONENT, BodyModifiersComponent } from '$shared';
 
 function stateIndex(state: BodyPartState): number {
     return ['intact', 'injured', 'handicapped', 'lost'].indexOf(state);
 }
 
-function computeMovementMultiplier(body: IBody): number {
+function computeMovementMultiplier(body: BodyComponent): number {
     const leftIdx = stateIndex(body.legLeft);
     const rightIdx = stateIndex(body.legRight);
 
@@ -16,7 +16,7 @@ function computeMovementMultiplier(body: IBody): number {
     return [1.0, 1.2, 1.6, 2.0][worst] ?? 1;
 }
 
-function computeHarvestMultiplier(body: IBody): number {
+function computeHarvestMultiplier(body: BodyComponent): number {
     const leftIdx = stateIndex(body.armLeft);
     const rightIdx = stateIndex(body.armRight);
 
@@ -26,7 +26,7 @@ function computeHarvestMultiplier(body: IBody): number {
     return [1.0, 0.7, 0.4, 0.2][best] ?? 1;
 }
 
-function computeVisionRadius(body: IBody): number {
+function computeVisionRadius(body: BodyComponent): number {
     const baseRadius = DEBUG_MODE ? 10 : VISION_RADIUS_DAY;
     const leftLost = body.eyeLeft === 'lost';
     const rightLost = body.eyeRight === 'lost';
@@ -40,22 +40,22 @@ function computeVisionRadius(body: IBody): number {
 }
 
 export function runBodySystem(world: World): void {
-    const entities = world.query(['Body']);
+    const entities = world.query([BODY_COMPONENT]);
 
     for (const entity of entities) {
-        const body = world.getComponent<IBody>(entity, 'Body');
+        const body = world.getComponent<BodyComponent>(entity, BODY_COMPONENT);
         if (!body) continue;
 
         if (body.torso === 'lost' || body.head === 'lost') {
             continue;
         }
 
-        const modifiers: IBodyModifiers = {
+        const modifiers: BodyModifiersComponent = {
             movementMultiplier: computeMovementMultiplier(body),
             harvestMultiplier: computeHarvestMultiplier(body),
             visionRadius: computeVisionRadius(body),
         };
 
-        world.addComponent<IBodyModifiers>(entity, 'BodyModifiers', modifiers);
+        world.addComponent(entity, BODY_MODIFIERS_COMPONENT, modifiers);
     }
 }

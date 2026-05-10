@@ -2,7 +2,10 @@ import { supabase } from './supabaseServer';
 
 export interface WorldMeta {
     seed: string;
-    gameTime: Record<string, unknown>;
+    gameTime: {
+        year?: number;
+        timeOfDay?: number;
+    };
 }
 
 export interface MapModification {
@@ -21,11 +24,16 @@ export class WorldPersistenceService {
 
         if (error || !data) return null;
 
+        const gameTime = (data.game_time as { year?: number; timeOfDay?: number }) ?? {};
+
         return {
             seed: data.seed as string,
-            gameTime: (data.game_time as Record<string, unknown>) ?? {}
-
+            gameTime: {
+                ...(typeof gameTime.year === 'number' && { year: gameTime.year }),
+                ...(typeof gameTime.timeOfDay === 'number' && { timeOfDay: gameTime.timeOfDay }),
+            }
         };
+
     }
 
     async saveWorldMeta(meta: WorldMeta): Promise<void> {

@@ -1,6 +1,4 @@
-import { IPlayer, IPosition, IIdentity, IInventory, ISkills } from "$shared/components";
-import { BodyPart, BodyPartState, IBody } from "$shared/components/player/body";
-import { IFatigue } from "$shared/components/player/fatigue";
+import { PlayerComponent, PositionComponent, IdentityComponent, InventoryComponent, SkillsComponent, FatigueComponent, PLAYER_COMPONENT, IDENTITY_COMPONENT, POSITION_COMPONENT, FATIGUE_COMPONENT, INVENTORY_COMPONENT, SKILLS_COMPONENT, BodyPart, BodyPartState, BodyComponent, BODY_COMPONENT } from "$shared/components";
 import { Resource } from "$shared/types";
 import { World } from "../core/World";
 
@@ -25,27 +23,27 @@ export class PlayerFactory {
     static create(params: CreatePlayerParams) {
         const player = params.world.createEntity();
 
-        params.world.addComponent<IPlayer>(player, 'Player', {
+        params.world.addComponent<PlayerComponent>(player, PLAYER_COMPONENT, {
             socketId: params.socketId,
             userId: params.userId
         });
-        params.world.addComponent<IPosition>(player, 'Position', {
+        params.world.addComponent<PositionComponent>(player, POSITION_COMPONENT, {
             q: params.startPosition.q,
             r: params.startPosition.r
         });
-        params.world.addComponent<IIdentity>(player, 'Identity', {
+        params.world.addComponent<IdentityComponent>(player, IDENTITY_COMPONENT, {
             firstName: params.firstName,
             lastName: params.lastName,
             currentAge: params.age
         });
-        params.world.addComponent<IInventory>(player, 'Inventory', {
+        params.world.addComponent<InventoryComponent>(player, INVENTORY_COMPONENT, {
             [Resource.WOOD]: 0,
             [Resource.STONE]: 0,
             [Resource.SILVER]: 0
         });
-        params.world.addComponent<IFatigue>(player, 'Fatigue', { fatigue: 0 });
+        params.world.addComponent<FatigueComponent>(player, FATIGUE_COMPONENT, { fatigue: 0 });
 
-        params.world.addComponent<IBody>(player, 'Body', {
+        params.world.addComponent<BodyComponent>(player, BODY_COMPONENT, {
             [BodyPart.HEAD]: BodyPartState.INTACT,
             [BodyPart.EYE_LEFT]: BodyPartState.INTACT,
             [BodyPart.EYE_RIGHT]: BodyPartState.INTACT,
@@ -56,7 +54,7 @@ export class PlayerFactory {
             [BodyPart.TORSO]: BodyPartState.INTACT,
         });
 
-        params.world.addComponent<ISkills>(player, "skills", {});
+        params.world.addComponent<SkillsComponent>(player, SKILLS_COMPONENT, {});
 
         return player;
     }
@@ -64,7 +62,7 @@ export class PlayerFactory {
     static createFromComponents(params: CreateFromComponentsParams) {
         const player = params.world.createEntity();
 
-        params.world.addComponent<IPlayer>(player, 'Player', {
+        params.world.addComponent<PlayerComponent>(player, PLAYER_COMPONENT, {
             socketId: params.socketId,
             userId: params.userId
         });
