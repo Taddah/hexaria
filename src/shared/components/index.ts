@@ -11,3 +11,4 @@ export * from './player/body';
 export * from './player/fatigue';
 export * from './player/skill';
 export * from './player/death';
+export * from './player/attributes';

@@ -1,5 +1,5 @@
 // systems/eventSystem.ts
-import { EventComponent, EventEffect, EffectType, BodyPart, BodyPartState, ActionType, GameEvent, EventPolarity, ActionTagComponent, ACTION_TAG_COMPONENT, EVENTS_HISTORY_COMPONENT, EventsHistoryComponent, FatigueComponent, FATIGUE_COMPONENT, PlayerComponent, BODY_COMPONENT, BodyComponent, INVENTORY_COMPONENT, InventoryComponent, PLAYER_COMPONENT, EVENT_COMPONENT, DeathIntentComponent, DEATH_INTENT_COMPONENT } from "$shared/components";
+import { EventComponent, EventEffect, EffectType, BodyPart, BodyPartState, ActionType, GameEvent, EventPolarity, ActionTagComponent, ACTION_TAG_COMPONENT, EVENTS_HISTORY_COMPONENT, EventsHistoryComponent, FatigueComponent, FATIGUE_COMPONENT, PlayerComponent, BODY_COMPONENT, BodyComponent, INVENTORY_COMPONENT, InventoryComponent, PLAYER_COMPONENT, EVENT_COMPONENT, DeathIntentComponent, DEATH_INTENT_COMPONENT, ATTRIBUTES_COMPONENT, AttributesComponent } from "$shared/components";
 import { v4 as uuidv4 } from "uuid";
 import { EventRegistry } from "../core/EventRegistry";
 import { World } from "../core/World";
@@ -45,7 +45,8 @@ export async function runEventSystem(world: World, network: NetworkSystem): Prom
         const threshold = fatigue ? getThreshold(fatigue.fatigue) : 'RESTED';
 
         if (shouldTriggerEvent(history, action.type, threshold)) {
-            const event = pickEvent(action.type);
+            const attrs = world.getComponent<AttributesComponent>(entity, ATTRIBUTES_COMPONENT);
+            const event = pickEvent(action.type, attrs);
 
             if (event && eventComponent) {
                 const firstNode = event.nodes[0];
@@ -178,6 +179,7 @@ function shouldTriggerEvent(
 
 function pickEvent(
     actionType: ActionType,
+    attributes?: AttributesComponent,
     filter: (EventPolarity | 'all') = 'all'
 ): GameEvent | undefined {
     const events = EventRegistry.getAll() as GameEvent[];
@@ -187,8 +189,14 @@ function pickEvent(
         .filter(e => filter === 'all' || e.polarity === filter)
         .sort(() => Math.random() - 0.5);
 
+    const willpowerFactor = attributes ? Math.max(0.1, 1 - attributes.willpower * 0.01) : 1;
+
     for (const event of candidates) {
-        if (Math.random() * 100 < event.probability) {
+        let prob = event.probability;
+        if (event.polarity === 'negative') {
+            prob *= willpowerFactor;
+        }
+        if (Math.random() * 100 < prob) {
             return event;
         }
     }

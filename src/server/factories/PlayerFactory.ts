@@ -1,4 +1,4 @@
-import { PlayerComponent, PositionComponent, IdentityComponent, InventoryComponent, SkillsComponent, FatigueComponent, PLAYER_COMPONENT, IDENTITY_COMPONENT, POSITION_COMPONENT, FATIGUE_COMPONENT, INVENTORY_COMPONENT, SKILLS_COMPONENT, BodyPart, BodyPartState, BodyComponent, BODY_COMPONENT } from "$shared/components";
+import { PlayerComponent, PositionComponent, IdentityComponent, InventoryComponent, SkillsComponent, FatigueComponent, PLAYER_COMPONENT, IDENTITY_COMPONENT, POSITION_COMPONENT, FATIGUE_COMPONENT, INVENTORY_COMPONENT, SKILLS_COMPONENT, BodyPart, BodyPartState, BodyComponent, BODY_COMPONENT, ATTRIBUTES_COMPONENT, AttributesComponent, DEFAULT_ATTRIBUTES } from "$shared/components";
 import { Resource } from "$shared/types";
 import { World } from "../core/World";
 
@@ -55,6 +55,7 @@ export class PlayerFactory {
         });
 
         params.world.addComponent<SkillsComponent>(player, SKILLS_COMPONENT, {});
+        params.world.addComponent<AttributesComponent>(player, ATTRIBUTES_COMPONENT, { ...DEFAULT_ATTRIBUTES });
 
         return player;
     }

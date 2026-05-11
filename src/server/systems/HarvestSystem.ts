@@ -1,7 +1,8 @@
 import { World } from '../core/World';
-import { TileData, Resource, ActionType, HARVEST_INTENT_COMPONENT, HarvestIntentComponent, INVENTORY_COMPONENT, InventoryComponent, POSITION_COMPONENT, PositionComponent, ACTION_TAG_COMPONENT } from '$shared';
+import { TileData, Resource, ActionType, HARVEST_INTENT_COMPONENT, HarvestIntentComponent, INVENTORY_COMPONENT, InventoryComponent, POSITION_COMPONENT, PositionComponent, ACTION_TAG_COMPONENT, ATTRIBUTES_COMPONENT, AttributesComponent } from '$shared';
 import { addFatigue } from './FatigueSystem';
 import { gainXp } from './SkillSystem';
+import { gainAttributeXp } from './AttributeSystem';
 
 export function runHarvestSystem(world: World, map: TileData[]): boolean {
     const entities = world.query([POSITION_COMPONENT, INVENTORY_COMPONENT, HARVEST_INTENT_COMPONENT]);
@@ -22,7 +23,10 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         if (!tile?.resource || tile.resource.amount <= 0) continue;
 
         const resource = tile.resource;
-        const amount = Math.min(1, resource.amount);
+        const attrs = world.getComponent<AttributesComponent>(entity, ATTRIBUTES_COMPONENT);
+        const BASE_AMOUNT = 1;
+        const potentialAmount = Math.floor(BASE_AMOUNT * (1 + (attrs?.strength ?? 10) * 0.02));
+        const amount = Math.min(potentialAmount, resource.amount);
         resource.amount -= amount;
         resource.lastHarvestedAt = Date.now();
 
@@ -32,6 +36,7 @@ export function runHarvestSystem(world: World, map: TileData[]): boolean {
         world.addComponent(entity, ACTION_TAG_COMPONENT, { type: getActionType(resource.type), timestamp: Date.now() });
         addFatigue(world, entity, 2);
         gainXp(world, entity, getSkillName(resource.type));
+        gainAttributeXp(world, entity, getActionType(resource.type));
     }
 
 

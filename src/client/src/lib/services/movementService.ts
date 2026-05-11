@@ -16,7 +16,7 @@ export function onMoveConfirmed(pos: { q: number, r: number }) {
     _moveConfirmResolve = null;
 }
 
-function waitForMoveConfirmation(timeoutMs = MOVEMENT_DURATION_MS + 500): Promise<{ q: number, r: number }> {
+function waitForMoveConfirmation(timeoutMs: number): Promise<{ q: number, r: number }> {
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
             _moveConfirmResolve = null;
@@ -35,13 +35,14 @@ function animateStep(
     target: [number, number, number],
     fromY: number,
     toY: number,
-    sameElevation: boolean
+    sameElevation: boolean,
+    duration: number
 ): Promise<void> {
     return new Promise((resolve) => {
         const startTime = performance.now();
         function animate() {
             const elapsed = performance.now() - startTime;
-            const t = Math.min(elapsed / MOVEMENT_DURATION_MS, 1);
+            const t = Math.min(elapsed / duration, 1);
             const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
             gameState.playerAnimPosition = {
                 x: current.x + (target[0] - current.x) * eased,
@@ -79,11 +80,13 @@ export async function startMovement(
             const fromY = fromTile ? getScaleY(fromTile) + 1 : current.y;
             const toY = toTile ? getScaleY(toTile) + 1 : fromY;
 
+            const duration = localPlayer.movementDuration ?? MOVEMENT_DURATION_MS;
+
             socket.emit('request_move', { q: step.q, r: step.r });
             try {
                 const [confirmedPos] = await Promise.all([
-                    waitForMoveConfirmation(),
-                    animateStep(current, target, fromY, toY, fromY === toY)
+                    waitForMoveConfirmation(duration + 500),
+                    animateStep(current, target, fromY, toY, fromY === toY, duration)
                 ]);
 
                 currentQ = confirmedPos.q;

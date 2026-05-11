@@ -21,6 +21,8 @@ export interface EntityDTO {
 	bodyModifiers: BodyModifiersComponent;
 	fatigue: FatigueComponent;
 	skills: SkillsComponent;
+	attributes?: Record<string, string>;
+	movementDuration?: number;
 }
 
 export interface TimeDTO {

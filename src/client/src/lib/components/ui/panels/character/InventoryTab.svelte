@@ -1,43 +1,61 @@
+<!-- InventoryPopup.svelte -->
 <script lang="ts">
-	const inventory = [
-		{ name: 'Couteau de chasse', type: 'Arme', qty: 1, weight: '0.8 kg' },
-		{ name: 'Bandage', type: 'Médical', qty: 3, weight: '0.1 kg' },
-		{ name: 'Ration sèche', type: 'Nourriture', qty: 2, weight: '0.5 kg' },
-		{ name: 'Corde (5m)', type: 'Outil', qty: 1, weight: '1.2 kg' },
-		{ name: 'Briquet', type: 'Outil', qty: 1, weight: '0.05 kg' },
-		{ name: 'Gourde', type: 'Équipement', qty: 1, weight: '0.3 kg' }
-	];
+	import { gameState } from '$lib/stores/gameState.svelte';
+	import { Resource } from '$shared/types';
+	import { type Component } from 'svelte';
+	import { Trees, Mountain, Coins } from 'lucide-svelte';
 
-	const typeColor: Record<string, string> = {
-		Arme: '#ef4444',
-		Médical: '#16a34a',
-		Nourriture: '#ca8a04',
-		Outil: '#2563eb',
-		Équipement: '#9333ea'
+	type Icon = Component<{ size?: number; color?: string }>;
+
+	const RESOURCE_META: Record<Resource, { label: string; icon: Icon; color: string }> = {
+		[Resource.WOOD]: { label: 'Bois', icon: Trees as unknown as Icon, color: '#639922' },
+		[Resource.STONE]: { label: 'Pierre', icon: Mountain as unknown as Icon, color: '#888780' },
+		[Resource.SILVER]: { label: 'Argent', icon: Coins as unknown as Icon, color: '#378ADD' }
 	};
+
+	const items = $derived(
+		Object.entries(gameState.localPlayer?.inventory ?? {})
+			.filter(([, qty]) => (qty as number) > 0)
+			.map(([key, qty]) => ({
+				key: key as Resource,
+				qty: qty as number,
+				meta: RESOURCE_META[key as Resource] ?? { label: key, icon: 'ti-box', color: '#888780' }
+			}))
+	);
 </script>
 
-<div class="flex flex-col gap-1">
-	{#each inventory as item}
-		<div
-			class="flex items-center justify-between rounded px-3 py-2"
-			style="background: var(--color-bg-dark); border: 1px solid var(--color-bg-panel-2);"
-		>
-			<div class="flex items-center gap-2">
+{#if items.length === 0}
+	<p class="py-4 text-center text-xs" style="color: var(--color-text-muted)">
+		Aucun item dans l'inventaire.
+	</p>
+{:else}
+	<div class="grid grid-cols-4 gap-1.5">
+		{#each items as { qty, meta }}
+			<div
+				class="relative flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-md transition-colors"
+				style="background: var(--color-bg-dark); border: 1px solid var(--color-bg-panel-2);"
+			>
 				<span
-					class="rounded px-1.5 py-0.5 text-xs font-bold"
-					style="
-                        background: {typeColor[item.type] ?? '#555'}22;
-                        color: {typeColor[item.type] ?? '#aaa'};
-                        border: 1px solid {typeColor[item.type] ?? '#555'}44;
-                    ">{item.type}</span
+					class="absolute top-1 left-1 h-1.5 w-1.5 rounded-full"
+					style="background: {meta.color}"
+				></span>
+
+				<meta.icon size={24} color={meta.color} />
+
+				<span
+					class="px-1 text-center text-[10px] leading-tight"
+					style="color: var(--color-text-muted)"
 				>
-				<span class="text-xs" style="color: var(--color-text-light);">{item.name}</span>
+					{meta.label}
+				</span>
+
+				<span
+					class="absolute right-1.5 bottom-1 text-[11px] font-medium"
+					style="color: var(--color-text-light)"
+				>
+					{qty}
+				</span>
 			</div>
-			<div class="flex items-center gap-3">
-				<span class="text-xs" style="color: var(--color-text-muted);">x{item.qty}</span>
-				<span class="text-xs" style="color: var(--color-text-muted);">{item.weight}</span>
-			</div>
-		</div>
-	{/each}
-</div>
+		{/each}
+	</div>
+{/if}

@@ -1,8 +1,9 @@
 import { World } from '../core/World';
 import { TileData } from '$shared/types';
-import { MovementIntentComponent, PositionComponent, MOVEMENT_DURATION_MS, PlayerComponent, ActionType, MOVEMENT_INTENT_COMPONENT, POSITION_COMPONENT, ACTION_TAG_COMPONENT, PLAYER_COMPONENT } from '$shared';
+import { MovementIntentComponent, PositionComponent, MOVEMENT_DURATION_MS, PlayerComponent, ActionType, MOVEMENT_INTENT_COMPONENT, POSITION_COMPONENT, ACTION_TAG_COMPONENT, PLAYER_COMPONENT, ATTRIBUTES_COMPONENT, AttributesComponent } from '$shared';
 import { addFatigue } from './FatigueSystem';
 import { gainXp } from './SkillSystem';
+import { gainAttributeXp } from './AttributeSystem';
 
 
 
@@ -12,7 +13,10 @@ export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed
         const pos = world.getComponent<PositionComponent>(entity, POSITION_COMPONENT);
         const intent = world.getComponent<MovementIntentComponent>(entity, MOVEMENT_INTENT_COMPONENT);
         if (!pos || !intent) continue;
-        if (Date.now() - intent.startedAt < MOVEMENT_DURATION_MS) continue;
+        const attrs = world.getComponent<AttributesComponent>(entity, ATTRIBUTES_COMPONENT);
+        const delay = attrs ? MOVEMENT_DURATION_MS / (1 + attrs.agility * 0.01) : MOVEMENT_DURATION_MS;
+
+        if (Date.now() - intent.startedAt < delay) continue;
 
         const distance =
             (Math.abs(pos.q - intent.targetQ) +
@@ -42,5 +46,6 @@ export function runMovementSystem(world: World, map: TileData[], onMoveConfirmed
         world.addComponent(entity, ACTION_TAG_COMPONENT, { type: ActionType.TRAVEL, timestamp: Date.now() });
         addFatigue(world, entity, 1);
         gainXp(world, entity, "athletics");
+        gainAttributeXp(world, entity, ActionType.TRAVEL);
     }
 }

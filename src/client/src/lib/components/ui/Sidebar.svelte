@@ -11,12 +11,10 @@
 	}
 
 	const items: SidebarItem[] = [
-		{ emoji: '👤', label: 'Status' },
-		{ emoji: '🫀', label: 'Personnage', panel: 'body' },
+		{ emoji: '👤', label: 'Personnage', panel: 'body' },
 		{ emoji: '🗺️', label: 'Carte' },
-		{ emoji: '📜', label: 'Diplomatie' },
 		{ emoji: '🏴', label: 'Evènements', panel: 'events' },
-		{ emoji: '✉️', label: 'Messagerie' }
+		{ emoji: '🏠', label: 'Village' }
 	];
 
 	let activePanel = $state<string | null>(null);

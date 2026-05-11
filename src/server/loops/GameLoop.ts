@@ -1,4 +1,5 @@
 import { TileData } from "$shared/types";
+import { ACTION_TAG_COMPONENT } from "$shared/components";
 import { World } from "../core/World";
 import { runBodySystem } from "../systems/BodySystem";
 import { runDeathSystem } from "../systems/DeathSystem";
@@ -60,6 +61,11 @@ export class GameLoop {
         }
 
         this.network.broadcastWorldState();
+
+        const actionEntities = this.world.query([ACTION_TAG_COMPONENT]);
+        for (const entity of actionEntities) {
+            this.world.removeComponent(entity, ACTION_TAG_COMPONENT);
+        }
 
         if (this.tickCount >= 10000) this.tickCount = 0;
     }
