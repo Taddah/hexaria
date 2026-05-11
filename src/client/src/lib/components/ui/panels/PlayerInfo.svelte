@@ -6,8 +6,7 @@
 	// Valeurs en dur — à brancher côté serveur
 	const needs = {
 		hunger: 80,
-		thirst: 35,
-		fatigue: 15
+		thirst: 35
 	};
 
 	function hungerLabel(v: number) {
@@ -96,7 +95,9 @@
 
 		<!-- Nom + âge -->
 		<div class="flex shrink-0 flex-col gap-1">
-			<span class="text-panel-title text-lg leading-tight">{localPlayer?.identity.firstName} {localPlayer?.identity.lastName}</span>
+			<span class="text-panel-title text-lg leading-tight"
+				>{localPlayer?.identity.firstName} {localPlayer?.identity.lastName}</span
+			>
 			<span class="text-sm leading-tight" style="color: var(--color-gold)"
 				>Âge {localPlayer?.identity.currentAge}</span
 			>

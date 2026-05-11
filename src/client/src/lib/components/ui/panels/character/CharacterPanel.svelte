@@ -15,17 +15,8 @@
 	const localPlayer = $derived(gameState.localPlayer);
 
 	const character = $derived({
-		name: `${localPlayer?.identity.firstName ?? ''} ${localPlayer?.identity.lastName ?? ''}`.trim(),
-		hunger: 0,
-		thirst: 0,
-		fatigue: localPlayer?.fatigue?.fatigue ?? 0
+		name: `${localPlayer?.identity.firstName ?? ''} ${localPlayer?.identity.lastName ?? ''}`.trim()
 	});
-
-	function gaugeColor(value: number): string {
-		if (value > 60) return '#16a34a';
-		if (value > 30) return '#ca8a04';
-		return '#b91c1c';
-	}
 
 	const tabs = [
 		{ id: 'stats', label: 'Stats' },
@@ -78,31 +69,6 @@
 			</p>
 
 			<BodyPanel />
-
-			<!-- Jauges -->
-			<div class="flex flex-col gap-2">
-				{#each [{ label: '🍖 Faim', value: character.hunger }, { label: '💧 Soif', value: character.thirst }, { label: '😴 Fatigue', value: character.fatigue, invert: true }] as gauge}
-					<div class="flex flex-col gap-1">
-						<div class="flex items-center justify-between">
-							<span class="text-xs" style="color: var(--color-text-muted);">{gauge.label}</span>
-							<span class="text-xs font-bold" style="color: var(--color-text-light);"
-								>{gauge.value}%</span
-							>
-						</div>
-						<div
-							class="h-1.5 w-full overflow-hidden rounded-full"
-							style="background: var(--color-bg-dark);"
-						>
-							<div
-								class="h-full rounded-full transition-all"
-								style="width: {gauge.value}%; background: {gaugeColor(
-									gauge.invert ? 100 - gauge.value : gauge.value
-								)};"
-							></div>
-						</div>
-					</div>
-				{/each}
-			</div>
 		</div>
 
 		<!-- Droite -->
