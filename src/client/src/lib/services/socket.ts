@@ -5,6 +5,7 @@ import { goto } from '$app/navigation';
 import { isMoving, onMoveConfirmed } from './movementService';
 import { getAccessToken } from '$lib/stores/authState.svelte';
 import { registerTradeListeners } from './tradeService';
+import { registerInspectListener } from './inspectService';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -38,6 +39,7 @@ export function initializeSocket(): Socket {
 	socketInstance = socket;
 
 	registerTradeListeners();
+	registerInspectListener();
 
 	socket.on('connect', () => {
 		console.log(`[CLIENT NETWORK] Connecté au serveur`);

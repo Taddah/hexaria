@@ -31,7 +31,6 @@ export class TradeHandler {
 
         // ── trade_request ────────────────────────────────────────────────────────
         socket.on('trade_request', (payload: TradeRequestPayload) => {
-            console.log("trade_request", payload)
             const initiatorEntity = findEntityByUserId(this.world, userId)
             if (initiatorEntity === undefined) return
 
@@ -64,7 +63,6 @@ export class TradeHandler {
             }
             this.world.addComponent(sessionEntity, TRADE_SESSION_COMPONENT, session);
 
-            console.log("session", session);
 
             // Tags sur les joueurs
             const tag: TradeTagComponent = { sessionEntity }
@@ -74,7 +72,6 @@ export class TradeHandler {
             // Notifier B uniquement
             const userB = getUserIdByEntity(this.world, targetEntity)
             if (userB) {
-                console.log("trade_invite", { session })
                 emitToPlayer(this.registry, userB, 'trade_invite', { session })
             }
         })

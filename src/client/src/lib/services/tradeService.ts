@@ -43,7 +43,6 @@ export function registerTradeListeners(): void {
 
     // Invitation reçue (côté B)
     socket.on('trade_invite', ({ session }: TradeInvitePayload) => {
-        console.log("trade_invite", { session })
         const initiator = gameState.entities.find(e => e.id === session.playerA)
         tradeState.pendingInvite = {
             session,

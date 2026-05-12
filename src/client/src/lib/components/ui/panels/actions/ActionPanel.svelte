@@ -8,6 +8,7 @@
 	import { DecoType, Resource } from '$shared';
 	import Players from './Players.svelte';
 	import { requestTrade } from '$lib/services/tradeService';
+	import { inspectPlayer } from '$lib/services/inspectService';
 
 	interface Action {
 		id: string;
@@ -124,8 +125,7 @@
 	});
 
 	function handleInspect(playerId: number) {
-		console.log('inspect', playerId);
-		// TODO: ouvrir le panel d'inspection
+		inspectPlayer(playerId);
 	}
 
 	function handleTrade(playerId: number) {

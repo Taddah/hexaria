@@ -17,6 +17,7 @@
 	import { browser } from '$app/environment';
 	import TradeInvitBanner from '$lib/components/ui/panels/actions/trade/TradeInvitBanner.svelte';
 	import TradePanel from '$lib/components/ui/panels/actions/trade/TradePanel.svelte';
+	import InspectPanel from '$lib/components/ui/panels/actions/InspectPanel.svelte';
 
 	const localPlayer = $derived(gameState.localPlayer);
 
@@ -62,6 +63,7 @@
 
 		<TradeInvitBanner />
 		<TradePanel />
+		<InspectPanel />
 
 		<ConnectionOverlay />
 		<DeathPanel />

@@ -12,4 +12,5 @@ export * from './player/fatigue';
 export * from './player/skill';
 export * from './player/death';
 export * from './player/attributes';
-export * from './player/trade';
+export * from './actions/trade';
+export * from './actions/inspect'

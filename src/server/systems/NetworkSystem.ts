@@ -10,6 +10,7 @@ import { CharacterHandler } from '../handlers/characterHandler';
 import { supabase } from '../services/supabaseServer';
 import { PlayerPersistenceService } from '../services/PlayerPersistenceService';
 import { cancelSession, TradeHandler } from '../handlers/tradeHandler';
+import { InspectHandler } from '../handlers/inspectHandler';
 
 export class NetworkSystem {
     private io: Server;
@@ -20,6 +21,7 @@ export class NetworkSystem {
     private eventHandler: EventHandler;
     private characterHandler: CharacterHandler;
     private tradeHandler: TradeHandler;
+    private inspectHandler: InspectHandler;
 
     private previousWorldState: string = "";
     private previousMap: TileData[] = [];
@@ -50,6 +52,7 @@ export class NetworkSystem {
         this.eventHandler = new EventHandler(this.world);
         this.characterHandler = new CharacterHandler(this.world, this.map, this.registry);
         this.tradeHandler = new TradeHandler(this.world, this.registry);
+        this.inspectHandler = new InspectHandler(this.world);
 
         this.io.on('connection', (socket: Socket) => {
             console.log(`[NETWORK] Client authentifié: userId=${socket.data.userId}`);
@@ -59,6 +62,7 @@ export class NetworkSystem {
             this.eventHandler.register(socket);
             this.characterHandler.register(socket);
             this.tradeHandler.register(socket);
+            this.inspectHandler.register(socket);
 
             socket.on('disconnect', async () => {
                 const userId = socket.data.userId as string;
