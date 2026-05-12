@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { gameState } from '$lib/stores/gameState.svelte';
-	import { getPlayerTile } from '$lib/utils/playerUtils';
+	import { getPlayersOnCurrentTile, getPlayerTile } from '$lib/utils/playerUtils';
 	import { getSocket } from '$lib/services/socket';
 	import { requestMove } from '$lib/services/movementService';
 	import { requestHarvest } from '$lib/services/harvestService';
 	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
 	import { DecoType, Resource } from '$shared';
+	import Players from './Players.svelte';
 
 	interface Action {
 		id: string;
@@ -19,35 +20,33 @@
 	const POINT_DEPTH = 28;
 	const VIEW_WIDTH = 220;
 
+	let showPlayersPanel = $state(false);
+
 	const localPlayer = $derived(gameState.localPlayer);
+
 	const playerTile = $derived.by(() => {
-		const tile = getPlayerTile(localPlayer, gameState.map);
-		return tile;
+		return getPlayerTile(localPlayer, gameState.map);
 	});
 
 	const selectedTile = $derived(gameState.selectedHex);
 
-	const canHarvestWood = $derived.by(() => {
-		return (
-			!!playerTile?.resource &&
+	const canHarvestWood = $derived(
+		!!playerTile?.resource &&
 			playerTile.resource.type === Resource.WOOD &&
 			playerTile.resource.amount > 0
-		);
-	});
-	const canHarvestStone = $derived.by(() => {
-		return (
-			!!playerTile?.resource &&
+	);
+
+	const canHarvestStone = $derived(
+		!!playerTile?.resource &&
 			playerTile.resource.type === Resource.STONE &&
 			playerTile.resource.amount > 0
-		);
-	});
-	const canHarvestSilver = $derived.by(() => {
-		return (
-			!!playerTile?.resource &&
+	);
+
+	const canHarvestSilver = $derived(
+		!!playerTile?.resource &&
 			playerTile.resource.type === Resource.SILVER &&
 			playerTile.resource.amount > 0
-		);
-	});
+	);
 
 	const isMoveValid = $derived(
 		!!(
@@ -57,6 +56,12 @@
 			selectedTile.decoZone?.type !== DecoType.DENSE
 		)
 	);
+
+	const playersOnTile = $derived(
+		getPlayersOnCurrentTile(gameState.localPlayer, gameState.entities)
+	);
+
+	const hasOthersOnTile = $derived(playersOnTile.length > 0);
 
 	const actions = $derived(buildActions());
 	const totalHeight = $derived(HEADER_HEIGHT + actions.length * ITEM_HEIGHT + POINT_DEPTH);
@@ -100,7 +105,36 @@
 			});
 		}
 
+		if (hasOthersOnTile) {
+			list.push({
+				id: 'players',
+				emoji: '🧍',
+				title: `Joueurs (${playersOnTile.length})`,
+				execute: () => (showPlayersPanel = !showPlayersPanel)
+			});
+		}
+
 		return list;
+	}
+
+	// Ferme le panel joueurs si la tile se vide
+	$effect(() => {
+		if (!hasOthersOnTile) showPlayersPanel = false;
+	});
+
+	function handleInspect(playerId: number) {
+		console.log('inspect', playerId);
+		// TODO: ouvrir le panel d'inspection
+	}
+
+	function handleTrade(playerId: number) {
+		console.log('trade', playerId);
+		// TODO: ouvrir le panel d'échange
+	}
+
+	function handleAttack(playerId: number) {
+		console.log('attack', playerId);
+		// TODO: envoyer la requête d'attaque
 	}
 </script>
 
@@ -114,7 +148,6 @@
 			bevel={POINT_DEPTH}
 			dividerY={HEADER_HEIGHT}
 		/>
-
 		<div class="relative flex flex-col" style="width: 13.75rem;">
 			<div class="flex items-center gap-2 px-3" style="height: 2.75rem;">
 				<span class="text-base">👑</span>
@@ -125,10 +158,14 @@
 				<div
 					class="px-2 py-1.5"
 					style={i < actions.length - 1
-						? `border-bottom: 1px solid var(--color-border-separator);`
+						? 'border-bottom: 1px solid var(--color-border-separator);'
 						: ''}
 				>
-					<button class="panel-btn gap-3 rounded-md px-3 py-2" onclick={action.execute}>
+					<button
+						class="panel-btn gap-3 rounded-md px-3 py-2"
+						class:active={action.id === 'players' && showPlayersPanel}
+						onclick={action.execute}
+					>
 						<span class="shrink-0 text-2xl leading-none">{action.emoji}</span>
 						<span class="text-panel-title text-sm leading-tight">{action.title}</span>
 					</button>
@@ -139,3 +176,19 @@
 		</div>
 	</div>
 {/if}
+
+{#if showPlayersPanel}
+	<Players
+		onclose={() => (showPlayersPanel = false)}
+		oninspect={handleInspect}
+		ontrade={handleTrade}
+		onattack={handleAttack}
+	/>
+{/if}
+
+<style>
+	.panel-btn.active {
+		background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+		border-color: var(--color-gold-dark);
+	}
+</style>
