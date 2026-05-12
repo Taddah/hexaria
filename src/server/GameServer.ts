@@ -16,6 +16,7 @@ import { TileData } from '$shared/types';
 import { WORLD_COMPONENT, WorldComponent } from '$shared/components/world';
 import { AgingLoop } from './loops/AgingLoop';
 import { GameLoop } from './loops/GameLoop';
+import { PlayerRegistry } from './core/PlayerRegistry';
 
 const MAP_SIZE = 300;
 
@@ -27,6 +28,7 @@ export class GameServer {
     private map!: TileData[];
     private worldPersistence!: WorldPersistenceService;
     private worldMeta!: WorldMeta;
+    private registry!: PlayerRegistry;
 
     private agingLoop!: AgingLoop;
     private gameLoop!: GameLoop;
@@ -36,12 +38,16 @@ export class GameServer {
         this.initWorld();
         await this.initMap();
 
+        this.registry = new PlayerRegistry()
+
         this.initNetwork();
         this.initSaveSystem();
         this.initShutdownHandlers();
 
+
+
         this.agingLoop = new AgingLoop(this.world, this.worldEntity, this.worldPersistence, this.worldMeta);
-        this.gameLoop = new GameLoop(this.world, this.map, this.network, this.saveSystem);
+        this.gameLoop = new GameLoop(this.world, this.map, this.network, this.saveSystem, this.registry);
         this.startLoops();
         console.log('[SERVER] Démarré');
     }
@@ -96,13 +102,13 @@ export class GameServer {
     }
 
     private initNetwork() {
-        this.network = new NetworkSystem(3000, this.world, this.map);
+        this.network = new NetworkSystem(3000, this.world, this.map, this.registry);
     }
 
     private initSaveSystem() {
         this.saveSystem = new SaveSystem(
             this.world,
-            this.network.registry,
+            this.registry,
             () => {
                 const timeState = getTimeState();
                 const worldData = this.world.getComponent<WorldComponent>(this.worldEntity, WORLD_COMPONENT);

@@ -10,6 +10,8 @@ import { NetworkSystem } from "../systems/NetworkSystem";
 import { runResourceRenewalSystem } from "../systems/ResourceRenewalSystem";
 import { SaveSystem } from "../systems/SaveSystem";
 import { getTimeState, tickTimeOfDay } from "../systems/TimeSystem";
+import { runTradeSystem } from "../systems/TradeSystem";
+import { PlayerRegistry } from "../core/PlayerRegistry";
 
 export class GameLoop {
     private timer: ReturnType<typeof setInterval> | null = null;
@@ -19,7 +21,8 @@ export class GameLoop {
         private world: World,
         private map: TileData[],
         private network: NetworkSystem,
-        private saveSystem: SaveSystem
+        private saveSystem: SaveSystem,
+        private registry: PlayerRegistry
     ) { }
 
     start() {
@@ -47,6 +50,8 @@ export class GameLoop {
             this.network.broadcastMapUpdate();
             for (const tile of renewed) this.saveSystem.markTileDirty(tile);
         }
+
+        runTradeSystem(this.world, this.registry);
 
         tickTimeOfDay(100);
 

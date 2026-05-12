@@ -15,6 +15,8 @@
 	import ConnectionOverlay from '$lib/components/ui/ConnectionOverlay.svelte';
 	import DeathPanel from '$lib/components/ui/panels/DeathPanel.svelte';
 	import { browser } from '$app/environment';
+	import TradeInvitBanner from '$lib/components/ui/panels/actions/trade/TradeInvitBanner.svelte';
+	import TradePanel from '$lib/components/ui/panels/actions/trade/TradePanel.svelte';
 
 	const localPlayer = $derived(gameState.localPlayer);
 
@@ -57,6 +59,9 @@
 		<ChatPanel />
 
 		<EventModal />
+
+		<TradeInvitBanner />
+		<TradePanel />
 
 		<ConnectionOverlay />
 		<DeathPanel />

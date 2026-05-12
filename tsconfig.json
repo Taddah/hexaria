@@ -46,5 +46,10 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+    "exclude": [
+      "node_modules",
+      "src/client",
+      "src/client/node_modules"
+    ]
   }
 }

@@ -5,29 +5,29 @@ import { findEntityByUserId, getWorldState, serializePlayerComponents } from '..
 import { HarvestHandler } from '../handlers/harvestHandler';
 import { MovementHandler } from '../handlers/movementHandler';
 import { EventHandler } from '../handlers/eventHandler';
-import { TileData, type TimeState } from '$shared';
+import { TileData, TRADE_TAG_COMPONENT, TradeTagComponent, type TimeState } from '$shared';
 import { CharacterHandler } from '../handlers/characterHandler';
 import { supabase } from '../services/supabaseServer';
 import { PlayerPersistenceService } from '../services/PlayerPersistenceService';
+import { cancelSession, TradeHandler } from '../handlers/tradeHandler';
 
 export class NetworkSystem {
     private io: Server;
-    readonly registry: PlayerRegistry;
+
 
     private harvestHandler: HarvestHandler;
     private movementHandler: MovementHandler;
     private eventHandler: EventHandler;
     private characterHandler: CharacterHandler;
+    private tradeHandler: TradeHandler;
 
     private previousWorldState: string = "";
     private previousMap: TileData[] = [];
 
-    constructor(port: number, private world: World, private map: TileData[]) {
+    constructor(port: number, private world: World, private map: TileData[], private registry: PlayerRegistry) {
         this.io = new Server(port, {
             cors: { origin: '*', methods: ['GET', 'POST'] }
         });
-
-        this.registry = new PlayerRegistry();
 
         console.log(`[NETWORK] Serveur WebSocket démarré sur le port ${port}`);
 
@@ -46,9 +46,10 @@ export class NetworkSystem {
         });
 
         this.harvestHandler = new HarvestHandler(this.world, this.map);
-        this.movementHandler = new MovementHandler(this.world, this.map);
+        this.movementHandler = new MovementHandler(this.world, this.map, this.registry);
         this.eventHandler = new EventHandler(this.world);
         this.characterHandler = new CharacterHandler(this.world, this.map, this.registry);
+        this.tradeHandler = new TradeHandler(this.world, this.registry);
 
         this.io.on('connection', (socket: Socket) => {
             console.log(`[NETWORK] Client authentifié: userId=${socket.data.userId}`);
@@ -57,6 +58,7 @@ export class NetworkSystem {
             this.movementHandler.register(socket);
             this.eventHandler.register(socket);
             this.characterHandler.register(socket);
+            this.tradeHandler.register(socket);
 
             socket.on('disconnect', async () => {
                 const userId = socket.data.userId as string;
@@ -68,6 +70,11 @@ export class NetworkSystem {
                     const components = serializePlayerComponents(this.world, entityId);
                     await persistence.savePlayer(userId, components);
                     console.log(`[SAVE] Joueur ${userId} sauvegardé au disconnect`);
+
+                    const tradeTag = this.world.getComponent<TradeTagComponent>(entityId, TRADE_TAG_COMPONENT)
+                    if (tradeTag) {
+                        cancelSession(this.world, this.registry, tradeTag.sessionEntity, 'PLAYER_DISCONNECTED')
+                    }
 
                     this.world.deleteEntity(entityId);
                     this.broadcastWorldState();

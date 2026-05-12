@@ -7,6 +7,7 @@
 	import PanelBg from '$lib/components/ui/panels/PanelBg.svelte';
 	import { DecoType, Resource } from '$shared';
 	import Players from './Players.svelte';
+	import { requestTrade } from '$lib/services/tradeService';
 
 	interface Action {
 		id: string;
@@ -128,8 +129,7 @@
 	}
 
 	function handleTrade(playerId: number) {
-		console.log('trade', playerId);
-		// TODO: ouvrir le panel d'échange
+		requestTrade(playerId);
 	}
 
 	function handleAttack(playerId: number) {

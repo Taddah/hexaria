@@ -1,9 +1,10 @@
 import { io, type Socket } from 'socket.io-client';
-import type { EventHistory, IEventsHistory, TileData, TimeState } from '$shared';
+import type { EventHistory, TileData, TimeState } from '$shared';
 import { gameState } from '$lib/stores/gameState.svelte';
 import { goto } from '$app/navigation';
 import { isMoving, onMoveConfirmed } from './movementService';
 import { getAccessToken } from '$lib/stores/authState.svelte';
+import { registerTradeListeners } from './tradeService';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -35,6 +36,8 @@ export function initializeSocket(): Socket {
 		reconnectionAttempts: Infinity
 	});
 	socketInstance = socket;
+
+	registerTradeListeners();
 
 	socket.on('connect', () => {
 		console.log(`[CLIENT NETWORK] Connecté au serveur`);
